@@ -31,10 +31,10 @@ BuildRequires:	openssl-devel >= 0.9.6a
 BuildRequires:	pam-devel
 BuildRequires:	zlib-devel
 BuildRequires:	libwrap-devel
+BuildRequires:	perl
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Prereq:		openssl
-Obsoletes:	ssh < %{version}
-Obsoletes:	ssh > %{version}
+Obsoletes:	ssh
 
 %define		_sysconfdir	/etc/ssh
 %define		_libexecdir	%{_libdir}/%{name}
@@ -67,8 +67,7 @@ Requires:	openssh
 Group:		Applications/Networking
 Group(de):	Applikationen/Netzwerkwesen
 Group(pl):	Aplikacje/Sieciowe
-Obsoletes:	ssh-clients < %{version}
-Obsoletes:	ssh-clients > %{version}
+Obsoletes:	ssh-clients
 Requires:	%{name} = %{version}
 
 %description clients
@@ -101,7 +100,7 @@ Requires:	chkconfig >= 0.9
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
 Group(pl):	Sieciowe/Serwery
-Obsoletes:	ssh-server < %{version}, ssh-server > %{version}
+Obsoletes:	ssh-server
 Requires:	/bin/login
 Requires:	util-linux
 Prereq:		rc-scripts
@@ -139,9 +138,9 @@ Group:		Applications/Networking
 Group(de):	Applikationen/Netzwerkwesen
 Group(pl):	Aplikacje/Sieciowe
 Requires:	%{name} = %{version}
-Obsoletes:	ssh-extras < %{version}, ssh-extras > %{version}
-Obsoletes:	ssh-askpass < %{version}, ssh-askpass > %{version}
-Obsoletes:	openssh-askpass < %{version}, openssh-askpass > %{version}
+Obsoletes:	ssh-extras
+Obsoletes:	ssh-askpass
+Obsoletes:	openssh-askpass
 
 %description gnome-askpass
 Ssh (Secure Shell) a program for logging into a remote machine and for

@@ -1,13 +1,12 @@
 #
 # Conditional build:
-%bcond_with	gnome		# without gnome-askpass utility
-%bcond_without	gtk		# without gtk (2.x)
+%bcond_without	gnome		# without gnome-askpass utility
+%bcond_with	gtk		# without gtk (2.x)
 %bcond_with	ldap		# with ldap support
-%bcond_without	kerberos5	# without kerberos5 support
-%bcond_without	chroot		# without chrooted user environment support
-
-# default to gtk2-based gnome-askpass
-%{?with_gtk:%define _without_gnome 1}
+%bcond_with	kerberos5	# without kerberos5 support
+%bcond_with	chroot		# without chrooted user environment support
+#
+%{?with_gtk:%undefine with_gnome}
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(de):	OpenSSH - freie Implementation der Secure Shell (SSH)
 Summary(es):	ImplementaciСn libre de SSH
@@ -20,7 +19,7 @@ Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	3.7.1p2
-Release:	3.2
+Release:	4
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -54,7 +53,7 @@ BuildRequires:	automake
 %{?with_gnome:BuildRequires:	gnome-libs-devel}
 %{?with_gtk:BuildRequires:	gtk+2-devel}
 BuildRequires:	libwrap-devel
-BuildRequires:	openssl-devel >= 0.9.7c
+BuildRequires:	openssl-devel >= 0.9.6k
 %{?with_ldap:BuildRequires:	openldap-devel}
 %{?with_kerberos5:BuildRequires:	heimdal-devel}
 BuildRequires:	pam-devel
@@ -62,7 +61,7 @@ BuildRequires:	%{__perl}
 %{?with_gtk:BuildRequires:	pkgconfig}
 BuildRequires:	zlib-devel
 PreReq:		FHS >= 2.1-24
-PreReq:		openssl >= 0.9.7c
+PreReq:		openssl >= 0.9.6k
 Obsoletes:	ssh
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -257,7 +256,7 @@ Summary(ru):	OpenSSH - сервер протокола Secure Shell (sshd)
 Summary(uk):	OpenSSH - сервер протоколу Secure Shell (sshd)
 Group:		Networking/Daemons
 PreReq:		%{name} = %{epoch}:%{version}
-PreReq:		rc-scripts >= 0.3.1-15
+PreReq:		rc-scripts >= 0.3.1-3
 Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/useradd
 Requires(post,preun):	/sbin/chkconfig
@@ -463,7 +462,7 @@ install contrib/gnome-ssh-askpass1 $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
 %if %{with gtk}
 install contrib/gnome-ssh-askpass2 $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
 %endif
-%if %{with gnome}%{with gtk}
+%if %{with gnome} || %{with gtk}
 install %{SOURCE7} %{SOURCE8} $RPM_BUILD_ROOT/etc/profile.d
 %endif
 
@@ -520,13 +519,13 @@ fi
 %files clients
 %defattr(644,root,root,755)
 %doc connect.html
-%attr(0755,root,root) %{_bindir}/connect
-%attr(0755,root,root) %{_bindir}/ssh
-%attr(0755,root,root) %{_bindir}/slogin
-%attr(0755,root,root) %{_bindir}/sftp
-%attr(0755,root,root) %{_bindir}/ssh-agent
-%attr(0755,root,root) %{_bindir}/ssh-add
-%attr(0755,root,root) %{_bindir}/scp
+%attr(755,root,root) %{_bindir}/connect
+%attr(755,root,root) %{_bindir}/ssh
+%attr(755,root,root) %{_bindir}/slogin
+%attr(755,root,root) %{_bindir}/sftp
+%attr(755,root,root) %{_bindir}/ssh-agent
+%attr(755,root,root) %{_bindir}/ssh-add
+%attr(755,root,root) %{_bindir}/scp
 %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/ssh_config
 %{_mandir}/man1/scp.1*
 %{_mandir}/man1/ssh.1*
@@ -544,11 +543,9 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_sbindir}/sshd
 %attr(755,root,root) %{_libexecdir}/sftp-server
-%attr(755,root,root) %{_libexecdir}/ssh-keysign
 %dir %{_libexecdir}
 %{_mandir}/man8/sshd.8*
 %{_mandir}/man8/sftp-server.8*
-%{_mandir}/man8/ssh-keysign.8*
 %{_mandir}/man5/sshd_config.5*
 %attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/sshd_config
 %attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/pam.d/sshd
@@ -557,7 +554,7 @@ fi
 %attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/sysconfig/sshd
 %attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/security/blacklist.sshd
 
-%if %{with gnome}%{with gtk}
+%if %{with gnome} || %{with gtk}
 %files gnome-askpass
 %defattr(644,root,root,755)
 %dir %{_libexecdir}/ssh

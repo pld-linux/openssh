@@ -1,0 +1,167 @@
+diff -Nur openssh-3.2.3p1.orig/clientloop.c openssh-3.2.3p1-alive/clientloop.c
+--- openssh-3.2.3p1.orig/clientloop.c	Tue Apr 23 13:09:46 2002
++++ openssh-3.2.3p1-alive/clientloop.c	Sun Oct 13 18:32:06 2002
+@@ -321,6 +321,9 @@
+ client_wait_until_can_do_something(fd_set **readsetp, fd_set **writesetp,
+     int *maxfdp, int *nallocp, int rekeying)
+ {
++	struct timeval tv, *tvp;
++	int ret;
++
+ 	/* Add any selections by the channel mechanism. */
+ 	channel_prepare_select(readsetp, writesetp, maxfdp, nallocp, rekeying);
+ 
+@@ -362,13 +365,30 @@
+ 	/*
+ 	 * Wait for something to happen.  This will suspend the process until
+ 	 * some selected descriptor can be read, written, or has some other
+-	 * event pending. Note: if you want to implement SSH_MSG_IGNORE
+-	 * messages to fool traffic analysis, this might be the place to do
+-	 * it: just have a random timeout for the select, and send a random
+-	 * SSH_MSG_IGNORE packet when the timeout expires.
++	 * event pending.
++	 * Set a random timeout for the select, and send a random SSH_MSG_IGNORE
++	 * packet when the timeout expires to fool traffic analysis.
+ 	 */
+ 
+-	if (select((*maxfdp)+1, *readsetp, *writesetp, NULL, NULL) < 0) {
++	if (options.bogus_traffic_interval_max) {
++		u_int32_t rand = arc4random();
++		u_int64_t timeusec;
++		static u_int64_t timebase = 0;
++
++		if (!timebase)
++			timebase = (options.bogus_traffic_interval_max -
++		options.bogus_traffic_interval_min) * 1000000;  
++		timeusec = timebase * rand / 0xffffffffUL;
++		timeusec += options.bogus_traffic_interval_min * 1000000;
++		tv.tv_sec = timeusec / 1000000;
++		tv.tv_usec = timeusec % 1000000;
++		tvp = &tv;
++		debug2("Will send SSH_MSG_IGNORE in %lu.%lu s", tv.tv_sec, tv.tv_usec);
++	}
++	else tvp = NULL;
++
++	ret = select((*maxfdp)+1, *readsetp, *writesetp, NULL, tvp);
++	if (ret < 0) {
+ 		char buf[100];
+ 
+ 		/*
+@@ -386,6 +406,12 @@
+ 		buffer_append(&stderr_buffer, buf, strlen(buf));
+ 		quit_pending = 1;
+ 	}
++	else if (ret == 0) { /* timeout */
++		u_int32_t rand = arc4random();
++		packet_send_ignore((rand & 0x3f) + 1);
++		packet_send();
++		packet_write_wait();
++	}
+ }
+ 
+ static void
+diff -Nur openssh-3.2.3p1.orig/readconf.c openssh-3.2.3p1-alive/readconf.c
+--- openssh-3.2.3p1.orig/readconf.c	Tue Feb  5 02:26:35 2002
++++ openssh-3.2.3p1-alive/readconf.c	Sun Oct 13 17:57:46 2002
+@@ -115,7 +115,8 @@
+ 	oKbdInteractiveAuthentication, oKbdInteractiveDevices, oHostKeyAlias,
+ 	oDynamicForward, oPreferredAuthentications, oHostbasedAuthentication,
+ 	oHostKeyAlgorithms, oBindAddress, oSmartcardDevice,
+-	oClearAllForwardings, oNoHostAuthenticationForLocalhost
++	oClearAllForwardings, oNoHostAuthenticationForLocalhost,
++	oBogusTrafficIntervalMax, oBogusTrafficIntervalMin
+ } OpCodes;
+ 
+ /* Textual representations of the tokens. */
+@@ -178,6 +179,8 @@
+ 	{ "compression", oCompression },
+ 	{ "compressionlevel", oCompressionLevel },
+ 	{ "keepalive", oKeepAlives },
++	{ "BogusTrafficIntervalMax", oBogusTrafficIntervalMax },
++	{ "BogusTrafficIntervalMin", oBogusTrafficIntervalMin },
+ 	{ "numberofpasswordprompts", oNumberOfPasswordPrompts },
+ 	{ "loglevel", oLogLevel },
+ 	{ "dynamicforward", oDynamicForward },
+@@ -420,6 +423,42 @@
+ 		intptr = &options->no_host_authentication_for_localhost;
+ 		goto parse_flag;
+ 
++	case oBogusTrafficIntervalMax:
++		intptr = &options->bogus_traffic_interval_max;
++		arg = strdelim(&s);
++		if (!arg || *arg == '\0')
++			fatal("%.200s line %d: Missing argument.", filename, linenum);
++		if (arg[0] < '0' || arg[0] > '9')
++			fatal("%.200s line %d: Bad number.", filename, linenum);
++
++		/* Octal, decimal, or hex format? */
++		value = strtol(arg, &endofnumber, 0);
++		if (arg == endofnumber)
++			fatal("%.200s line %d: Bad number.", filename, linenum);
++		if (*activep && *intptr == -1)
++			*intptr = value;
++		if (options->bogus_traffic_interval_min >= value)
++			fatal("%.200s line %d: Bad value.", filename, linenum);
++		break;
++
++	case oBogusTrafficIntervalMin:
++		intptr = &options->bogus_traffic_interval_min;
++		arg = strdelim(&s);
++		if (!arg || *arg == '\0')
++			fatal("%.200s line %d: Missing argument.", filename, linenum);
++		if (arg[0] < '0' || arg[0] > '9')
++			fatal("%.200s line %d: Bad number.", filename, linenum);
++
++		/* Octal, decimal, or hex format? */
++		value = strtol(arg, &endofnumber, 0);
++		if (arg == endofnumber)
++			fatal("%.200s line %d: Bad number.", filename, linenum);
++		if (*activep && *intptr == -1)
++			*intptr = value;
++		if (options->bogus_traffic_interval_max <= value)
++			fatal("%.200s line %d: Bad value.", filename, linenum);
++		break;
++
+ 	case oNumberOfPasswordPrompts:
+ 		intptr = &options->number_of_password_prompts;
+ 		goto parse_int;
+@@ -772,6 +811,8 @@
+ 	options->strict_host_key_checking = -1;
+ 	options->compression = -1;
+ 	options->keepalives = -1;
++	options->bogus_traffic_interval_max = -1;
++	options->bogus_traffic_interval_min = -1;
+ 	options->compression_level = -1;
+ 	options->port = -1;
+ 	options->connection_attempts = -1;
+@@ -863,6 +904,10 @@
+ 		options->compression = 0;
+ 	if (options->keepalives == -1)
+ 		options->keepalives = 1;
++	if (options->bogus_traffic_interval_max == -1)
++		options->bogus_traffic_interval_max = 0;
++	if (options->bogus_traffic_interval_min == -1)
++		options->bogus_traffic_interval_min = 0;
+ 	if (options->compression_level == -1)
+ 		options->compression_level = 6;
+ 	if (options->port == -1)
+diff -Nur openssh-3.2.3p1.orig/readconf.h openssh-3.2.3p1-alive/readconf.h
+--- openssh-3.2.3p1.orig/readconf.h	Tue Mar  5 02:53:05 2002
++++ openssh-3.2.3p1-alive/readconf.h	Sun Oct 13 19:09:02 2002
+@@ -63,6 +63,16 @@
+ 	int     compression_level;	/* Compression level 1 (fast) to 9
+ 					 * (best). */
+ 	int     keepalives;	/* Set SO_KEEPALIVE. */
++	int	bogus_traffic_interval_max;/*
++		 * max time value of SSH_MSG_IGNORE 
++		 * interval
++		 */
++	int	bogus_traffic_interval_min;/*
++		 * min time value of SSH_MSG_IGNORE 
++		 * interval
++		 */
++	int	pam_authentication_via_kbd_int;
++	
+ 	LogLevel log_level;	/* Level for logging. */
+ 
+ 	int     port;		/* Port to connect. */

@@ -14,7 +14,6 @@ Source5:	openssh.sysconfig
 Source6:	passwd.pamd
 Patch0:		openssh-PAM_NEW_AUTHTOK.patch
 Patch1:		openssh-libwrap.patch
-Patch2:		openssh-linux.patch
 BuildRequires:	openssl-devel >= 0.9.4-2
 BuildRequires:	zlib-devel
 BuildRequires:	pam-devel
@@ -113,7 +112,6 @@ This package contains the GNOME passphrase dialog.
 %setup  -q
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
 
 %build
 autoconf

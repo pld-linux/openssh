@@ -55,7 +55,6 @@ case "$1" in
 	# Check if the service is already running?
 	if [ ! -f /var/lock/subsys/sshd ]; then
 		msg_starting OpenSSH
-		ULIMIT_C="-S -c 0"
 		daemon /usr/sbin/sshd 
 		RETVAL=$?
 		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/sshd		

@@ -192,8 +192,11 @@ Summary(uk):	OpenSSH - сервер протоколу Secure Shell (sshd)
 Group:		Networking/Daemons
 PreReq:		%{name} = %{version}
 PreReq:		rc-scripts
+Requires(pre):	/bin/id
+Requires(pre):	/usr/sbin/useradd
 Requires(post):	/sbin/chkconfig
 Requires(post):	chkconfig >= 0.9
+Requires(postun):	/usr/sbin/userdel
 Requires:	/bin/login
 Requires:	util-linux
 Obsoletes:	ssh-server
@@ -358,9 +361,14 @@ touch $RPM_BUILD_ROOT/etc/security/blacklist.sshd
 rm -rf $RPM_BUILD_ROOT
 
 %pre server
-%{_sbindir}/groupadd -r -g %{sshd_gid} sshd 2>/dev/null || :
-%{_sbindir}/useradd -d %{_privsepdir} -s /bin/false -u %{sshd_uid} \
-        -g sshd -M -r sshd 2>/dev/null || :
+if [ -n "`id -u sshd 2>/dev/null`" ]; then
+	if [ "`id -u sshd`" != "40" ]; then
+		echo "Error: user sshd doesn't have uid=40. Correct this before installing ssh server." 1>&2
+		exit 1
+	fi
+else
+	/usr/sbin/useradd -u 40 -d %{_privsepdir} -s /bin/false -M -r -c "OpenSSH PrivSep User" -g nobody sshd 1>&2
+fi
 	
 %post server
 /sbin/chkconfig --add sshd
@@ -379,6 +387,11 @@ if [ "$1" = "0" ]; then
 		/etc/rc.d/init.d/sshd stop 1>&2
 	fi
 	/sbin/chkconfig --del sshd
+fi
+
+%postun server
+if [ "$1" = "0" ]; then
+	/usr/sbin/userdel sshd
 fi
 
 %files

@@ -387,7 +387,7 @@ GNOME.
 %patch2 -p1
 %patch3 -p1
 #%patch4 -p1
-%{!?_without_ldap:%patch5 -p1}
+%{?_with_ldap:%patch5 -p1}
 
 %build
 %{__aclocal}

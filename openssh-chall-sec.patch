@@ -1,0 +1,31 @@
+diff -uNr openssh-3.2.3p1.orig/auth2-chall.c openssh-3.2.3p1/auth2-chall.c
+--- openssh-3.2.3p1.orig/auth2-chall.c	Fri Mar 22 03:30:43 2002
++++ openssh-3.2.3p1/auth2-chall.c	Thu Jun 27 01:32:12 2002
+@@ -256,6 +256,8 @@
+ 
+ 	authctxt->postponed = 0;	/* reset */
+ 	nresp = packet_get_int();
++	if (nresp > 100)
++		fatal("input_userauth_info_response: nresp too big %u", nresp);
+ 	if (nresp > 0) {
+ 		response = xmalloc(nresp * sizeof(char*));
+ 		for (i = 0; i < nresp; i++)
+diff -uNr openssh-3.2.3p1.orig/auth2-pam.c openssh-3.2.3p1/auth2-pam.c
+--- openssh-3.2.3p1.orig/auth2-pam.c	Tue Jan 22 13:43:13 2002
++++ openssh-3.2.3p1/auth2-pam.c	Thu Jun 27 01:32:12 2002
+@@ -140,6 +140,15 @@
+ 	nresp = packet_get_int();	/* Number of responses. */
+ 	debug("got %d responses", nresp);
+ 
++
++	if (nresp != context_pam2.num_expected)
++		fatal("%s: Received incorrect number of responses "
++		    "(expected %u, received %u)", __func__, nresp,
++		    context_pam2.num_expected);
++
++	if (nresp > 100)
++		fatal("%s: too many replies", __func__);
++
+ 	for (i = 0; i < nresp; i++) {
+ 		int j = context_pam2.prompts[i];
+ 

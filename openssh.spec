@@ -47,7 +47,7 @@ Patch4:		%{name}-sigpipe.patch
 # http://ldappubkey.gcu-squad.org/
 Patch5:		ldappubkey-ossh3.6-v2.patch
 Patch6:		%{name}-heimdal.patch
-Patch7:		%{name}-pam_chauthtok.patch
+Patch7:		%{name}-pam-conv.patch
 URL:		http://www.openssh.com/
 BuildRequires:	autoconf
 BuildRequires:	automake

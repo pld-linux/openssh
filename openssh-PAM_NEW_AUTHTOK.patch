@@ -1,33 +1,14 @@
-diff -ur openssh-1.2pre15/sshd.c openssh-1.2pre15.new/sshd.c
---- openssh-1.2pre15/sshd.c	Thu Nov 25 01:54:59 1999
-+++ openssh-1.2pre15.new/sshd.c	Thu Dec  2 19:43:53 1999
-@@ -253,15 +253,21 @@
+--- openssh-1.2pre17/sshd.c.wiget	Thu Dec  9 00:31:37 1999
++++ openssh-1.2pre17/sshd.c	Mon Dec 13 17:09:32 1999
+@@ -253,6 +253,11 @@
  	}
  
  	pam_retval = pam_acct_mgmt((pam_handle_t *)pamh, 0);
--	if (pam_retval != PAM_SUCCESS) {
--		log("PAM rejected by account configuration: %.200s", PAM_STRERROR((pam_handle_t *)pamh, pam_retval));
--		do_fake_authloop(username);
--	}
-+	if(pam_retval == PAM_NEW_AUTHTOK_REQD) {
-+		forced_command = xmalloc(strlen("/usr/bin/passwd -N ssh") + 1);
++	if (pam_retval == PAM_NEW_AUTHTOK_REQD) {
++		forced_command = xmalloc(strlen("/usr/bin/passwd -N ssh") +1);
 +		strcpy(forced_command, "/usr/bin/passwd -N ssh");
-+/*		pam_retval = pam_chauthtok((pam_handle_t *)pamh, PAM_CHANGE_EXPIRED_AUTHTOK); */
-+	} else {
-+		if (pam_retval != PAM_SUCCESS) {
-+			log("PAM rejected by account configuration: %.200s", PAM_STRERROR((pam_handle_t *)pamh, pam_retval));
-+			do_fake_authloop(username);
-+		}
- 
--	pam_retval = pam_open_session((pam_handle_t *)pamh, 0);
--	if (pam_retval != PAM_SUCCESS) {
--		log("PAM session setup failed: %.200s", PAM_STRERROR((pam_handle_t *)pamh, pam_retval));
--		do_fake_authloop(username);
-+		pam_retval = pam_open_session((pam_handle_t *)pamh, 0);
-+		if (pam_retval != PAM_SUCCESS) {
-+			log("PAM session setup failed: %.200s", PAM_STRERROR((pam_handle_t *)pamh, pam_retval));
-+			do_fake_authloop(username);
-+		}
- 	}
- }
- #endif /* HAVE_LIBPAM */
++/*		pam_retval = pam_chauthtok((pam_handle_t *)pamh,PAM_CHANGE_EXPIRED_AUTHTOK); */ 
++	}
+ 	if (pam_retval != PAM_SUCCESS) {
+ 		log("PAM rejected by account configuration: %.200s", PAM_STRERROR((pam_handle_t *)pamh, pam_retval));
+ 		do_fake_authloop(username);

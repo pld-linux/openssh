@@ -36,7 +36,7 @@ BuildRequires:	perl
 BuildRequires:	zlib-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Prereq:		openssl
-Requires:	FHS >= 2.1-24
+Prereq:		FHS >= 2.1-24
 Obsoletes:	ssh
 
 %define		_sysconfdir	/etc/ssh

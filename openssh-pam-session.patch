@@ -1,0 +1,10 @@
+--- openssh-2.3.0p1/session.c~	Sat Oct 28 05:19:58 2000
++++ openssh-2.3.0p1/session.c	Mon Jan 29 21:21:13 2001
+@@ -484,6 +484,7 @@
+ 	session_proctitle(s);
+ 
+ #ifdef USE_PAM
++			do_pam_session(pw->pw_name, NULL);
+ 			do_pam_setcred();
+ #endif /* USE_PAM */
+ 

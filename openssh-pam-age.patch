@@ -1,0 +1,168 @@
+diff -ur openssh-3.2.3p1/auth-pam.c openssh-3.2.3p1.new/auth-pam.c
+--- openssh-3.2.3p1/auth-pam.c	Wed May  8 04:27:56 2002
++++ openssh-3.2.3p1.new/auth-pam.c	Fri Jun 28 14:48:26 2002
+@@ -59,6 +59,7 @@
+ static int password_change_required = 0;
+ /* remember whether the last pam_authenticate() succeeded or not */
+ static int was_authenticated = 0;
++static int acct_mgmt_retval = -1;
+ 
+ /* Remember what has been initialised */
+ static int session_opened = 0;
+@@ -72,10 +73,40 @@
+ }
+ 
+ /* start an authentication run */
+-int do_pam_authenticate(int flags)
++int do_pam_authenticate(int flags, int can_age_pw_here)
+ {
+ 	int retval = pam_authenticate(__pamh, flags);
++
++	was_authenticated = (retval == PAM_SUCCESS);
++	if (retval != PAM_SUCCESS)
++		return retval;
++
++	acct_mgmt_retval = pam_acct_mgmt(__pamh, 0);
++
++	if (acct_mgmt_retval == PAM_SUCCESS)
++		return PAM_SUCCESS;
++
++	was_authenticated = 0;
++	if (acct_mgmt_retval != PAM_NEW_AUTHTOK_REQD)
++		return acct_mgmt_retval;
++
++	/* (acct_mgmt_retval == PAM_NEW_AUTHTOK_REQD) */
++	/* PAM auth token (password) is expired */
++
++	/*
++	 * USERAUTH_PASSWORD_CHANGEREQ is not currently
++	 * supported. Password aged users using password
++	 * userauth are thrown out here.
++	 */
++	if (!can_age_pw_here)
++		return PAM_NEW_AUTHTOK_REQD;
++
++	debug("do_pam_authenticate() - doing password aging");
++	retval = pam_chauthtok(__pamh, PAM_CHANGE_EXPIRED_AUTHTOK);
+ 	was_authenticated = (retval == PAM_SUCCESS);
++	if (retval == PAM_SUCCESS)
++		acct_mgmt_retval = PAM_SUCCESS;
++
+ 	return retval;
+ }
+ 
+@@ -220,7 +251,8 @@
+ 
+ 	pamstate = INITIAL_LOGIN;
+ 	pam_retval = do_pam_authenticate(
+-	    options.permit_empty_passwd == 0 ? PAM_DISALLOW_NULL_AUTHTOK : 0);
++	    options.permit_empty_passwd == 0 ? PAM_DISALLOW_NULL_AUTHTOK : 0,
++	    0);
+ 	if (pam_retval == PAM_SUCCESS) {
+ 		debug("PAM Password authentication accepted for "
+ 		    "user \"%.100s\"", pw->pw_name);
+@@ -248,19 +280,22 @@
+ 			    PAM_STRERROR(__pamh, pam_retval));
+ 	}
+ 
+-	pam_retval = pam_acct_mgmt(__pamh, 0);
++	/* do_pam_authenticate() may have called pam_acct_mgmt() already */
++	pam_retval = acct_mgmt_retval;
+ 	debug2("pam_acct_mgmt() = %d", pam_retval);
++	if (pam_retval == -1)
++		pam_retval = pam_acct_mgmt(__pamh, 0);
++
+ 	switch (pam_retval) {
+ 		case PAM_SUCCESS:
+ 			/* This is what we want */
+ 			break;
+-#if 0
+ 		case PAM_NEW_AUTHTOK_REQD:
+ 			message_cat(&__pam_msg, NEW_AUTHTOK_MSG);
+ 			/* flag that password change is necessary */
+ 			password_change_required = 1;
++			return(0); /* Sorry, no TTY password aging */
+ 			break;
+-#endif
+ 		default:
+ 			log("PAM rejected by account configuration[%d]: "
+ 			    "%.200s", pam_retval, PAM_STRERROR(__pamh, 
+@@ -324,27 +359,6 @@
+ 	return password_change_required;
+ }
+ 
+-/*
+- * Have user change authentication token if pam_acct_mgmt() indicated
+- * it was expired.  This needs to be called after an interactive
+- * session is established and the user's pty is connected to
+- * stdin/stout/stderr.
+- */
+-void do_pam_chauthtok(void)
+-{
+-	int pam_retval;
+-
+-	do_pam_set_conv(&conv);
+-
+-	if (password_change_required) {
+-		pamstate = OTHER;
+-		pam_retval = pam_chauthtok(__pamh, PAM_CHANGE_EXPIRED_AUTHTOK);
+-		if (pam_retval != PAM_SUCCESS)
+-			fatal("PAM pam_chauthtok failed[%d]: %.200s",
+-			    pam_retval, PAM_STRERROR(__pamh, pam_retval));
+-	}
+-}
+-
+ /* Cleanly shutdown PAM */
+ void finish_pam(void)
+ {
+diff -ur openssh-3.2.3p1/auth-pam.h openssh-3.2.3p1.new/auth-pam.h
+--- openssh-3.2.3p1/auth-pam.h	Thu Apr  4 21:02:28 2002
++++ openssh-3.2.3p1.new/auth-pam.h	Fri Jun 28 14:46:18 2002
+@@ -9,13 +9,12 @@
+ void finish_pam(void);
+ int auth_pam_password(Authctxt *authctxt, const char *password);
+ char **fetch_pam_environment(void);
+-int do_pam_authenticate(int flags);
++int do_pam_authenticate(int flags, int can_age_pw_here);
+ int do_pam_account(char *username, char *remote_user);
+ void do_pam_session(char *username, const char *ttyname);
+ void do_pam_setcred(int init);
+ void print_pam_messages(void);
+ int is_pam_password_change_required(void);
+-void do_pam_chauthtok(void);
+ void do_pam_set_conv(struct pam_conv *);
+ void message_cat(char **p, const char *a);
+ 
+diff -ur openssh-3.2.3p1/auth2-pam.c openssh-3.2.3p1.new/auth2-pam.c
+--- openssh-3.2.3p1/auth2-pam.c	Fri Jun 28 14:48:46 2002
++++ openssh-3.2.3p1.new/auth2-pam.c	Fri Jun 28 14:46:18 2002
+@@ -42,7 +42,7 @@
+ 
+ 	dispatch_set(SSH2_MSG_USERAUTH_INFO_RESPONSE,
+ 	    &input_userauth_info_response_pam);
+-	retval = (do_pam_authenticate(0) == PAM_SUCCESS);
++	retval = (do_pam_authenticate(0, 1) == PAM_SUCCESS);
+ 	dispatch_set(SSH2_MSG_USERAUTH_INFO_RESPONSE, NULL);
+ 
+ 	return retval;
+diff -ur openssh-3.2.3p1/session.c openssh-3.2.3p1.new/session.c
+--- openssh-3.2.3p1/session.c	Mon May 13 02:48:58 2002
++++ openssh-3.2.3p1.new/session.c	Fri Jun 28 14:46:18 2002
+@@ -645,17 +645,6 @@
+ 		    options.verify_reverse_mapping),
+ 		    (struct sockaddr *)&from);
+ 
+-#ifdef USE_PAM
+-	/*
+-	 * If password change is needed, do it now.
+-	 * This needs to occur before the ~/.hushlogin check.
+-	 */
+-	if (is_pam_password_change_required()) {
+-		print_pam_messages();
+-		do_pam_chauthtok();
+-	}
+-#endif
+-
+ 	if (check_quietlogin(s, command))
+ 		return;
+ 

@@ -21,7 +21,7 @@ Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	3.6.1p2%{?_with_ldap:ldap}
-Release:	3
+Release:	3.2
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -247,7 +247,7 @@ Summary(pt_BR):	Servidor OpenSSH para comunicaГУes encriptadas
 Summary(ru):	OpenSSH - сервер протокола Secure Shell (sshd)
 Summary(uk):	OpenSSH - сервер протоколу Secure Shell (sshd)
 Group:		Networking/Daemons
-PreReq:		%{name} = %{version}
+PreReq:		%{name} = %{epoch}:%{version}
 PreReq:		rc-scripts >= 0.3.1-3
 Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/useradd
@@ -333,7 +333,7 @@ Summary(pt_BR):	DiАlogo para entrada de passphrase para GNOME
 Summary(ru):	OpenSSH - диалог ввода ключевой фразы (passphrase) для GNOME
 Summary(uk):	OpenSSH - д╕алог вводу ключово╖ фрази (passphrase) для GNOME
 Group:		Applications/Networking
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{epoch}:%{version}
 Obsoletes:	ssh-extras
 Obsoletes:	ssh-askpass
 Obsoletes:	openssh-askpass

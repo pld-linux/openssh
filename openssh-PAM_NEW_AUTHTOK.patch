@@ -1,14 +1,59 @@
---- openssh-1.2pre17/sshd.c.wiget	Thu Dec  9 00:31:37 1999
-+++ openssh-1.2pre17/sshd.c	Mon Dec 13 17:09:32 1999
-@@ -253,6 +253,11 @@
+diff -ur openssh-1.2.1pre24.orig/auth-pam.c openssh-1.2.1pre24/auth-pam.c
+--- openssh-1.2.1pre24.orig/auth-pam.c	Thu Dec 30 05:11:25 1999
++++ openssh-1.2.1pre24/auth-pam.c	Tue Jan  4 19:07:56 2000
+@@ -15,6 +15,8 @@
+ 
+ RCSID("$Id$");
+ 
++extern char *forced_command;
++
+ /* Callbacks */
+ static int pamconv(int num_msg, const struct pam_message **msg,
+ 	  struct pam_response **resp, void *appdata_ptr);
+@@ -137,6 +139,9 @@
+ 	if (pam_retval == PAM_SUCCESS) {
+ 		debug("PAM Password authentication accepted for user \"%.100s\"", pw->pw_name);
+ 		return 1;
++	} else if (pam_retval == PAM_NEW_AUTHTOK_REQD) {
++		debug("PAM (expired)Password authentication accepted for user \"%.100s\"", pw->pw_name);
++		return 1;
+ 	} else {
+ 		debug("PAM Password authentication for \"%.100s\" failed: %s", 
+ 			pw->pw_name, PAM_STRERROR((pam_handle_t *)pamh, pam_retval));
+@@ -165,9 +170,15 @@
  	}
  
  	pam_retval = pam_acct_mgmt((pam_handle_t *)pamh, 0);
-+	if (pam_retval == PAM_NEW_AUTHTOK_REQD) {
-+		forced_command = xmalloc(strlen("/usr/bin/passwd -N ssh") +1);
+-	if (pam_retval != PAM_SUCCESS) {
+-		log("PAM rejected by account configuration: %.200s", PAM_STRERROR((pam_handle_t *)pamh, pam_retval));
+-		return(0);
++	if(pam_retval == PAM_NEW_AUTHTOK_REQD) {
++		forced_command = xmalloc(strlen("/usr/bin/passwd -N ssh") + 1);
 +		strcpy(forced_command, "/usr/bin/passwd -N ssh");
-+/*		pam_retval = pam_chauthtok((pam_handle_t *)pamh,PAM_CHANGE_EXPIRED_AUTHTOK); */ 
-+	}
- 	if (pam_retval != PAM_SUCCESS) {
- 		log("PAM rejected by account configuration: %.200s", PAM_STRERROR((pam_handle_t *)pamh, pam_retval));
- 		do_fake_authloop(username);
++/*		pam_retval = pam_chauthtok((pam_handle_t *)pamh, PAM_CHANGE_EXPIRED_AUTHTOK); */
++	} else {
++		if (pam_retval != PAM_SUCCESS) {
++			log("PAM rejected by account configuration: %.200s", PAM_STRERROR((pam_handle_t *)pamh, pam_retval));
++			return(0);
++		}
+ 	}
+ 	
+ 	return(1);
+@@ -186,7 +197,7 @@
+ 	}
+ 
+ 	pam_retval = pam_open_session((pam_handle_t *)pamh, 0);
+-	if (pam_retval != PAM_SUCCESS)
++	if ((pam_retval != PAM_SUCCESS) && (pam_retval != PAM_NEW_AUTHTOK_REQD))
+ 		fatal("PAM session setup failed: %.200s", PAM_STRERROR((pam_handle_t *)pamh, pam_retval));
+ }
+ 
+@@ -197,7 +208,7 @@
+  
+ 	debug("PAM establishing creds");
+ 	pam_retval = pam_setcred((pam_handle_t *)pamh, PAM_ESTABLISH_CRED);
+-	if (pam_retval != PAM_SUCCESS)
++	if ((pam_retval != PAM_SUCCESS) && (pam_retval != PAM_NEW_AUTHTOK_REQD))
+ 		fatal("PAM setcred failed: %.200s", PAM_STRERROR((pam_handle_t *)pamh, pam_retval));
+ }
+ 

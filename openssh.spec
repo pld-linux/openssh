@@ -14,7 +14,7 @@ Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	3.5p1
-Release:	1
+Release:	2
 Epoch:		1
 License:	BSD
 Group:		Applications/Networking
@@ -29,6 +29,7 @@ Patch0:		%{name}-no_libnsl.patch
 Patch1:		%{name}-set_12.patch
 Patch2:		%{name}-linux-ipv6.patch
 Patch3:		%{name}-pam_misc.patch
+Patch4:		%{name}-sigpipe.patch
 URL:		http://www.openssh.com/
 BuildRequires:	XFree86-devel
 BuildRequires:	autoconf
@@ -372,6 +373,7 @@ GNOME.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %build
 %{__aclocal}

@@ -21,7 +21,7 @@ BuildRequires:	pam-devel
 BuildRequires:	XFree86-devel
 BuildRequires:	gnome-libs-devel
 BuildRoot:	/tmp/%{name}-%{version}-root
-Obsoletes:	ssh <> %{version}
+Obsoletes:	ssh < %{version}, ssh > %{version}
 
 %define		_sysconfdir	/etc/ssh
 
@@ -45,7 +45,7 @@ Summary:	OpenSSH Secure Shell protocol clients
 Requires:	openssh
 Group:		Applications/Networking
 Group(pl):	Aplikacje/Sieciowe
-Obsoletes:	ssh-clients <> %{version}
+Obsoletes:	ssh-clients < %{version}, ssh-clients > %{version}
 Requires:	%{name} = %{version}
 
 %description clients
@@ -67,7 +67,7 @@ Summary:	OpenSSH Secure Shell protocol server (sshd)
 Requires:	openssh chkconfig >= 0.9
 Group:		Networking/Daemons
 Group(pl):	Sieciowe/Serwery
-Obsoletes:	ssh-server <> %{version}
+Obsoletes:	ssh-server < %{version}, ssh-server > %{version}
 Requires:	rc-scripts
 Requires:	/bin/login
 Requires:	util-linux
@@ -92,9 +92,9 @@ Summary:	OpenSSH GNOME passphrase dialog
 Group:		Applications/Networking
 Group(pl):	Aplikacje/Sieciowe
 Requires:	%{name} = %{version}
-Obsoletes:	ssh-extras <> %{version}
-Obsoletes:	ssh-askpass <> %{version}
-Obsoletes:	openssh-askpass <> %{version}
+Obsoletes:	ssh-extras < %{version}, ssh-extras > %{version}
+Obsoletes:	ssh-askpass < %{version}, ssh-askpass > %{version}
+Obsoletes:	openssh-askpass < %{version}, openssh-askpass > %{version}
 
 %description gnome-askpass
 Ssh (Secure Shell) a program for logging into a remote machine and for

@@ -21,7 +21,7 @@ BuildRequires:	gnome-libs-devel
 BuildRoot:	/tmp/%{name}-%{version}-root
 Obsoletes:	ssh
 
-%define		_syscondir	/etc/ssh
+%define		_sysconfdir	/etc/ssh
 
 %description
 Ssh (Secure Shell) a program for logging into a remote machine and for
@@ -127,7 +127,7 @@ make install \
 
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/pam.d/sshd
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/sysconfig/sshd
-install -m755 %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
+install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
 install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/ssh_config
 install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/sshd_config
 

@@ -346,7 +346,7 @@ install %{SOURCE5} $RPM_BUILD_ROOT/etc/sysconfig/sshd
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
 install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/ssh_config
 install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/sshd_config
-install -d -m-m755 %{SOURCE7} $RPM_BUILD_ROOT%%{_var}/empty/sshd
+install -d -m755 %{SOURCE7} $RPM_BUILD_ROOT%%{_var}/empty/sshd
 install -d $RPM_BUILD_ROOT%{_libexecdir}/ssh
 %{!?_without_gnome:install contrib/gnome-ssh-askpass $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass}
 

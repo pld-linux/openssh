@@ -438,10 +438,12 @@ cd contrib
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{pam.d,rc.d/init.d,sysconfig,security,profile.d}}
+install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{pam.d,rc.d/init.d,sysconfig,security,profile.d}} \
+	$RPM_BUILD_ROOT%{_libexecdir}/ssh
 
-%{__make} install DESTDIR="$RPM_BUILD_ROOT"
-
+%{__make} install \
+	DESTDIR=$RPM_BUILD_ROOT
+	
 install connect    $RPM_BUILD_ROOT%{_bindir}
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/pam.d/sshd
 install %{SOURCE6} $RPM_BUILD_ROOT/etc/pam.d/passwdssh
@@ -450,7 +452,6 @@ install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
 install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/ssh_config
 install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/sshd_config
 
-install -d $RPM_BUILD_ROOT%{_libexecdir}/ssh
 %if 0%{!?_without_gnome:1}
 install contrib/gnome-ssh-askpass1 $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
 %endif

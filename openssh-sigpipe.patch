@@ -1,7 +1,7 @@
-diff -urN openssh-3.8.1p1.org/clientloop.c openssh-3.8.1p1/clientloop.c
---- openssh-3.8.1p1.org/clientloop.c	2004-04-29 01:37:05.496553160 +0200
-+++ openssh-3.8.1p1/clientloop.c	2004-04-29 01:37:29.691874912 +0200
-@@ -99,6 +99,9 @@
+diff -urN openssh-3.9p1.org/clientloop.c openssh-3.9p1/clientloop.c
+--- openssh-3.9p1.org/clientloop.c	2004-08-17 19:03:29.093601408 +0200
++++ openssh-3.9p1/clientloop.c	2004-08-17 19:03:41.803669184 +0200
+@@ -104,6 +104,9 @@
   */
  extern char *host;
  
@@ -11,7 +11,7 @@ diff -urN openssh-3.8.1p1.org/clientloop.c openssh-3.8.1p1/clientloop.c
  /*
   * Flag to indicate that we have received a window change signal which has
   * not yet been processed.  This will cause a message indicating the new
-@@ -940,6 +943,8 @@
+@@ -1202,6 +1205,8 @@
  		signal(SIGQUIT, signal_handler);
  	if (signal(SIGTERM, SIG_IGN) != SIG_IGN)
  		signal(SIGTERM, signal_handler);
@@ -20,10 +20,10 @@ diff -urN openssh-3.8.1p1.org/clientloop.c openssh-3.8.1p1/clientloop.c
  	if (have_pty)
  		signal(SIGWINCH, window_change_handler);
  
-diff -urN openssh-3.8.1p1.org/ssh.0 openssh-3.8.1p1/ssh.0
---- openssh-3.8.1p1.org/ssh.0	2004-04-29 01:37:06.122458008 +0200
-+++ openssh-3.8.1p1/ssh.0	2004-04-29 01:39:29.069726720 +0200
-@@ -228,6 +228,8 @@
+diff -urN openssh-3.9p1.org/ssh.0 openssh-3.9p1/ssh.0
+--- openssh-3.9p1.org/ssh.0	2004-08-17 19:03:29.327565840 +0200
++++ openssh-3.9p1/ssh.0	2004-08-17 19:03:41.809668272 +0200
+@@ -235,6 +235,8 @@
               that enable them to authenticate using the identities loaded into
               the agent.
  
@@ -32,19 +32,19 @@ diff -urN openssh-3.8.1p1.org/ssh.0 openssh-3.8.1p1/ssh.0
       -a      Disables forwarding of the authentication agent connection.
  
       -b bind_address
-diff -urN openssh-3.8.1p1.org/ssh.1 openssh-3.8.1p1/ssh.1
---- openssh-3.8.1p1.org/ssh.1	2004-04-29 01:37:05.604536744 +0200
-+++ openssh-3.8.1p1/ssh.1	2004-04-29 01:37:29.693874608 +0200
+diff -urN openssh-3.9p1.org/ssh.1 openssh-3.9p1/ssh.1
+--- openssh-3.9p1.org/ssh.1	2004-08-17 19:03:29.208583928 +0200
++++ openssh-3.9p1/ssh.1	2004-08-17 19:04:51.366094088 +0200
 @@ -43,7 +43,7 @@
  .Nd OpenSSH SSH client (remote login program)
  .Sh SYNOPSIS
  .Nm ssh
--.Op Fl 1246AaCfgkNnqsTtVvXxY
-+.Op Fl 1246ABaCfgkNnqsTtVvXxY
+-.Op Fl 1246AaCfgkMNnqsTtVvXxY
++.Op Fl 1246AaBCfgkMNnqsTtVvXxY
  .Op Fl b Ar bind_address
  .Op Fl c Ar cipher_spec
- .Op Fl D Ar port
-@@ -426,6 +426,10 @@
+ .Bk -words
+@@ -443,6 +443,10 @@
  .It Fl b Ar bind_address
  Specify the interface to transmit from on machines with multiple
  interfaces or aliased addresses.
@@ -55,9 +55,9 @@ diff -urN openssh-3.8.1p1.org/ssh.1 openssh-3.8.1p1/ssh.1
  .It Fl C
  Requests compression of all data (including stdin, stdout, stderr, and
  data for forwarded X11 and TCP/IP connections).
-diff -urN openssh-3.8.1p1.org/ssh.c openssh-3.8.1p1/ssh.c
---- openssh-3.8.1p1.org/ssh.c	2004-04-29 01:37:05.651529600 +0200
-+++ openssh-3.8.1p1/ssh.c	2004-04-29 01:37:29.699873696 +0200
+diff -urN openssh-3.9p1.org/ssh.c openssh-3.9p1/ssh.c
+--- openssh-3.9p1.org/ssh.c	2004-08-17 19:03:29.209583776 +0200
++++ openssh-3.9p1/ssh.c	2004-08-17 19:04:36.765313744 +0200
 @@ -135,6 +135,9 @@
  /* Should we execute a command or invoke a subsystem? */
  int subsystem_flag = 0;
@@ -68,16 +68,16 @@ diff -urN openssh-3.8.1p1.org/ssh.c openssh-3.8.1p1/ssh.c
  /* # of replies received for global requests */
  static int client_global_request_id = 0;
  
-@@ -228,7 +231,7 @@
+@@ -236,7 +239,7 @@
  
  again:
  	while ((opt = getopt(ac, av,
--	    "1246ab:c:e:fgi:kl:m:no:p:qstvxACD:F:I:L:NPR:TVXY")) != -1) {
-+	    "1246ab:c:e:fgi:kl:m:no:p:qstvxABCD:F:I:L:NPR:TVXY")) != -1) {
+-	    "1246ab:c:e:fgi:kl:m:no:p:qstvxACD:F:I:L:MNPR:S:TVXY")) != -1) {
++	    "1246ab:c:e:fgi:kl:m:no:p:qstvxABCD:F:I:L:MNPR:S:TVXY")) != -1) {
  		switch (opt) {
  		case '1':
  			options.protocol = SSH_PROTO_1;
-@@ -271,6 +274,9 @@
+@@ -279,6 +282,9 @@
  		case 'A':
  			options.forward_agent = 1;
  			break;

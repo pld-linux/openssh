@@ -28,17 +28,19 @@ BuildRequires:	XFree86-devel
 BuildRequires:	autoconf
 BuildRequires:	automake
 %{!?_without_gnome:BuildRequires: gnome-libs-devel}
+BuildRequires:	libwrap-devel
 BuildRequires:	openssl-devel >= 0.9.6a
 BuildRequires:	pam-devel
-BuildRequires:	zlib-devel
-BuildRequires:	libwrap-devel
 BuildRequires:	perl
+BuildRequires:	zlib-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Prereq:		openssl
+Requires:	FHS >= 2.1-24
 Obsoletes:	ssh
 
 %define		_sysconfdir	/etc/ssh
 %define		_libexecdir	%{_libdir}/%{name}
+%define		_privsepdir	/usr/share/empty
 
 %description
 Ssh (Secure Shell) a program for logging into a remote machine and for
@@ -132,10 +134,9 @@ Summary(pl):	Klienci protoko³u Secure Shell
 Summary(pt_BR):	Clientes do OpenSSH
 Summary(ru):	OpenSSH - ËÌÉÅÎÔÙ ÐÒÏÔÏËÏÌÁ Secure Shell
 Summary(uk):	OpenSSH - ËÌ¦¤ÎÔÉ ÐÒÏÔÏËÏÌÕ Secure Shell
-Requires:	openssh
 Group:		Applications/Networking
-Obsoletes:	ssh-clients
 Requires:	%{name} = %{version}
+Obsoletes:	ssh-clients
 
 %description clients
 Ssh (Secure Shell) a program for logging into a remote machine and for
@@ -188,15 +189,14 @@ Summary(pl):	Serwer protoko³u Secure Shell (sshd)
 Summary(pt_BR):	Servidor OpenSSH para comunicações encriptadas
 Summary(ru):	OpenSSH - ÓÅÒ×ÅÒ ÐÒÏÔÏËÏÌÁ Secure Shell (sshd)
 Summary(uk):	OpenSSH - ÓÅÒ×ÅÒ ÐÒÏÔÏËÏÌÕ Secure Shell (sshd)
-Requires:	openssh
-Requires:	chkconfig >= 0.9
 Group:		Networking/Daemons
-Obsoletes:	ssh-server
+PreReq:		%{name} = %{version}
+PreReq:		rc-scripts
+Requires(post):	/sbin/chkconfig
+Requires(post):	chkconfig >= 0.9
 Requires:	/bin/login
 Requires:	util-linux
-Prereq:		rc-scripts
-Prereq:		/sbin/chkconfig
-Prereq:		%{name} = %{version}
+Obsoletes:	ssh-server
 
 %description server
 Ssh (Secure Shell) a program for logging into a remote machine and for
@@ -323,7 +323,7 @@ aclocal
 	--with-4in6 \
 	--disable-suid-ssh \
 	--with-tcp-wrappers \
-	--with-privsep-path=%{_var}/empty/sshd \
+	--with-privsep-path=%{_privsepdir} \
 	--with-pid-dir=%{_localstatedir}/run
 
 echo '#define LOGIN_PROGRAM           "/bin/login"' >>config.h
@@ -346,7 +346,6 @@ install %{SOURCE5} $RPM_BUILD_ROOT/etc/sysconfig/sshd
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
 install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/ssh_config
 install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/sshd_config
-install -d -m755 %{SOURCE7} $RPM_BUILD_ROOT%%{_var}/empty/sshd
 install -d $RPM_BUILD_ROOT%{_libexecdir}/ssh
 %{!?_without_gnome:install contrib/gnome-ssh-askpass $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass}
 
@@ -360,7 +359,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %pre server
 %{_sbindir}/groupadd -r -g %{sshd_gid} sshd 2>/dev/null || :
-%{_sbindir}/useradd -d /var/empty/sshd -s /bin/false -u %{sshd_uid} \
+%{_sbindir}/useradd -d %{_privsepdir} -s /bin/false -u %{sshd_uid} \
         -g sshd -M -r sshd 2>/dev/null || :
 	
 %post server
@@ -410,7 +409,6 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_sbindir}/sshd
 %attr(755,root,root) %{_libexecdir}/sftp-server
-%dir %attr(0111,root,root) %{_var}/empty/sshd
 %dir %{_libexecdir}
 %{_mandir}/man8/sshd.8*
 %{_mandir}/man8/sftp-server.8*

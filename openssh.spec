@@ -1,12 +1,13 @@
 #
 # Conditional build:	
 # _without_gnome - without gnome-askpass utility
+# _without_embed - don't build uClibc version
 
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(pl):	Publicznie dostêpna implementacja bezpiecznego shella (SSH)
 Name:		openssh
 Version:	3.0.2p1
-Release:	1
+Release:	2
 License:	BSD
 Group:		Applications/Networking
 Group(de):	Applikationen/Netzwerkwesen
@@ -32,9 +33,21 @@ BuildRequires:	pam-devel
 BuildRequires:	zlib-devel
 BuildRequires:	libwrap-devel
 BuildRequires:	perl
+%if %{!?_without_embed:1}%{?_without_embed:0}
+BuildRequires:	uClibc-devel
+BuildRequires:	uClibc-static
+BuildRequires:	openssl-devel-embed
+BuildRequires:	zlib-devel-embed
+%endif
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Prereq:		openssl
 Obsoletes:	ssh
+
+%define embed_path	/usr/lib/embed
+%define embed_cc	%{_arch}-uclibc-cc
+%define embed_cflags	%{rpmcflags} -Os
+
+%define embed_binaries	ssh scp sshd ssh-keygen
 
 %define		_sysconfdir	/etc/ssh
 %define		_libexecdir	%{_libdir}/%{name}
@@ -131,6 +144,22 @@ pomiedzy dwoma hostami.
 Ten pakiet zawiera serwer sshd (do którego mog± ³±czyæ siê klienci
 ssh).
 
+%package embed
+Summary:	OpenSSH Secure Shell for embedded applications
+Summary:	OpenSSH Secure Shell dla aplikacji wbudowanych 
+Requires:	openssh
+Group:		Applications/Networking
+Group(de):	Applikationen/Netzwerkwesen
+Group(pl):	Aplikacje/Sieciowe
+Obsoletes:	ssh-clients
+
+%description embed
+OpenSSH for embedded enviroment. Client, server, scp and ssh-keygen.
+
+%description -l pl embed
+OpenSSH dla aplikacji wbudowanych. Klient, serwer, scp i ssh-keygen.
+
+
 %package gnome-askpass
 Summary:	OpenSSH GNOME passphrase dialog
 Summary(pl):	Odpytywacz has³a OpenSSH dla GNOME
@@ -173,6 +202,37 @@ Ten pakiet zawiera ,,odpytywacz has³a'' dla GNOME.
 %build
 aclocal
 autoconf
+
+%if %{!?_without_embed:1}%{?_without_embed:0}
+%configure \
+	--without-gnome-askpass \
+	--without-pam \
+	--without-shadow \
+	--with-mantype=man \
+	--with-md5-passwords \
+	--with-ipaddr-display \
+	--with-4in6 \
+	--disable-suid-ssh \
+	--without-tcp-wrappers \
+	--with-pid-dir=%{_localstatedir}/run \
+	CC=%{embed_cc} CFLAGS="%{embed_cflags}"
+
+echo '#define LOGIN_PROGRAM           "/bin/login"' >>config.h
+%{__make}
+
+for f in %{embed_binaries} ; do
+	mv -f $f $f-embed-shared
+done
+
+%{__make} LDFLAGS='-static -L. -Lopenbsd-compat/'
+
+for f in %{embed_binaries} ; do
+	mv -f $f $f-embed-static
+done
+
+%{__make} distclean
+%endif
+
 %configure \
 	%{!?_without_gnome:--with-gnome-askpass} \
 	--with-pam \
@@ -213,7 +273,15 @@ echo ".so man1/ssh.1" > $RPM_BUILD_ROOT%{_mandir}/man1/slogin.1
 gzip -9nf *.RNG TODO README OVERVIEW CREDITS Change*
 
 touch $RPM_BUILD_ROOT/etc/security/blacklist.sshd
-	
+
+%if %{!?_without_embed:1}%{?_without_embed:0}
+install -d $RPM_BUILD_ROOT/%{embed_path}/{shared,static}
+for f in %{embed_binaries} ; do
+	install $f-embed-static $RPM_BUILD_ROOT/%{embed_path}/static/$f
+	install $f-embed-shared $RPM_BUILD_ROOT/%{embed_path}/shared/$f
+done
+%endif
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -277,3 +345,9 @@ fi
 %{!?_without_gnome:%defattr(644,root,root,755)}
 %{!?_without_gnome:%dir %{_libexecdir}/ssh}
 %{!?_without_gnome:%attr(755,root,root) %{_libexecdir}/ssh/ssh-askpass}
+
+%if %{!?_without_embed:1}%{?_without_embed:0}
+%files embed
+%defattr(644,root,root,755)
+%attr(755,root,root) %{embed_path}/*/*
+%endif

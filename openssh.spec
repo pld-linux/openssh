@@ -463,9 +463,11 @@ install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/sshd_config
 
 %if %{with gnome}
 install contrib/gnome-ssh-askpass1 $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
+ln -s %{_libexecdir}/ssh/ssh-askpass $RPM_BUILD_ROOT%{_libexecdir}/ssh-askpass
 %endif
 %if %{with gtk}
 install contrib/gnome-ssh-askpass2 $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
+ln -s %{_libexecdir}/ssh/ssh-askpass $RPM_BUILD_ROOT%{_libexecdir}/ssh-askpass
 %endif
 
 rm -f	$RPM_BUILD_ROOT%{_mandir}/man1/slogin.1
@@ -563,4 +565,5 @@ fi
 %defattr(644,root,root,755)
 %dir %{_libexecdir}/ssh
 %attr(755,root,root) %{_libexecdir}/ssh/ssh-askpass
+%attr(755,root,root) %{_libexecdir}/ssh-askpass
 %endif

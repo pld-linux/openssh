@@ -12,8 +12,6 @@ Version:	3.0.2p1
 Release:	2
 License:	BSD
 Group:		Applications/Networking
-Group(de):	Applikationen/Netzwerkwesen
-Group(pl):	Aplikacje/Sieciowe
 Source0:	ftp://ftp.ca.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
 Source1:	%{name}d.conf
 Source2:	%{name}.conf
@@ -112,8 +110,6 @@ Summary(pl):	Klienci protoko³u Secure Shell
 Summary(pt_BR):	Clientes do OpenSSH
 Requires:	openssh
 Group:		Applications/Networking
-Group(de):	Applikationen/Netzwerkwesen
-Group(pl):	Aplikacje/Sieciowe
 Obsoletes:	ssh-clients
 Requires:	%{name} = %{version}
 
@@ -155,8 +151,6 @@ Summary(pt_BR):	Servidor OpenSSH para comunicações encriptadas
 Requires:	openssh
 Requires:	chkconfig >= 0.9
 Group:		Networking/Daemons
-Group(de):	Netzwerkwesen/Server
-Group(pl):	Sieciowe/Serwery
 Obsoletes:	ssh-server
 Requires:	/bin/login
 Requires:	util-linux
@@ -203,8 +197,6 @@ Summary:	OpenSSH Secure Shell for embedded applications
 Summary:	OpenSSH Secure Shell dla aplikacji wbudowanych 
 Requires:	openssh
 Group:		Applications/Networking
-Group(de):	Applikationen/Netzwerkwesen
-Group(pl):	Aplikacje/Sieciowe
 Obsoletes:	ssh-clients
 
 %description embed
@@ -220,8 +212,6 @@ Summary(es):	Diálogo para introducción de passphrase para GNOME
 Summary(pl):	Odpytywacz has³a OpenSSH dla GNOME
 Summary(pt_BR):	Diálogo para entrada de passphrase para GNOME
 Group:		Applications/Networking
-Group(de):	Applikationen/Netzwerkwesen
-Group(pl):	Aplikacje/Sieciowe
 Requires:	%{name} = %{version}
 Obsoletes:	ssh-extras
 Obsoletes:	ssh-askpass

@@ -5,8 +5,8 @@ Version:	2.2.0p1
 Release:	3
 License:	BSD
 Group:		Applications/Networking
-Group(pl):	Aplikacje/Sieciowe
 Group(de):	Applikationen/Netzwerkwesen
+Group(pl):	Aplikacje/Sieciowe
 Source0:	ftp://ftp.ca.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
 Source1:	%{name}d.conf
 Source2:	%{name}.conf
@@ -60,8 +60,8 @@ Summary:	OpenSSH Secure Shell protocol clients
 Summary(pl):	Klienci protoko³u Secure Shell
 Requires:	openssh
 Group:		Applications/Networking
-Group(pl):	Aplikacje/Sieciowe
 Group(de):	Applikationen/Netzwerkwesen
+Group(pl):	Aplikacje/Sieciowe
 Obsoletes:	ssh-clients < %{version}, ssh-clients > %{version}
 Requires:	%{name} = %{version}
 
@@ -92,8 +92,8 @@ Summary:	OpenSSH Secure Shell protocol server (sshd)
 Summary(pl):	Serwer protoko³u Secure Shell (sshd)
 Requires:	openssh chkconfig >= 0.9
 Group:		Networking/Daemons
-Group(pl):	Sieciowe/Serwery
 Group(de):	Netzwerkwesen/Server
+Group(pl):	Sieciowe/Serwery
 Obsoletes:	ssh-server < %{version}, ssh-server > %{version}
 Requires:	rc-scripts
 Requires:	/bin/login
@@ -129,8 +129,8 @@ ssh).
 Summary:	OpenSSH GNOME passphrase dialog
 Summary(pl):	Odpytywacz has³a OpenSSH dla GNOME
 Group:		Applications/Networking
-Group(pl):	Aplikacje/Sieciowe
 Group(de):	Applikationen/Netzwerkwesen
+Group(pl):	Aplikacje/Sieciowe
 Requires:	%{name} = %{version}
 Obsoletes:	ssh-extras < %{version}, ssh-extras > %{version}
 Obsoletes:	ssh-askpass < %{version}, ssh-askpass > %{version}
@@ -200,8 +200,7 @@ install -d $RPM_BUILD_ROOT%{_libexecdir}/ssh
 install contrib/gnome-ssh-askpass \
 	$RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
 
-gzip -9nf ChangeLog OVERVIEW COPYING.Ylonen README README.Ylonen UPGRADING \
-	$RPM_BUILD_ROOT/%{_mandir}/man*/*
+gzip -9nf ChangeLog OVERVIEW COPYING.Ylonen README README.Ylonen UPGRADING
 
 touch $RPM_BUILD_ROOT/etc/security/blacklist.sshd
 	
@@ -226,7 +225,7 @@ if ! grep ssh /etc/security/passwd.conf >/dev/null 2>&1 ; then
 fi
 
 %preun server
-if [ "$1" = 0 ]; then
+if [ "$1" = "0" ]; then
 	if [ -f /var/lock/subsys/sshd ]; then
 		/etc/rc.d/init.d/sshd stop 1>&2
 	fi

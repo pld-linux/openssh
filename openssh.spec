@@ -21,6 +21,7 @@ BuildRequires:	pam-devel
 BuildRequires:	XFree86-devel
 BuildRequires:	gnome-libs-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+Prereq:		openssl >= 0.9.4-2
 Obsoletes:	ssh < %{version}, ssh > %{version}
 
 %define		_sysconfdir	/etc/ssh

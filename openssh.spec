@@ -8,7 +8,7 @@ Summary(pl):	Publicznie dostêpna implementacja bezpiecznego shella (SSH)
 Summary(pt_BR):	Implementação livre do SSH
 Name:		openssh
 Version:	3.2.2p1
-Release:	0.1
+Release:	1
 License:	BSD
 Group:		Applications/Networking
 Source0:	ftp://ftp.ca.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
@@ -265,8 +265,6 @@ install -d $RPM_BUILD_ROOT%{_libexecdir}/ssh
 rm -f	$RPM_BUILD_ROOT%{_mandir}/man1/slogin.1
 echo ".so ssh.1" > $RPM_BUILD_ROOT%{_mandir}/man1/slogin.1
 
-gzip -9nf *.RNG TODO README OVERVIEW CREDITS Change*
-
 touch $RPM_BUILD_ROOT/etc/security/blacklist.sshd
 
 %clean
@@ -293,7 +291,7 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc *.gz
+%doc *.RNG TODO README OVERVIEW CREDITS Change*
 %attr(755,root,root) %{_bindir}/ssh-key*
 %{_mandir}/man1/ssh-key*.1*
 %dir %{_sysconfdir}

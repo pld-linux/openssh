@@ -7,7 +7,7 @@
 #
 # default to gtk2-based gnome-askpass
 
-%define		orig_ver	3.7.1p1
+%define		orig_ver	3.7.1p2
 
 %{!?_without_gtk:%define _without_gnome 1}
 Summary:	OpenSSH free Secure Shell (SSH) implementation
@@ -21,13 +21,13 @@ Summary(pt_BR):	ImplementaГЦo livre do SSH
 Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
-Version:	3.7.1p1
-Release:	3%{?_with_ldap:ldap}
+Version:	3.7.1p2
+Release:	1%{?_with_ldap:ldap}
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
 Source0:	ftp://ftp.ca.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{orig_ver}.tar.gz
-# Source0-md5:	f54e574e606c08ef63ebb1ab2f7689dc
+# Source0-md5:	61cf5b059938718308836d00f6764a94
 Source1:	%{name}d.conf
 Source2:	%{name}.conf
 Source3:	%{name}d.init

@@ -66,7 +66,6 @@ Group(de):	Applikationen/Netzwerkwesen
 Group(pl):	Aplikacje/Sieciowe
 Obsoletes:	ssh-clients < %{version}
 Obsoletes:	ssh-clients > %{version}
-Obsoletes:	sftp
 Requires:	%{name} = %{version}
 
 %description clients

@@ -7,10 +7,10 @@
     <meta name="generator" content="emacs-wiki.el" />
     <meta http-equiv="Content-Type"
 	  content="us-ascii" />
-    <link rev="made" href="mailto:gotoh@imasy.or.jp" />
-    <link rel="home" href="http://www.imasy.ne.jp/~gotoh/" />
-    <link rel="index" href="http://www.imasy.ne.jp/~gotoh/SiteIndex.html" />
-    <link rel="stylesheet" type="text/css" href="emacs-wiki.css">
+    <link rev="made" href="mailto:gotoh@taiyo.co.jp" />
+    <link rel="home" href="http://www.taiyo.co.jp/~gotoh/" />
+    <link rel="index" href="http://www.taiyo.co.jp/~gotoh/SiteIndex.html" />
+    <link rel="stylesheet" type="text/css" href="emacs-wiki.css" />
   </head>
   <body>
     <h1>SSH Proxy Command -- connect.c</h1>
@@ -33,6 +33,8 @@ Features of <strong>connect.c</strong> are:
 </li>
 <li>Supports NO-AUTH and USERPASS authentication of SOCKS
 </li>
+<li>Partially supports telnet proxy (experimental).
+</li>
 <li>You can input password from tty, ssh-askpass or
      environment variable.
 </li>
@@ -48,186 +50,167 @@ Features of <strong>connect.c</strong> are:
 
 <p>
 Download source code from:
-<a href="http://www.imasy.or.jp/~gotoh/ssh/connect.c">http://www.imasy.or.jp/~gotoh/ssh/connect.c</a>
+<a href="http://www.taiyo.co.jp/~gotoh/ssh/connect.c">http://www.taiyo.co.jp/~gotoh/ssh/connect.c</a>
 <br/>
 For windows user, pre-compiled binary is also available:
-<a href="http://www.imasy.or.jp/~gotoh/ssh/connect.exe">http://www.imasy.or.jp/~gotoh/ssh/connect.exe</a> (compiled with MSVC)
+<a href="http://www.taiyo.co.jp/~gotoh/ssh/connect.exe">http://www.taiyo.co.jp/~gotoh/ssh/connect.exe</a> (compiled with MSVC)
 
 </p>
 
-<hr>
+<h2>Contents</h2>
 <dl class="contents">
 <dt class="contents">
-<a href="connect.html#sec1">News</a>
+<a href="#sec1">News</a>
 </dt>
 <dt class="contents">
-<a href="connect.html#sec2">What is 'proxy command'</a>
+<a href="#sec2">What is 'proxy command'</a>
 </dt>
 <dt class="contents">
-<a href="connect.html#sec3">How to Use</a>
+<a href="#sec3">How to Use</a>
 </dt>
 <dd>
 <dl class="contents">
 <dt class="contents">
-<a href="connect.html#sec4">Get Source</a>
+<a href="#sec4">Get Source</a>
 </dt>
 <dt class="contents">
-<a href="connect.html#sec5">Compile and Install</a>
+<a href="#sec5">Compile and Install</a>
 </dt>
 <dt class="contents">
-<a href="connect.html#sec6">Modify your ~/.ssh/config</a>
+<a href="#sec6">Modify your ~/.ssh/config</a>
 </dt>
 <dt class="contents">
-<a href="connect.html#sec7">Use SSH</a>
+<a href="#sec7">Use SSH</a>
 </dt>
 <dt class="contents">
-<a href="connect.html#sec8">Have trouble?</a>
+<a href="#sec8">Have trouble?</a>
 </dt>
 </dl>
 </dd>
 <dt class="contents">
-<a href="connect.html#sec9">More Detail</a>
+<a href="#sec9">More Detail</a>
 </dt>
 <dt class="contents">
-<a href="connect.html#sec10">Limitations</a>
+<a href="#sec10">Specifying user name via environment variables</a>
+</dt>
+<dt class="contents">
+<a href="#sec11">Specifying password via environment variables</a>
+</dt>
+<dt class="contents">
+<a href="#sec12">Limitations</a>
 </dt>
 <dd>
 <dl class="contents">
 <dt class="contents">
-<a href="connect.html#sec11">SOCKS5 authentication</a>
+<a href="#sec13">SOCKS5 authentication</a>
 </dt>
 <dt class="contents">
-<a href="connect.html#sec12">HTTP authentication</a>
+<a href="#sec14">HTTP authentication</a>
 </dt>
 <dt class="contents">
-<a href="connect.html#sec13">Switching proxy server</a>
+<a href="#sec15">Switching proxy server</a>
+</dt>
+<dt class="contents">
+<a href="#sec16">Telnet Proxy</a>
 </dt>
 </dl>
 </dd>
 <dt class="contents">
-<a href="connect.html#sec14">Tips</a>
+<a href="#sec17">Tips</a>
 </dt>
 <dd>
 <dl class="contents">
 <dt class="contents">
-<a href="connect.html#sec15">Proxying socket connection</a>
+<a href="#sec18">Proxying socket connection</a>
 </dt>
 <dt class="contents">
-<a href="connect.html#sec16">Use with <code>ssh-askpass</code> command</a>
+<a href="#sec19">Use with ssh-askpass command</a>
 </dt>
 <dt class="contents">
-<a href="connect.html#sec17">Use for Network Stream of Emacs</a>
+<a href="#sec20">Use for Network Stream of Emacs</a>
 </dt>
 <dt class="contents">
-<a href="connect.html#sec18">Remote resolver</a>
+<a href="#sec21">Remote resolver</a>
 </dt>
 <dt class="contents">
-<a href="connect.html#sec19">Hopping Connection via SSH</a>
+<a href="#sec22">Hopping Connection via SSH</a>
 </dt>
 </dl>
 </dd>
 <dt class="contents">
-<a href="connect.html#sec20">F.Y.I.</a>
+<a href="#sec23">Break The More Restricted Wall</a>
+</dt>
+<dt class="contents">
+<a href="#sec24">F.Y.I.</a>
 </dt>
 <dd>
 <dl class="contents">
 <dt class="contents">
-<a href="connect.html#sec21">Difference between SOCKS versions.</a>
+<a href="#sec25">Difference between SOCKS versions.</a>
 </dt>
 <dt class="contents">
-<a href="connect.html#sec22">Configuration to use HTTPS</a>
+<a href="#sec26">Configuration to use HTTPS</a>
 </dt>
 <dt class="contents">
-<a href="connect.html#sec23">SOCKS5 Servers</a>
+<a href="#sec27">SOCKS5 Servers</a>
 </dt>
 <dt class="contents">
-<a href="connect.html#sec24">Specifications</a>
+<a href="#sec28">Specifications</a>
 </dt>
 <dt class="contents">
-<a href="connect.html#sec25">Related Links</a>
+<a href="#sec29">Related Links</a>
 </dt>
 <dt class="contents">
-<a href="connect.html#sec26">Similars</a>
+<a href="#sec30">Similars</a>
 </dt>
 </dl>
 </dd>
+<dt class="contents">
+<a href="#sec31">hisotry</a>
+</dt>
 </dl>
 
-<h2><a name="sec1">News</a></h2>
 
+<h2><a name="sec1" id="sec1"></a>News</h2>
 <dl>
-<dt>2003-01-07</dt>
+<dt>2005-03-04</dt>
 <dd>
-Rev. 1.68. Fixed a trouble around timeout support.
+Updated compile option for Mac OS X.
 </dd>
-<dt>2002-11-21</dt>
+<dt>2005-02-21</dt>
 <dd>
-Rev. 1.64 supports reading parameters from file /etc/connectrc or
-  ~/.connectrc instead of specifying via environment variables. For
-  examle, you can use this feature to switch setting by replacing file
-  when network environment is changed. And added SOCKS_DIRECT,
-  SOCKS5_DIRECT, SOCKS4_DIRECT, HTTP_DIRECT, SOCKS5_AUTH, environment
-  parameters. (Thanks Masatoshi TSUCHIYA)
+Rev.1.92. Removed assertions which has no mean and worse for windows
+  suggested by OZAWA Takahiro.
 </dd>
-<dt>2002-11-20</dt>
+<dt>2005-01-12</dt>
 <dd>
-Rev. 1.63 supports some old proxies which make response 401 with
-  WWW-Authenticate: header. And fixed to use username specified in
-  proxy host by -H option correctly. (contributed from Des Herriott, thanks)
+Rev.1.90. Fixed not to cause seg-fault on accessing to non HTTP
+  port. This problem is reported by Jason Armstrong <ja at riverdrums.com>.
 </dd>
-<dt>2002-10-14</dt>
+<dt>2004-10-30</dt>
 <dd>
-Rev. 1.61 with New option -w for specifying connection timeout.
-  Currently, it works on UNIX only. (contributed from Darren Tucker, thanks)
-</dd>
-<dt>2002-09-29</dt>
-<dd>
-Add sample script for switching proxy server
-  advised from Darren Tucker, thanks.
-</dd>
-<dt>2002-08-27</dt>
-<dd>
-connect.c is updataed to rev. 1.60.
-</dd>
-<dt>2002-04-08</dt>
-<dd>
-Updated <a href="http://www.imasy.or.jp/~gotoh/ssh/openssh-socks.html">"Using OpenSSH through a SOCKS compatible PROXY on your LAN"</a> written by  J. Grant. (version 0.8)
-</dd>
-<dt>2002-02-20</dt>
-<dd>
-Add link of new document "Using OpenSSH through a SOCKS compatible PROXY on your LAN"
-  written by J. Grant.
-</dd>
-<dt>2002-01-31</dt>
-<dd>
-Rev. 1.53 -- On Win32 and with MSVC, handle password
-  input from console correctly.
-</dd>
-<dt>2002-01-30</dt>
-<dd>
-Rev. 1.50 -- [Security Fix] Do not print secure info in debug mode.
-</dd>
-<dt>2002-01-09</dt>
-<dd>
-Web page was made.
-  connect.c is rev. 1.48.
+Rev.1.89. Partial support for telnet proxy.
+  Thanks to Gregory Shimansky &lt;gshimansky at mail dot ru&gt;. 
+  (Note: This is ad-hoc implementation, so it is not enough for
+  various type of telnet proxies.
+  And password interaction is not supported.)
 </dd>
 </dl>
 
-<h2><a name="sec2">What</a> is 'proxy command'</h2>
+<h2><a name="sec2" id="sec2"></a>What is 'proxy command'</h2>
 
 <p>
 OpenSSH development team decides to stop supporting SOCKS and any
 other tunneling mechanism. It was aimed to separate complexity to
 support various mechanism of proxying from core code.  And they
-recommends more flexible mechanism: '<strong>ProxyCommand</strong>' option
+recommends more flexible mechanism: <strong>ProxyCommand</strong> option
 instead.
 
 </p>
 
 <p>
 Proxy command mechanism is delegation of network stream
-communication.  If '<strong>ProxyCommand</strong>' options is specified, SSH
+communication.  If <strong>ProxyCommand</strong> options is specified, SSH
 invoke specified external command and talk with standard I/O of thid
 command.  Invoked command undertakes network communication with
 relaying to/from standard input/output including iniitial
@@ -237,26 +220,26 @@ proxying code into external command.
 </p>
 
 <p>
-'<strong>connect.c</strong>' was made for this purpose.
+The <strong>connect.c</strong> program was made for this purpose.
 
 </p>
 
-<h2><a name="sec3">How</a> to Use</h2>
+<h2><a name="sec3" id="sec3"></a>How to Use</h2>
 
-<h3><a name="sec4">Get</a> Source</h3>
+<h3><a name="sec4" id="sec4"></a>Get Source</h3>
 
 <p>
-Download source code from <a href="http://www.imasy.or.jp/~gotoh/ssh/connect.c">here</a>.
+Download source code from <a href="http://www.taiyo.co.jp/~gotoh/ssh/connect.c">here</a>.
 <br/>
 If you are MS Windows user, you can get pre-compiled binary from
-<a href="http://www.imasy.or.jp/~gotoh/ssh/connect.exe">here</a>.
+<a href="http://www.taiyo.co.jp/~gotoh/ssh/connect.exe">here</a>.
 
 </p>
 
-<h3><a name="sec5">Compile</a> and Install</h3>
+<h3><a name="sec5" id="sec5"></a>Compile and Install</h3>
 
 <p>
-In most environment, you can compile '<strong>connect.c</strong>' simply.
+In most environment, you can compile <strong>connect.c</strong> simply.
 On UNIX environment, you can use cc or gcc.
 On Windows environment, you can use Microsoft Visual C, Borland C or Cygwin gcc.
 
@@ -287,11 +270,14 @@ On Windows environment, you can use Microsoft Visual C, Borland C or Cygwin gcc.
 <tr>
 <td>Cygwin gcc</td><td>gcc connect.c -o connect</td>
 </tr>
+<tr>
+<td>Mac OS X</td><td>gcc connect.c -o connect -lresolv<br/>or<br/>gcc connect.c -o connect -DBIND_8_COMPAT=1</td>
+</tr>
 </tbody>
 </table>
 
 <p>
-To install '<strong>connect</strong>' command, simply copy compiled binary to directory
+To install <strong>connect</strong> command, simply copy compiled binary to directory
 in your PATH (ex. /usr/local/bin).  Like this:
 
 </p>
@@ -300,13 +286,13 @@ in your PATH (ex. /usr/local/bin).  Like this:
 $ cp connect /usr/local/bin
 </pre>
 
-<h3><a name="sec6">Modify</a> your ~/.ssh/config</h3>
+<h3><a name="sec6" id="sec6"></a>Modify your ~/.ssh/config</h3>
 
 <p>
-Modify your <code>~/.ssh/config</code> file to use '<strong>connect</strong>' command as
-'<strong>proxy command</strong>'.  For the case of SOCKS server is running on
-firewall host '<code>socks.local.net</code>' with port 1080, you can add
-'<strong>ProxyCommand</strong>' option in <code>~/.ssh/config</code>, like this:
+Modify your <code>~/.ssh/config</code> file to use <strong>connect</strong> command as
+<strong>proxy command</strong>.  For the case of SOCKS server is running on
+firewall host <code>socks.local.net</code> with port 1080, you can add
+<strong>ProxyCommand</strong> option in <code>~/.ssh/config</code>, like this:
 
 </p>
 
@@ -316,7 +302,7 @@ Host remote.outside.net
 </pre>
 
 <p>
-'<code>%h</code>' and '<code>%p</code>' will be replaced on invoking proxy command with
+<code>%h</code> and <code>%p</code> will be replaced on invoking proxy command with
 target hostname and port specified to SSH command.
 
 </p>
@@ -338,7 +324,7 @@ Host *.local.net
 </pre>
 
 <p>
-If you want to use http proxy, use '<strong>-H</strong>' option instead of '<strong>-S</strong>'
+If you want to use http proxy, use <strong>-H</strong> option instead of <strong>-S</strong>
 option in examle above, like this:
 
 </p>
@@ -353,13 +339,13 @@ Host *.local.net
   ProxyCommand connect %h %p
 </pre>
 
-<h3><a name="sec7">Use</a> SSH</h3>
+<h3><a name="sec7" id="sec7"></a>Use SSH</h3>
 
 <p>
 After editing your <code>~/.ssh/config</code> file, you are ready to use ssh.
 You can execute ssh without any special options as if remote host is
-IP reachable host.  Following is an example to execute '<code>hostname</code>'
-command on host '<code>remote.outside.net</code>'.
+IP reachable host.  Following is an example to execute <code>hostname</code>
+command on host <code>remote.outside.net</code>.
 
 </p>
 
@@ -369,11 +355,11 @@ remote.outside.net
 $
 </pre>
 
-<h3><a name="sec8">Have</a> trouble?</h3>
+<h3><a name="sec8" id="sec8"></a>Have trouble?</h3>
 
 <p>
-If you have trouble, execute '<strong>connect</strong>' command from command line
-with '<code>-d</code>' option to see what is happened. Some debug message may
+If you have trouble, execute <strong>connect</strong> command from command line
+with <code>-d</code> option to see what is happened. Some debug message may
 appear and reports progress. This information may tell you what is
 wrong. In this example, error has occurred on authentication stage of
 SOCKS5 protocol.
@@ -395,19 +381,19 @@ DEBUG: Program is $Revision$
 DEBUG: connecting to xxx.xxx.xxx.xxx:1080
 DEBUG: begin_socks_relay()
 DEBUG: atomic_out()  [4 bytes]
-DEBUG: >>> 05 02 00 02
+DEBUG: &gt;&gt;&gt; 05 02 00 02
 DEBUG: atomic_in() [2 bytes]
-DEBUG: <<< 05 02
+DEBUG: &lt;&lt;&lt; 05 02
 DEBUG: auth method: USERPASS
 DEBUG: atomic_out()  [some bytes]
-DEBUG: >>> xx xx xx xx ...
+DEBUG: &gt;&gt;&gt; xx xx xx xx ...
 DEBUG: atomic_in() [2 bytes]
-DEBUG: <<< 01 01
+DEBUG: &lt;&lt;&lt; 01 01
 ERROR: Authentication faield.
 FATAL: failed to begin relaying via SOCKS.
 </pre>
 
-<h2><a name="sec9">More</a> Detail</h2>
+<h2><a name="sec9" id="sec9"></a>More Detail</h2>
 
 <p>
 Command line usage is here:
@@ -415,78 +401,98 @@ Command line usage is here:
 </p>
 
 <pre class="example">
-usage:  connect [-dnhs45] [-R resolve] [-p local-port] [-w sec]
+usage:  connect [-dnhst45] [-R resolve] [-p local-port] [-w sec]
 		[-H [user@]proxy-server[:port]]
 		[-S [user@]socks-server[:port]]
+		[-T socks-server:[port]]
+                [-c telnet-proxy-command]
 		host port
 </pre>
 
 <p>
-'<strong>host</strong>' and '<strong>port</strong>' is target hostname and port-number to connect.
+<strong><em>host</em></strong> and <strong><em>port</em></strong> is target hostname and port-number to connect.
 
 </p>
 
 <p>
-'<strong>-H</strong>' option specify hostname and port number of http proxy server to
+<strong>-H</strong> option specify hostname and port number of http proxy server to
 relay. If port is omitted, 80 is used. You can specify this value by
-environment variable <code>HTTP_PROXY</code> and give '<strong>-h</strong>' option to use it.
+environment variable <code>HTTP_PROXY</code> and give <strong>-h</strong> option to use it.
 
 </p>
 
 <p>
-'<strong>-S</strong>' option specify hostname and port number of SOCKS server to
-relay.  Like '<strong>-H</strong>' option, port number can be omit and default is 1080. 
+<strong>-S</strong> option specify hostname and port number of SOCKS server to
+relay.  Like <strong>-H</strong> option, port number can be omit and default is 1080. 
 You can also specify this value pair by environment variable
-<code>SOCKS5_SERVER</code> and give '<strong>-s</strong>' option to use it.
+<code>SOCKS5_SERVER</code> and give <strong>-s</strong> option to use it.
 
 </p>
 
 <p>
-'<strong>-4</strong>' and '<strong>-5</strong>' is for specifying SOCKS protocol version. It is
-valid only using with '<strong>-s</strong>' or '<strong>-S</strong>'. Default is '<strong>-5</strong>'
+<strong>-T</strong> option specify hostname and port number of telnet proxy to
+relay. The port number can be omit and default is 23.
+You can also specify this value pair by environment variable
+<code>TELNET_PROXY</code> and give <strong>-t</strong> option to use it.
+
+</p>
+
+<p>
+<strong>-4</strong> and <strong>-5</strong> is for specifying SOCKS protocol version. It is
+valid only using with <strong>-s</strong> or <strong>-S</strong>. Default is <strong>-5</strong>
 (protocol version 5)
 
 </p>
 
 <p>
-'<strong>-R</strong>' is for specifying method to resolve hostname. 3 keywords
-('<code>local</code>', '<code>remote</code>', '<code>both</code>') or dot-notation IP address is
-allowed.  Keyword '<code>both</code>' means; "Try local first, then
+<strong>-R</strong> is for specifying method to resolve hostname. 3 keywords
+(<code>local</code>, <code>remote</code>, <code>both</code>) or dot-notation IP address is
+allowed.  Keyword <code>both</code> means; "Try local first, then
 remote". If dot-notation IP address is specified, use this host as
-nameserver (UNIX only). Default is '<code>remote</code>' for SOCKS5 or '<code>local</code>'
-for others. On SOCKS4 protocol, remote resolving method ('<code>remote</code>'
-and '<code>both</code>') use protocol version 4a.
+nameserver (UNIX only). Default is <code>remote</code> for SOCKS5 or <code>local</code>
+for others. On SOCKS4 protocol, remote resolving method (<code>remote</code>
+and <code>both</code>) use protocol version 4a.
 
 </p>
 
 <p>
-The '<strong>-p</strong>' option will forward a local TCP port instead of using the
-standard input and output.
+The <strong>-p</strong> option specifys to wait a local TCP port and make relaying
+with it instead of standard input and output.
 
 </p>
 
 <p>
-The '<strong>-w</strong>' option specifys timeout seconds for making connection with
-TARGET host.
+The <strong>-w</strong> option specifys timeout seconds on making connection with
+target host.
 
 </p>
 
 <p>
-The '<strong>-a</strong>' option specifiys user intended authentication methods
-separated by comma.  Currently '<code>userpass</code>' and '<code>none</code>' are
-supported. Default is '<code>userpass</code>'. You can also specifying this
+The <strong>-c</strong> option specifys request string against telnet
+proxy server. The special word '%h' and '%p' in this string are replaced
+as hostname and port number before sending. 
+For telnet proxy by <a class="nonexistent" href="mailto:gotoh@taiyo.co.jp">DeleGate</a>, both "telnet %h %p" and "%h:%p"
+are acceptable.
+Default is "telnet %h %p".
+
+</p>
+
+<p>
+The <strong>-a</strong> option specifiys user intended authentication methods
+separated by comma.  Currently <code>userpass</code> and <code>none</code> are
+supported. Default is <code>userpass</code>. You can also specifying this
 parameter by the environment variable <code>SOCKS5_AUTH</code>.
 
 </p>
 
 <p>
-The '<strong>-d</strong>' option is used for debug. If you fail to connect, use this
+The <strong>-d</strong> option is used for debug. If you fail to connect, use this
 and check request to and response from server.
 
 </p>
 
 <p>
-You can omit '<strong>port</strong>' argument when program name is special format
+You can omit <strong><em>port</em></strong> argument when program name is special format
 containing port number itself. For example, 
 
 </p>
@@ -506,9 +512,105 @@ This example means that the command name "<code>connect-25</code>" contains port
 
 </p>
 
-<h2><a name="sec10">Limitations</a></h2>
+<h2><a name="sec10" id="sec10"></a>Specifying user name via environment variables</h2>
 
-<h3><a name="sec11">SOCKS5</a> authentication</h3>
+<p>
+There are 5 environemnt variables to specify
+user name without command line option. This mechanism is usefull
+for the user who using another user name different from system account.
+
+</p>
+
+<dl>
+<dt>SOCKS5_USER</dt>
+<dd>
+Used for SOCKS v5 access.
+</dd>
+<dt>SOCKS4_USER</dt>
+<dd>
+Used for SOCKS v4 access.
+</dd>
+<dt>SOCKS_USER</dt>
+<dd>
+Used for SOCKS v5 or v4 access and varaibles above are not defined.
+</dd>
+<dt>HTTP_PROXY_USER</dt>
+<dd>
+Used for HTTP proxy access.
+</dd>
+<dt>CONNECT_USER</dt>
+<dd>
+Used for all type of access if all above are not defined.
+</dd>
+</dl>
+
+<p>
+Following table describes how user name is determined.
+Left most number is order to check. If variable is not defined,
+check next variable, and so on.
+
+</p>
+
+<table border=1>
+<tr align=center><th></th><th>SOCKS v5</th><th>SOCKS v4</th><th>HTTP proxy</th></tr>
+<tr align=center><td>1</td><td>SOCKS5_USER</td><td>SOCKS4_USER</td><td rowspan=2>HTTP_PROXY_USER</td></tr>
+<tr align=center><td>2</td><td colspan=2>SOCKS_USER</td></tr>
+<tr align=center><td>3</td><td colspan=3>CONNECT_USER</td></tr>
+<tr align=center><td>4</td><td colspan=3><i>(query user name to system)</i></td></tr>
+</table>
+
+<h2><a name="sec11" id="sec11"></a>Specifying password via environment variables</h2>
+
+<p>
+There are 5 environemnt variables to specify
+password. If you use this feature, please note that it is
+not secure way.
+
+</p>
+
+<dl>
+<dt>SOCKS5_PASSWD</dt>
+<dd>
+Used for SOCKS v5 access. This variables is compatible
+  with NEC SOCKS implementation.
+</dd>
+<dt>SOCKS5_PASSWORD</dt>
+<dd>
+Used for SOCKS v5 access if SOCKS5_PASSWD is not defined.
+</dd>
+<dt>SOCKS_PASSWORD</dt>
+<dd>
+Used for SOCKS v5 (or v4) access all above is not defined.
+</dd>
+<dt>HTTP_PROXY_PASSWORD</dt>
+<dd>
+Used for HTTP proxy access.
+</dd>
+<dt>CONNECT_PASSWORD</dt>
+<dd>
+Used for all type of access if all above are not defined.
+</dd>
+</dl>
+
+<p>
+Following table describes how password is determined.
+Left most number is order to check. If variable is not defined,
+check next variable, and so on. Finally ask to user interactively
+using external program or tty input.
+
+</p>
+
+<table border=1>
+<tr align=center><th></th><th>SOCKS v5</th><th>HTTP proxy</th></tr>
+<tr align=center><td>1</td><td>SOCKS5_PASSWD</td><td rowspan=2>HTTP_PROXY_PASSWORD</td></tr>
+<tr align=center><td>2</td><td>SOCKS_PASSWORD</td></tr>
+<tr align=center><td>3</td><td colspan=2>CONNECT_PASSWORD</td></tr>
+<tr align=center><td>4</td><td colspan=2><i>(ask to user interactively)</i></td></tr>
+</table>
+
+<h2><a name="sec12" id="sec12"></a>Limitations</h2>
+
+<h3><a name="sec13" id="sec13"></a>SOCKS5 authentication</h3>
 
 <p>
 Only NO-AUTH and USER/PASSWORD authentications are supported.
@@ -517,14 +619,14 @@ EAP, MAF, etc.) is not supported.
 
 </p>
 
-<h3><a name="sec12">HTTP</a> authentication</h3>
+<h3><a name="sec14" id="sec14"></a>HTTP authentication</h3>
 
 <p>
 BASIC authentication is supported but DIGEST authentication is not.
 
 </p>
 
-<h3><a name="sec13">Switching</a> proxy server</h3>
+<h3><a name="sec15" id="sec15"></a>Switching proxy server</h3>
 
 <p>
 There is no mechanism to switch proxy server regarding to PC environment.
@@ -554,25 +656,57 @@ if you use it.)
 #!/bin/sh
 ## ~/bin/myconnect --- Proxy server switching wrapper
 
-if ifconfig eth0 |grep "inet addr:192\.168\.1" >/dev/null; then
-	opts="-S 192.168.1.1:1080"  
-elif ifconfig eth0 |grep "inet addr:10\." >/dev/null; then
-	opts="-H 10.1.1.1:80"
+if ifconfig eth0 |grep &quot;inet addr:192\.168\.1&quot; &gt;/dev/null; then
+	opts=&quot;-S 192.168.1.1:1080&quot;  
+elif ifconfig eth0 |grep &quot;inet addr:10\.&quot; &gt;/dev/null; then
+	opts=&quot;-H 10.1.1.1:80&quot;
 else
-	opts="-s"
+	opts=&quot;-s&quot;
 fi
 exec /usr/local/bin/connect $opts $@
 </pre>
 
-<h2><a name="sec14">Tips</a></h2>
-
-<h3><a name="sec15">Proxying</a> socket connection</h3>
+<h3><a name="sec16" id="sec16"></a>Telnet Proxy</h3>
 
 <p>
-In usual, '<strong>connect.c</strong>' relays network connection to/from standard
-input/output. By specifying '<strong>-p</strong>' option, however, '<strong>connect.c</strong>'
+At first, note that the telnet proxy support is an partial feature.
+In this implementation, <strong>connect</strong> single requestinting and proxy
+returns some success/error detective in talked back lines including
+greeting, prompt and connected messages.
+
+</p>
+
+<p>
+The <strong>connect</strong> simply send request after connection to proxy is
+established before any response reading, then repeat reading response
+strings from proxy to decide remote connection request is succeeded or
+not by checking pre-defined phrase in each lines. There are
+pre-defined phrases which are good-phrase and bad-phrases.  First
+good-phrase is checked and change state as relaying if exist.
+<strong>connect</strong> treat this line as final response from proxy before
+starting acutal communication with remote host.  Or if good-phrase is
+not matched, bad-phrases will be checked.  If one of bad-phrase
+matched, it cause connection error immediately.
+
+</p>
+
+<p>
+The pre-defined phrases are currently fixed string so you cannot
+change without modifying and compiling.  The good-phrase is:
+"connected to".  The bad-phrases are: " failed", " refused", "
+rejected", " closed".
+
+</p>
+
+<h2><a name="sec17" id="sec17"></a>Tips</h2>
+
+<h3><a name="sec18" id="sec18"></a>Proxying socket connection</h3>
+
+<p>
+In usual, <strong>connect.c</strong> relays network connection to/from standard
+input/output. By specifying <strong>-p</strong> option, however, <strong>connect.c</strong>
 relays local network stream instead of standard input/output.
-With this option, '<strong>connect</strong>' command waits connection
+With this option, <strong>connect</strong> command waits connection
 from other program, then start relaying between both network stream.
 
 </p>
@@ -582,20 +716,20 @@ This feature may be useful for the program which is hard to SOCKSify.
 
 </p>
 
-<h3><a name="sec16">Use</a> with <code>ssh-askpass</code> command</h3>
+<h3><a name="sec19" id="sec19"></a>Use with ssh-askpass command</h3>
 
 <p>
-'<strong>connect.c</strong>' ask you password when authentication is required.  If
+<strong>connect.c</strong> ask you password when authentication is required.  If
 you are using on tty/pty terminal, connect can input from terminal
-with prompt. But you can also use '<code>ssh-askpass</code>' program to input
+with prompt. But you can also use <code>ssh-askpass</code> program to input
 password.  If you are graphical environment like X Window or MS
 Windows, and program does not have tty/pty, and environment variable
-SSH_ASKPASS is specified, then '<strong>connect.c</strong>' invoke command
-specified by environment variable '<code>SSH_ASKPASS</code>' to input password.
+SSH_ASKPASS is specified, then <strong>connect.c</strong> invoke command
+specified by environment variable <code>SSH_ASKPASS</code> to input password.
 <code>ssh-askpass</code> program might be installed if you are using OpenSSH on
 UNIX environment. On Windows environment, pre-compiled binary is
 available from
-<a href="http://www.imasy.or.jp/~gotoh/ssh/ssh-askpass.exe">here</a>.
+<a href="http://www.taiyo.co.jp/~gotoh/ssh/ssh-askpass.exe">here</a>.
 
 </p>
 
@@ -606,16 +740,16 @@ This feature is limited on window system environment.
 
 <p>
 And also useful on Emacs on MS Windows (NT Emacs or Meadow).  It is
-hard to send passphrase to '<strong>connect</strong>' command (and also ssh)
+hard to send passphrase to <strong>connect</strong> command (and also ssh)
 because external command is invoked on hidden terminal and do I/O with
 this terminal.  Using ssh-askpass avoids this problem.
 
 </p>
 
-<h3><a name="sec17">Use</a> for Network Stream of Emacs</h3>
+<h3><a name="sec20" id="sec20"></a>Use for Network Stream of Emacs</h3>
 
 <p>
-Although '<strong>connect.c</strong>' is made for OpenSSH, it is generic and
+Although <strong>connect.c</strong> is made for OpenSSH, it is generic and
 independent from OpenSSH. So we can use this for other purpose.  For
 example, you can use this command in Emacs to open network connection
 with remote host over the firewall via SOCKS or HTTP proxy without
@@ -625,7 +759,7 @@ SOCKSifying Emacs itself.
 
 <p>
 There is sample code: 
-<a href="http://www.imasy.or.jp/~gotoh/lisp/relay.el">http://www.imasy.or.jp/~gotoh/lisp/relay.el</a>
+<a href="http://www.taiyo.co.jp/~gotoh/lisp/relay.el">http://www.taiyo.co.jp/~gotoh/lisp/relay.el</a>
 
 </p>
 
@@ -636,19 +770,19 @@ comments of source for more detail.
 
 </p>
 
-<h3><a name="sec18">Remote</a> resolver</h3>
+<h3><a name="sec21" id="sec21"></a>Remote resolver</h3>
 
 <p>
 If you are SOCKS4 user on UNIX environment, you might want specify
 nameserver to resolve remote hostname.  You can do it specifying
-'<strong>-R</strong>' option followed by IP address of resolver.
+<strong>-R</strong> option followed by IP address of resolver.
 
 </p>
 
-<h3><a name="sec19">Hopping</a> Connection via SSH</h3>
+<h3><a name="sec22" id="sec22"></a>Hopping Connection via SSH</h3>
 
 <p>
-Conbination of ssh and '<strong>connect</strong>' command have more interesting usage.
+Conbination of ssh and <strong>connect</strong> command have more interesting usage.
 Following command makes indirect connection to host2:port from your
 current host via host1.
 
@@ -702,13 +836,92 @@ using <a href="http://www.gohome.org/wl/">Wanderlust</a> on Emacs at home.
 +------+           +----------+          +-------+           +-----------+
 | HOME |           | firewall |          | host1 |           | NNTP host |
 +------+           +----------+          +-------+           +-----------+
- emacs <-------------- ssh ---------------> sshd <-- connect --> nntpd
-       <-- connect --> socksd <-- SOCKS -->
+ emacs &lt;-------------- ssh ---------------&gt; sshd &lt;-- connect --&gt; nntpd
+       &lt;-- connect --&gt; socksd &lt;-- SOCKS --&gt;
 </pre>
 
-<h2><a name="sec20">F</a>.Y.I.</h2>
+<p>
+As an advanced example, you can use SSH hopping as fetchmail's plug-in
+program to access via secure tunnel. This method requires that
+<strong>connect</strong> program is insatalled on remote host.  There's example
+of .fetchmailrc bellow. When fetchmail access to mail-server, you will
+login to remote host using SSH then execute <strong>connect</strong> program on
+remote host to relay conversation with pop server. Thus fetchmail can
+retrieve mails in secure.
 
-<h3><a name="sec21">Difference</a> between SOCKS versions.</h3>
+</p>
+
+<blockquote>
+<p>
+    poll mail-server
+      protocol pop3
+      plugin "ssh %h connect localhost %p"
+      username "username"
+      password "password"
+
+</p>
+</blockquote>
+
+<h2><a name="sec23" id="sec23"></a>Break The More Restricted Wall</h2>
+
+<p>
+If firewall does not provide SOCKS nor HTTPS other than port 443, you
+cannot break the wall in usual way.  But if you have you own host
+which is accessible from internet, you can make ssh connection to your
+own host by configuring sshd as waiting at port 443 instead of
+standard 22. By this, you can login to your own host via port 443.
+Once you have logged-in to extenal home machine, you can execute
+<strong>connect</strong> as second hop to make connection from your own host to
+final target host, like this:
+
+</p>
+
+<pre class="example">
+$ cat ~/.ssh/config
+Host home
+  ProxyCommand connect -H firewall:8080 %h 443
+
+Host server
+  ProxyCommand ssh home connect %h %p
+...
+internal$ ssh home
+You are logged in to home!
+home# exit
+internal$ ssh server
+You are logged in to server!
+server# exit
+internal$
+</pre>
+
+<p>
+This way is similar to "Hopping connection via SSH" except configuring
+outer sshd as waiting at port 443 (https).  This means that you have a
+capability to break the strongly restricted wall if you have own host
+out side of the wall.
+
+</p>
+
+<pre class="example">
+                        |
+      Internal (office) | External (internet)
+                        |
++--------+         +----------+                 +------+          +--------+
+| office |         | firewall |                 | home |          | server |
++--------+         +----------+                 +------+          +--------+
+   &lt;------------------ ssh ---------------------&gt;sshd:443
+    &lt;-- connect --&gt; http-proxy &lt;-- https:443 --&gt;                      any
+                                                 connect &lt;-- tcp --&gt;  port
+</pre>
+
+<p>
+NOTE: If you wanna use this, you should give up hosting https service
+at port 443 on you external host 'home'.
+
+</p>
+
+<h2><a name="sec24" id="sec24"></a>F.Y.I.</h2>
+
+<h3><a name="sec25" id="sec25"></a>Difference between SOCKS versions.</h3>
 
 <p>
 SOCKS version 4 is first popular implementation which is documented
@@ -728,14 +941,14 @@ hostname, UDP proxying, etc.
 
 </p>
 
-<h3><a name="sec22">Configuration</a> to use HTTPS</h3>
+<h3><a name="sec26" id="sec26"></a>Configuration to use HTTPS</h3>
 
 <p>
 Many http proxy servers implementation supports https <code>CONNECT</code> method
 (SLL).  You might add configuration to allow using https.  For the
 example of <a href="http://www.delegate.org/delegate/">DeleGate</a> (
 DeleGate is a multi-purpose application level gateway, or a proxy
-server) , you should add '<code>https</code>' to '<code>REMITTABLE</code>' parameter to
+server) , you should add <code>https</code> to <code>REMITTABLE</code> parameter to
 allow HTTP-Proxy like this:
 
 </p>
@@ -750,7 +963,7 @@ and so on.
 
 </p>
 
-<h3><a name="sec23">SOCKS5</a> Servers</h3>
+<h3><a name="sec27" id="sec27"></a>SOCKS5 Servers</h3>
 
 <dl>
 <dt><a href="http://www.socks.nec.com/refsoftware.html">NEC SOCKS Reference Implementation</a></dt>
@@ -771,7 +984,7 @@ DeleGate is multi function proxy service provider.
 </dd>
 </dl>
 
-<h3><a name="sec24">Specifications</a></h3>
+<h3><a name="sec28" id="sec28"></a>Specifications</h3>
 
 <dl>
 <dt><a href="http://www.socks.nec.com/protocol/socks4.protocol">socks4.protocol.txt</a></dt>
@@ -800,18 +1013,18 @@ HTTP Authentication: Basic and Digest Access Authentication
 </dd>
 </dl>
 
-<h3><a name="sec25">Related</a> Links</h3>
+<h3><a name="sec29" id="sec29"></a>Related Links</h3>
 
 <ul>
 <li><a href="http://www.openssh.org">OpenSSH Home</a>
 </li>
 <li><a href="http://www.ssh.com/">Proprietary SSH</a>
 </li>
-<li><a href="http://www.imasy.or.jp/~gotoh/ssh/openssh-socks.html">Using OpenSSH through a SOCKS compatible PROXY on your LAN</a> (J. Grant)
+<li><a href="http://www.taiyo.co.jp/~gotoh/ssh/openssh-socks.html">Using OpenSSH through a SOCKS compatible PROXY on your LAN</a> (J. Grant)
 </li>
 </ul>
 
-<h3><a name="sec26">Similars</a></h3>
+<h3><a name="sec30" id="sec30"></a>Similars</h3>
 
 <ul>
 <li><a href="http://proxytunnel.sourceforge.net/">Proxy Tunnel</a> -- Proxying command using https CONNECT.
@@ -819,6 +1032,89 @@ HTTP Authentication: Basic and Digest Access Authentication
 <li><a href="http://www.snurgle.org/~griffon/ssh-https-tunnel">stunnel</a> -- Proxy through an https tunnel (Perl script)
 </li>
 </ul>
+
+<h2><a name="sec31" id="sec31"></a>hisotry</h2>
+
+<dl>
+<dt>2004-07-21</dt>
+<dd>
+Rev.1.84. Fixed some typo.
+</dd>
+<dt>2004-05-18</dt>
+<dd>
+Rev.1.83. Fixed problem not work on Solaris.
+</dd>
+<dt>2004-04-27</dt>
+<dd>
+Rev.1.82. Bug fix of memory clear on http proxying.
+</dd>
+<dt>2004-04-22</dt>
+<dd>
+Rev. 1.81. Fixed memory violation and memory leak bug. New environment
+  variable SOCKS5_PASSWD for sharing value with NEC SOCKS implementation.
+  And document (this page) is updated.
+</dd>
+<dt>2004-03-30</dt>
+<dd>
+Rev. 1.76. Fixed to accept multiple 'Proxy-Authorization' response.
+</dd>
+<dt>2003-01-07</dt>
+<dd>
+Rev. 1.68. Fixed a trouble around timeout support.
+</dd>
+<dt>2002-11-21</dt>
+<dd>
+Rev. 1.64 supports reading parameters from file /etc/connectrc or
+  ~/.connectrc instead of specifying via environment variables. For
+  examle, you can use this feature to switch setting by replacing file
+  when network environment is changed. And added SOCKS_DIRECT,
+  SOCKS5_DIRECT, SOCKS4_DIRECT, HTTP_DIRECT, SOCKS5_AUTH, environment
+  parameters. (Thanks Masatoshi TSUCHIYA)
+</dd>
+<dt>2002-11-20</dt>
+<dd>
+Rev. 1.63 supports some old proxies which make response 401 with
+  WWW-Authenticate: header. And fixed to use username specified in
+  proxy host by -H option correctly. (contributed from Des Herriott, thanks)
+</dd>
+<dt>2002-10-14</dt>
+<dd>
+Rev. 1.61 with New option -w for specifying connection timeout.
+  Currently, it works on UNIX only. (contributed from Darren Tucker, thanks)
+</dd>
+<dt>2002-09-29</dt>
+<dd>
+Add sample script for switching proxy server
+  advised from Darren Tucker, thanks.
+</dd>
+<dt>2002-08-27</dt>
+<dd>
+connect.c is updataed to rev. 1.60.
+</dd>
+<dt>2002-04-08</dt>
+<dd>
+Updated <a href="http://www.taiyo.co.jp/~gotoh/ssh/openssh-socks.html">"Using OpenSSH through a SOCKS compatible PROXY on your LAN"</a> written by  J. Grant. (version 0.8)
+</dd>
+<dt>2002-02-20</dt>
+<dd>
+Add link of new document "Using OpenSSH through a SOCKS compatible PROXY on your LAN"
+  written by J. Grant.
+</dd>
+<dt>2002-01-31</dt>
+<dd>
+Rev. 1.53 -- On Win32 and with MSVC, handle password
+  input from console correctly.
+</dd>
+<dt>2002-01-30</dt>
+<dd>
+Rev. 1.50 -- [Security Fix] Do not print secure info in debug mode.
+</dd>
+<dt>2002-01-09</dt>
+<dd>
+Web page was made.
+  connect.c is rev. 1.48.
+</dd>
+</dl>
 <br>
 
     <!-- Page published by Emacs Wiki ends here -->
@@ -827,7 +1123,7 @@ HTTP Authentication: Basic and Digest Access Authentication
       <table width="100%" border="0" summary="Footer navigation">
        <tbody><tr>
 	  <td width="50%" align="left">
-	    <span class="footdate">Last Updated: 2003-06-17</span><br/>
+	    <span class="footdate">Last Updated: 2005-03-07</span><br/>
 	  </td>
 	  <td width="50%" align="right">
             This page is authored by <a href="mailto:gotoh@taiyo.co.jp">Shun-ichi GOTO</a>

@@ -92,7 +92,7 @@
 +					new_root += 2;
 +
 +					if(chroot(user_dir) != 0)
-+						fatal("Couldn't chroot to user directory % s", user_dir);
++						fatal("Couldn't chroot to user directory %s", user_dir);
 +						pw->pw_dir = new_root;
 +						break;
 +					}

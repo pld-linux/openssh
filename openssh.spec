@@ -1,13 +1,13 @@
 #
 # Conditional build:
-# _without_gnome	- without gnome-askpass utility
-# _without_gtk		- without gtk (2.x)
-# _with_ldap		- with ldap support
-# _without_kerberos5	- without kerberos5 support
-#
-# default to gtk2-based gnome-askpass
+%bcond_with	gnome		# without gnome-askpass utility
+%bcond_without	gtk		# without gtk (2.x)
+%bcond_with	ldap		# with ldap support
+%bcond_without	kerberos5	# without kerberos5 support
+%bcond_with	chroot		# with user chrooted env support
 
-%{!?_without_gtk:%define _without_gnome 1}
+# default to gtk2-based gnome-askpass
+%{?with_gtk:%define _without_gnome 1}
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(de):	OpenSSH - freie Implementation der Secure Shell (SSH)
 Summary(es):	ImplementaciСn libre de SSH
@@ -20,7 +20,7 @@ Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	3.7.1p2
-Release:	3
+Release:	3.1
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -46,18 +46,20 @@ Patch4:		%{name}-sigpipe.patch
 Patch5:		ldappubkey-ossh3.6-v2.patch
 Patch6:		%{name}-heimdal.patch
 Patch7:		%{name}-pam-conv.patch
+# http://chrootssh.sourceforge.net/download/osshChroot-3.7.1p2.diff
+Patch8:		%{name}-chroot.patch
 URL:		http://www.openssh.com/
 BuildRequires:	autoconf
 BuildRequires:	automake
-%{!?_without_gnome:BuildRequires: gnome-libs-devel}
-%{!?_without_gtk:BuildRequires:	gtk+2-devel}
+%{?with_gnome:BuildRequires:	gnome-libs-devel}
+%{?with_gtk:BuildRequires:	gtk+2-devel}
 BuildRequires:	libwrap-devel
 BuildRequires:	openssl-devel >= 0.9.7c
-%{?_with_ldap:BuildRequires:	openldap-devel}
-%{!?_without_kerberos5:BuildRequires:	heimdal-devel}
+%{?with_ldap:BuildRequires:	openldap-devel}
+%{?with_kerberos5:BuildRequires:	heimdal-devel}
 BuildRequires:	pam-devel
 BuildRequires:	%{__perl}
-%{!?_without_gtk:BuildRequires:	pkgconfig}
+%{?with_gtk:BuildRequires:	pkgconfig}
 BuildRequires:	zlib-devel
 PreReq:		FHS >= 2.1-24
 PreReq:		openssl >= 0.9.7c
@@ -395,9 +397,10 @@ GNOME.
 %patch2 -p1
 %patch3 -p1
 #%patch4 -p1
-%{?_with_ldap:%patch5 -p1}
-%{!?_without_kerberos5:%patch6 -p1}
+%{?with_ldap:%patch5 -p1}
+%{?with_kerberos5:%patch6 -p1}
 %patch7 -p1
+%{?with_chroot:%patch8 -p1}
 
 %build
 %{__aclocal}
@@ -413,9 +416,9 @@ GNOME.
 	--with-4in6 \
 	--disable-suid-ssh \
 	--with-tcp-wrappers \
-	%{?_with_ldap:--with-libs="-lldap -llber"} \
-	%{?_with_ldap:--with-cppflags="-DWITH_LDAP_PUBKEY"} \
-	%{!?_without_kerberos5:--with-kerberos5} \
+	%{?with_ldap:--with-libs="-lldap -llber"} \
+	%{?with_ldap:--with-cppflags="-DWITH_LDAP_PUBKEY"} \
+	%{?with_kerberos5:--with-kerberos5} \
 	--with-privsep-path=%{_privsepdir} \
 	--with-pid-dir=%{_localstatedir}/run \
 	--with-xauth=/usr/X11R6/bin/xauth
@@ -429,11 +432,11 @@ cp -f %{SOURCE10} .
 %{__cc} %{rpmcflags} %{rpmldflags} connect.c -o connect
 
 cd contrib
-%if 0%{!?_without_gnome:1}
+%if %{with gnome}
 %{__make} gnome-ssh-askpass1 \
 	CC="%{__cc} %{rpmldflags} %{rpmcflags}"
 %endif
-%if 0%{!?_without_gtk:1}
+%if %{with gtk}
 %{__make} gnome-ssh-askpass2 \
 	CC="%{__cc} %{rpmldflags} %{rpmcflags}"
 %endif
@@ -454,13 +457,13 @@ install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
 install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/ssh_config
 install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/sshd_config
 
-%if 0%{!?_without_gnome:1}
+%if %{with gnome}
 install contrib/gnome-ssh-askpass1 $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
 %endif
-%if 0%{!?_without_gtk:1}
+%if %{with gtk}
 install contrib/gnome-ssh-askpass2 $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
 %endif
-%if 0%{!?_without_gnome:1}%{!?_without_gtk:1}
+%if %{with gnome}%{with gtk}
 install %{SOURCE7} %{SOURCE8} $RPM_BUILD_ROOT/etc/profile.d
 %endif
 
@@ -554,7 +557,7 @@ fi
 %attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/sysconfig/sshd
 %attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/security/blacklist.sshd
 
-%if 0%{!?_without_gnome:1}%{!?_without_gtk:1}
+%if %{with gnome}%{with gtk}
 %files gnome-askpass
 %defattr(644,root,root,755)
 %dir %{_libexecdir}/ssh

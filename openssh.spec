@@ -544,6 +544,7 @@ fi
 %attr(755,root,root) %{_bindir}/ssh-key*
 %{_mandir}/man1/ssh-key*.1*
 %dir %{_sysconfdir}
+%dir %{_libexecdir}
 
 %files clients
 %defattr(644,root,root,755)
@@ -583,7 +584,6 @@ fi
 %attr(755,root,root) %{_sbindir}/sshd
 %attr(755,root,root) %{_libexecdir}/sftp-server
 %attr(755,root,root) %{_libexecdir}/ssh-keysign
-%dir %{_libexecdir}
 %{_mandir}/man8/sshd.8*
 %{_mandir}/man8/sftp-server.8*
 %{_mandir}/man8/ssh-keysign.8*

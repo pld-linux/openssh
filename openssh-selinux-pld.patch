@@ -5,7 +5,7 @@ diff -urN openssh-3.7.1p2.org/session.c openssh-3.7.1p2/session.c
  	if (getuid() != pw->pw_uid || geteuid() != pw->pw_uid)
  		fatal("Failed to set uids to %u.", (u_int) pw->pw_uid);
  #ifdef WITH_SELINUX
--	if (is_selinux_enabled())
+-	if (is_selinux_enabled()>0)
 +	if (is_selinux_enabled() > 0)
  	  {
  	    security_context_t scontext;

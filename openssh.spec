@@ -6,6 +6,8 @@ Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(es):	ImplementaciСn libre de SSH
 Summary(pl):	Publicznie dostЙpna implementacja bezpiecznego shella (SSH)
 Summary(pt_BR):	ImplementaГЦo livre do SSH
+Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
+Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	3.2.3p1
 Release:	1
@@ -89,11 +91,47 @@ colocando-os em bibliotecas separadas (OpenSSL).
 Esse pacote contИm o "port" pra Linux do OpenSSH. VocЙ deve instalar
 tambИm ou o pacote openssh-clients, ou o openssh-server, ou ambos.
 
+%description -l ru
+Ssh (Secure Shell) - это программа для "захода" (login) на удаленную
+машину и для выполнения команд на удаленной машине. Она предназначена
+для замены rlogin и rsh и обеспечивает безопасную шифрованную
+коммуникацию между двумя хостами в сети, являющейся небезопасной.
+Соединения X11 и любые порты TCP/IP могут также быть проведены через
+безопасный канал.
+
+OpenSSH - это переделка командой разработчиков OpenBSD последней
+свободной версии SSH, доведенная до современного состояния в терминах
+уровня безопасности и поддерживаемых возможностей. Все патентованные
+алгоритмы вынесены в отдельные библиотеки (OpenSSL).
+
+Этот пакет содержит файлы, необходимые как для клиента, так и для
+сервера OpenSSH. Вам нужно будет установить еще openssh-clients,
+openssh-server, или оба пакета.
+
+%description -l uk
+Ssh (Secure Shell) - це програма для "заходу" (login) до в╕ддалено╖
+машини та для виконання команд на в╕ддален╕й машин╕. Вона призначена
+для зам╕ни rlogin та rsh ╕ забезпечу╓ безпечну шифровану комун╕кац╕ю
+м╕ж двома хостами в мереж╕, яка не ╓ безпечною. З'╓днання X11 та
+дов╕льн╕ порти TCP/IP можуть також бути проведен╕ через безпечний
+канал.
+
+OpenSSH - це переробка командою розробник╕в OpenBSD останньо╖ в╕льно╖
+верс╕╖ SSH, доведена до сучасного стану в терм╕нах р╕вня безпеки та
+п╕дтримуваних можливостей. Вс╕ патентован╕ алгоритми винесен╕ до
+окремих б╕бл╕отек (OpenSSL).
+
+Цей пакет м╕стить файли, необх╕дн╕ як для кл╕╓нта, так ╕ для сервера
+OpenSSH. Вам потр╕бно буде ще встановити openssh-clients,
+openssh-server, чи обидва пакети.
+
 %package clients
 Summary:	OpenSSH Secure Shell protocol clients
 Summary(es):	Clientes de OpenSSH
 Summary(pl):	Klienci protokoЁu Secure Shell
 Summary(pt_BR):	Clientes do OpenSSH
+Summary(ru):	OpenSSH - клиенты протокола Secure Shell
+Summary(uk):	OpenSSH - кл╕╓нти протоколу Secure Shell
 Requires:	openssh
 Group:		Applications/Networking
 Obsoletes:	ssh-clients
@@ -129,11 +167,27 @@ Ten pakiet zawiera klientСw sЁu©╠cych do Ё╠czenia siЙ z serwerami SSH.
 Esse pacote inclui os clientes necessАrios para fazer conexУes
 encriptadas com servidores SSH.
 
+%description clients -l ru
+Ssh (Secure Shell) - это программа для "захода" (login) на удаленную
+машину и для выполнения команд на удаленной машине.
+
+Этот пакет содержит программы-клиенты, необходимые для установления
+зашифрованных соединений с серверами SSH.
+
+%description clients -l uk
+Ssh (Secure Shell) - це програма для "заходу" (login) до в╕ддалено╖
+машини та для виконання команд на в╕ддален╕й машин╕.
+
+Цей пакет м╕стить програми-кл╕╓нти, необх╕дн╕ для встановлення
+зашифрованих з'╓днань з серверами SSH.
+
 %package server
 Summary:	OpenSSH Secure Shell protocol server (sshd)
 Summary(es):	Servidor OpenSSH para comunicaciones codificadas
 Summary(pl):	Serwer protokoЁu Secure Shell (sshd)
 Summary(pt_BR):	Servidor OpenSSH para comunicaГУes encriptadas
+Summary(ru):	OpenSSH - сервер протокола Secure Shell (sshd)
+Summary(uk):	OpenSSH - сервер протоколу Secure Shell (sshd)
 Requires:	openssh
 Requires:	chkconfig >= 0.9
 Group:		Networking/Daemons
@@ -178,11 +232,29 @@ Esse pacote contИm o servidor SSH. O sshd И a parte servidor do
 protocolo secure shell e permite que clientes ssh se conectem ao seu
 host.
 
+%description server -l ru
+Ssh (Secure Shell) - это программа для "захода" (login) на удаленную
+машину и для выполнения команд на удаленной машине.
+
+Этот пакет содержит sshd - "демон" Secure Shell. sshd - это серверная
+часть протокола Secure Shell, позволяющая клиентам ssh соединяться с
+вашим хостом.
+
+%description server -l uk
+Ssh (Secure Shell) - це програма для "заходу" (login) до в╕ддалено╖
+машини та для виконання команд на в╕ддален╕й машин╕.
+
+Цей пакет м╕стить sshd - "демон" Secure Shell. sshd - це серверна
+частина протоколу Secure Shell, яка дозволя╓ кл╕╓нтам ssh зв'язуватись
+з вашим хостом.
+
 %package gnome-askpass
 Summary:	OpenSSH GNOME passphrase dialog
 Summary(es):	DiАlogo para introducciСn de passphrase para GNOME
 Summary(pl):	Odpytywacz hasЁa OpenSSH dla GNOME
 Summary(pt_BR):	DiАlogo para entrada de passphrase para GNOME
+Summary(ru):	OpenSSH - диалог ввода ключевой фразы (passphrase) для GNOME
+Summary(uk):	OpenSSH - д╕алог вводу ключово╖ фрази (passphrase) для GNOME
 Group:		Applications/Networking
 Requires:	%{name} = %{version}
 Obsoletes:	ssh-extras
@@ -217,6 +289,20 @@ Ten pakiet zawiera ,,odpytywacz hasЁa'' dla GNOME.
 %description gnome-askpass -l pt_BR
 Esse pacote contИm um programa que abre uma caixa de diАlogo para
 entrada de passphrase no GNOME.
+
+%description gnome-askpass -l ru
+Ssh (Secure Shell) - это программа для "захода" (login) на удаленную
+машину и для выполнения команд на удаленной машине.
+
+Этот пакет содержит диалог ввода ключевой фразы для использования под
+GNOME.
+
+%description gnome-askpass -l uk
+Ssh (Secure Shell) - це програма для "заходу" (login) до в╕ддалено╖
+машини та для виконання команд на в╕ддален╕й машин╕.
+
+Цей пакет м╕стить д╕алог вводу ключово╖ фрази для використання п╕д
+GNOME.
 
 %prep
 %setup  -q

@@ -1,6 +1,6 @@
 #
 # Conditional build:	
-# bcond_off_gnome - without gnome-askpass utility
+# _without_gnome - without gnome-askpass utility
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(pl):	Publicznie dostêpna implementacja bezpiecznego shella (SSH)
 Name:		openssh
@@ -22,7 +22,7 @@ Patch1:		%{name}-no_libnsl.patch
 URL:		http://www.openssh.com/
 BuildRequires:	XFree86-devel
 BuildRequires:	autoconf
-%{!?bcond_off_gnome:BuildRequires: gnome-libs-devel}
+%{!?_without_gnome:BuildRequires: gnome-libs-devel}
 BuildRequires:	gtk+-devel
 BuildRequires:	openssl-devel >= 0.9.6a
 BuildRequires:	pam-devel
@@ -170,7 +170,7 @@ Ten pakiet zawiera ,,odpytywacz has³a'' dla GNOME.
 %build
 autoconf
 %configure \
-	%{!?bcond_off_gnome:--with-gnome-askpass} \
+	%{!?_without_gnome:--with-gnome-askpass} \
 	--with-tcp-wrappers \
 	--with-pam \
 	--with-mantype=man \
@@ -184,9 +184,9 @@ echo '#define LOGIN_PROGRAM           "/bin/login"' >>config.h
 
 %{__make}
 
-%{!?bcond_off_gnome: cd contrib && %{__cc} %{rpmcflags} `gnome-config --cflags gnome gnomeui gtk` } \
-%{!?bcond_off_gnome:	gnome-ssh-askpass.c -o gnome-ssh-askpass } \
-%{!?bcond_off_gnome:	`gnome-config --libs gnome gnomeui gtk` }
+%{!?_without_gnome: cd contrib && %{__cc} %{rpmcflags} `gnome-config --cflags gnome gnomeui gtk` } \
+%{!?_without_gnome:	gnome-ssh-askpass.c -o gnome-ssh-askpass } \
+%{!?_without_gnome:	`gnome-config --libs gnome gnomeui gtk` }
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -202,7 +202,7 @@ install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
 install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/ssh_config
 install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/sshd_config
 install -d $RPM_BUILD_ROOT%{_libexecdir}/ssh
-%{!?bcond_off_gnome:install contrib/gnome-ssh-askpass $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass}
+%{!?_without_gnome:install contrib/gnome-ssh-askpass $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass}
 
 rm -f	$RPM_BUILD_ROOT%{_mandir}/man1/slogin.1
 echo ".so man1/ssh.1" > $RPM_BUILD_ROOT%{_mandir}/man1/slogin.1
@@ -278,7 +278,7 @@ fi
 %attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/sysconfig/sshd
 %attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/security/blacklist.sshd
 
-%{!?bcond_off_gnome:%files gnome-askpass}
-%{!?bcond_off_gnome:%defattr(644,root,root,755)}
-%{!?bcond_off_gnome:%dir %{_libexecdir}/ssh}
-%{!?bcond_off_gnome:%attr(755,root,root) %{_libexecdir}/ssh/ssh-askpass}
+%{!?_without_gnome:%files gnome-askpass}
+%{!?_without_gnome:%defattr(644,root,root,755)}
+%{!?_without_gnome:%dir %{_libexecdir}/ssh}
+%{!?_without_gnome:%attr(755,root,root) %{_libexecdir}/ssh/ssh-askpass}

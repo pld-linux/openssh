@@ -41,11 +41,11 @@ BuildRequires:	automake
 %{!?_without_gnome:BuildRequires: gnome-libs-devel}
 %{!?_without_gtk:BuildRequires:	gtk+2-devel}
 BuildRequires:	libwrap-devel
-BuildRequires:	openssl-devel >= 0.9.6a
+BuildRequires:	openssl-devel >= 0.9.7
 BuildRequires:	pam-devel
 BuildRequires:	perl
 BuildRequires:	zlib-devel
-PreReq:		openssl
+PreReq:		openssl >= 0.9.7
 PreReq:		FHS >= 2.1-24
 Obsoletes:	ssh
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)

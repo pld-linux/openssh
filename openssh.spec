@@ -134,7 +134,7 @@ make
 %install
 rm -rf $RPM_BUILD_ROOT
 
-install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{pam.d,rc.d/init.d,sysconfig}}
+install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{pam.d,rc.d/init.d,sysconfig,security}}
 
 make install DESTDIR="$RPM_BUILD_ROOT"
 
@@ -150,6 +150,8 @@ mv -f 	$RPM_BUILD_ROOT%{_libexecdir}/ssh/gnome-ssh-askpass \
 
 gzip -9fn ChangeLog OVERVIEW COPYING.Ylonen README README.Ylonen UPGRADING \
 	$RPM_BUILD_ROOT/%{_mandir}/man*/*
+
+touch $RPM_BUILD_ROOT/etc/security/blacklist.sshd
 	
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -205,6 +207,7 @@ fi
 %attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/pam.d/sshd
 %attr(754,root,root) /etc/rc.d/init.d/sshd
 %attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/sysconfig/sshd
+%attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/security/blacklist.sshd
 
 %files gnome-askpass
 %defattr(644,root,root,755)

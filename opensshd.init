@@ -36,7 +36,7 @@ case "$1" in
 	fi
 	if [ ! -f /var/lock/subsys/sshd ]; then
 		msg_starting OpenSSH
-		daemon sshd -h /etc/ssh/ssh_host_key
+		daemon /usr/sbin/sshd -h /etc/ssh/ssh_host_key
 		RETVAL=$?
 		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/sshd		
 	else

@@ -1,0 +1,20 @@
+diff -urN openssh-2.2.0p1.org/ssh.c openssh-2.2.0p1/ssh.c
+--- openssh-2.2.0p1.org/ssh.c	Sat Oct 28 21:15:52 2000
++++ openssh-2.2.0p1/ssh.c	Sat Oct 28 21:15:33 2000
+@@ -545,8 +545,14 @@
+ 		hints.ai_socktype = SOCK_STREAM;
+ 		errgai = getaddrinfo(host, NULL, &hints, &ai);
+ 		if (errgai == 0) {
+-			if (ai->ai_canonname != NULL)
+-				host = xstrdup(ai->ai_canonname);
++			if (ai->ai_canonname != NULL) {
++				struct addrinfo *aic = NULL;
++				hints.ai_flags = 0;
++				if (getaddrinfo(ai->ai_canonname, NULL, &hints, &aic) == 0) {
++					host = xstrdup(ai->ai_canonname);
++					freeaddrinfo(aic);
++				}
++			}
+ 			freeaddrinfo(ai);
+ 		}
+ 	}

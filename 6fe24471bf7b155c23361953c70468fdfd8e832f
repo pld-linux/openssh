@@ -1,0 +1,8 @@
+- raw version
+
+
+* Thu Oct 28 1999 Damien Miller <djm@ibs.com.au>
+- Use autoconf
+- New binary names
+* Wed Oct 27 1999 Damien Miller <djm@ibs.com.au>
+- Initial RPMification, based on Jan "Yenya" Kasprzak's <kas@fi.muni.cz> spec.

@@ -80,3 +80,35 @@
  
  struct mm_master *mm_create(struct mm_master *, size_t);
  void mm_destroy(struct mm_master *);
+diff -urN openssh-3.4p1.org/configure.ac openssh-3.4p1/configure.ac
+--- openssh-3.4p1.org/configure.ac	Thu Jun 27 18:09:38 2002
++++ openssh-3.4p1/configure.ac	Thu Jun 27 18:10:10 2002
+@@ -578,27 +578,7 @@
+ 	truncate utimes vhangup vsnprintf waitpid __b64_ntop _getpty)
+ 
+ if test $ac_cv_func_mmap = yes ; then
+-AC_MSG_CHECKING([for mmap anon shared])
+-AC_TRY_RUN(
+-	[
+-#include <stdio.h>
+-#include <sys/mman.h>
+-#if !defined(MAP_ANON) && defined(MAP_ANONYMOUS)
+-#define MAP_ANON MAP_ANONYMOUS
+-#endif
+-main() { char *p;
+-p = (char *) mmap(NULL, 10, PROT_WRITE|PROT_READ, MAP_ANON|MAP_SHARED, -1, 0);
+-if (p == (char *)-1)
+-	exit(1);
+-exit(0);
+-}
+-	],
+-	[
+-		AC_MSG_RESULT(yes)
+-		AC_DEFINE(HAVE_MMAP_ANON_SHARED)
+-	],
+-	[ AC_MSG_RESULT(no) ] 
+-)
++	AC_DEFINE(HAVE_MMAP_ANON_SHARED)
+ fi
+ 
+ dnl IRIX and Solaris 2.5.1 have dirname() in libgen

@@ -3,6 +3,7 @@
 %bcond_without	gnome		# without gnome-askpass utility
 %bcond_with	gtk		# without gtk (2.x)
 %bcond_with	ldap		# with ldap support
+%bcond_without	libedit		# without libedit (editline/history support in sftp client)
 %bcond_with	kerberos5	# without kerberos5 support
 %bcond_with	chroot		# without chrooted user environment support
 #
@@ -19,7 +20,7 @@ Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	4.0p1
-Release:	0.1
+Release:	1
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -412,6 +413,7 @@ GNOME.
 	--with-mantype=man \
 	--with-md5-passwords \
 	--with-ipaddr-display \
+	%{?with_libedit:--with-libedit} \
 	--with-4in6 \
 	--disable-suid-ssh \
 	--with-tcp-wrappers \

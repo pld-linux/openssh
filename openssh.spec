@@ -4,8 +4,8 @@
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(pl):	Publicznie dostêpna implementacja bezpiecznego shella (SSH)
 Name:		openssh
-Version:	2.5.2p2
-Release:	2
+Version:	2.9p1
+Release:	1
 License:	BSD
 Group:		Applications/Networking
 Group(de):	Applikationen/Netzwerkwesen
@@ -18,8 +18,7 @@ Source4:	%{name}d.pamd
 Source5:	%{name}.sysconfig
 Source6:	passwd.pamd
 Patch0:		%{name}-libwrap.patch
-Patch1:		%{name}-LIBS.patch
-Patch2:		%{name}-no_libnsl.patch
+Patch1:		%{name}-no_libnsl.patch
 URL:		http://www.openssh.com/
 BuildRequires:	XFree86-devel
 BuildRequires:	autoconf
@@ -166,21 +165,20 @@ Ten pakiet zawiera ,,odpytywacz has³a'' dla GNOME.
 %prep
 %setup  -q
 %patch0 -p1
-#%patch1 -p1
-%patch2 -p1
+%patch1 -p1
 
 %build
 autoconf
 %configure \
 	%{!?bcond_off_gnome:--with-gnome-askpass} \
 	--with-tcp-wrappers \
+	--with-pam \
+	--with-mantype=man \
 	--with-md5-passwords \
 	--with-ipaddr-display \
-	--enable-ipv6 \
 	--with-4in6 \
-	--with-pam \
-	--enable-log-auth \
-	--disable-suid-ssh
+	--disable-suid-ssh \
+	--with-pid-dir={_localstatedir}/run
 
 echo '#define LOGIN_PROGRAM           "/bin/login"' >>config.h
 
@@ -205,6 +203,9 @@ install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/ssh_config
 install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/sshd_config
 install -d $RPM_BUILD_ROOT%{_libexecdir}/ssh
 %{!?bcond_off_gnome:install contrib/gnome-ssh-askpass $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass}
+
+rm	$RPM_BUILD_ROOT%{_mandir}/man1/slogin.1
+echo ".so man1/ssh.1" > $RPM_BUILD_ROOT%{_mandir}/man1/slogin.1
 
 gzip -9nf *.RNG TODO README OVERVIEW CREDITS Change*
 
@@ -257,6 +258,7 @@ fi
 %attr(755,root,root) %{_bindir}/scp
 %{_mandir}/man1/scp.1*
 %{_mandir}/man1/ssh.1*
+%{_mandir}/man1/slogin.1*
 %{_mandir}/man1/sftp.1*
 %{_mandir}/man1/ssh-agent.1*
 %{_mandir}/man1/ssh-add.1*

@@ -1,10 +1,12 @@
 Summary:	OpenSSH free Secure Shell (SSH) implementation
+Summary(pl):   ,,wolna'' implementacja bezpiecznego shella (SSH)
 Name:		openssh
 Version:	2.1.0
-Release:	1
+Release:	2
 License:	BSD
 Group:		Applications/Networking
 Group(pl):	Aplikacje/Sieciowe
+URL:		http://www.openssh.com/
 Source0:	ftp://ftp.ca.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
 Source1:	opensshd.conf
 Source2:	openssh.conf
@@ -14,7 +16,8 @@ Source5:	openssh.sysconfig
 Source6:	passwd.pamd
 Patch0:		openssh-PAM_NEW_AUTHTOK.patch
 Patch1:		openssh-libwrap.patch
-BuildRequires:	openssl-devel >= 0.9.4-2
+Patch2:		openssh-known-hosts.patch
+BuildRequires:	openssl-devel >= 0.9.5a
 BuildRequires:	rpm >= 3.0.4
 BuildRequires:	zlib-devel
 BuildRequires:	pam-devel
@@ -22,7 +25,7 @@ BuildRequires:	XFree86-devel
 BuildRequires:	gnome-libs-devel
 BuildRequires:	gtk+-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
-Prereq:		openssl >= 0.9.4-2
+Prereq:		openssl >= 0.9.5a
 Obsoletes:	ssh < %{version}, ssh > %{version}
 
 %define		_sysconfdir	/etc/ssh
@@ -42,8 +45,14 @@ This package includes the core files necessary for both the OpenSSH client
 and server. To make this package useful, you should also install
 openssh-clients, openssh-server, or both.
 
+%description -l pl
+Ssh (Secure Shell) to program s³u¿±cy do logowania siê na zdaln± maszynê
+i uruchamiania na niej aplikacji. W zamierzeniu openssh ma zast±piæ rlogin,
+rsh i dostarczyæ bezpieczne, szyfrowane po³±czenie pomiedzy dwoma hostami.
+
 %package clients
 Summary:	OpenSSH Secure Shell protocol clients
+Summary(pl):    Klienci protoko³u Secure Shell
 Requires:	openssh
 Group:		Applications/Networking
 Group(pl):	Aplikacje/Sieciowe
@@ -64,8 +73,16 @@ algorithms to seperate libraries (OpenSSL).
 This package includes the clients necessary to make encrypted connections
 to SSH servers.
 
+%description -l pl clients
+Ssh (Secure Shell) to program s³u¿±cy do logowania siê na zdaln± maszynê
+i uruchamiania na niej aplikacji. W zamierzeniu openssh ma zast±piæ rlogin,
+rsh i dostarczyæ bezpieczne, szyfrowane po³±czenie pomiedzy dwoma hostami.
+
+Ten pakiet zawiera klientów s³u¿±cych do ³±czenia siê z serwerami SSH.
+
 %package server
 Summary:	OpenSSH Secure Shell protocol server (sshd)
+Summary(pl):    Serwer protoko³u Secure Shell (sshd)
 Requires:	openssh chkconfig >= 0.9
 Group:		Networking/Daemons
 Group(pl):	Sieciowe/Serwery
@@ -90,8 +107,16 @@ This package contains the secure shell daemon. The sshd is the server part
 of the secure shell protocol and allows ssh clients to connect to your
 host.
 
+%description -l pl server
+Ssh (Secure Shell) to program s³u¿±cy do logowania siê na zdaln± maszynê
+i uruchamiania na niej aplikacji. W zamierzeniu openssh ma zast±piæ rlogin,
+rsh i dostarczyæ bezpieczne, szyfrowane po³±czenie pomiedzy dwoma hostami.
+
+Ten pakiet zawiera serwer sshd (do którego mog± ³±czyæ siê klienci ssh).
+
 %package gnome-askpass
 Summary:	OpenSSH GNOME passphrase dialog
+Summary(pl):	Odpytywacz has³a OpenSSH dla GNOME
 Group:		Applications/Networking
 Group(pl):	Aplikacje/Sieciowe
 Requires:	%{name} = %{version}
@@ -112,10 +137,18 @@ algorithms to seperate libraries (OpenSSL).
 
 This package contains the GNOME passphrase dialog.
 
+%description -l pl gnome-askpass
+Ssh (Secure Shell) to program s³u¿±cy do logowania siê na zdaln± maszynê
+i uruchamiania na niej aplikacji. W zamierzeniu openssh ma zast±piæ rlogin,
+rsh i dostarczyæ bezpieczne, szyfrowane po³±czenie pomiedzy dwoma hostami.
+
+Ten pakiet zawiera ,,odpytywacz has³a'' dla GNOME.
+
 %prep
 %setup  -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 autoconf
@@ -125,19 +158,13 @@ autoconf
 	--with-md5-passwords \
 	--with-ipaddr-display \
 	--enable-ipv6 \
+	--with-4in6 \
 	--enable-log-auth 
-
-# with ipv4-default sshd can't listen on IPv6 and IPv4 sockets
-#	--with-ipv4-default \
-# broken options
-#	--without-kerberos4 \
-#	--without-afs \
-#	--without-skey 
 
 echo '#define LOGIN_PROGRAM           "/bin/login"' >>config.h
 
 make
-cd contrib && gcc `gnome-config --cflags gnome gnomeui` \
+cd contrib && gcc $RPM_OPT_FLAGS `gnome-config --cflags gnome gnomeui` \
 	gnome-ssh-askpass.c -o gnome-ssh-askpass \
 	`gnome-config --libs gnome gnomeui`
 
@@ -155,7 +182,8 @@ install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
 install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/ssh_config
 install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/sshd_config
 install -d $RPM_BUILD_ROOT%{_libexecdir}/ssh
-install contrib/gnome-ssh-askpass $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
+install -s contrib/gnome-ssh-askpass \
+	$RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
 
 gzip -9nf ChangeLog OVERVIEW COPYING.Ylonen README README.Ylonen UPGRADING \
 	$RPM_BUILD_ROOT/%{_mandir}/man*/*
@@ -167,8 +195,11 @@ rm -rf $RPM_BUILD_ROOT
 
 %post server
 /sbin/chkconfig --add sshd
-if [ ! -f /etc/ssh/ssh_host_key -o ! -s /etc/ssh/ssh_host_key ]; then
-	/usr/bin/ssh-keygen -b 1024 -f /etc/ssh/ssh_host_key -N '' 1>&2
+if [ ! -f %{_sysconfdir}/ssh_host_key -o ! -s %{_sysconfdir}/ssh_host_key ]; then
+	%{_bindir}/ssh-keygen -b 1024 -f %{_sysconfdir}/ssh_host_key -N '' 1>&2
+fi
+if [ ! -f %{_sysconfdir}/ssh_host_dsa_key -o ! -s %{_sysconfdir}/ssh_host_dsa_key ]; then
+        %{_bindir}/ssh-keygen -d -f %{_sysconfdir}/ssh_host_dsa_key -N '' 1>&2
 fi
 if [ -f /var/lock/subsys/sshd ]; then
 	/etc/rc.d/init.d/sshd restart 1>&2
@@ -196,18 +227,14 @@ fi
 
 %files clients
 %defattr(644,root,root,755)
-# suid root ?
-#%attr(4755,root,root) %{_bindir}/ssh
 %attr(0755,root,root) %{_bindir}/ssh
 %attr(0755,root,root) %{_bindir}/ssh-agent
 %attr(0755,root,root) %{_bindir}/ssh-add
-#%attr(0755,root,root) %{_bindir}/slogin
 %attr(755,root,root) %{_bindir}/scp
 %{_mandir}/man1/scp.1*
 %{_mandir}/man1/ssh.1*
 %{_mandir}/man1/ssh-agent.1*
 %{_mandir}/man1/ssh-add.1*
-#%{_mandir}/man1/slogin.1
 %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/ssh_config
 
 %files server

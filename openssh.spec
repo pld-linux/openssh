@@ -22,7 +22,7 @@ Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	3.7.1p1
-Release:	2%{?_with_ldap:ldap}
+Release:	3%{?_with_ldap:ldap}
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -47,6 +47,7 @@ Patch4:		%{name}-sigpipe.patch
 # http://ldappubkey.gcu-squad.org/
 Patch5:		ldappubkey-ossh3.6-v2.patch
 Patch6:		%{name}-heimdal.patch
+Patch7:		%{name}-pam_chauthtok.patch
 URL:		http://www.openssh.com/
 BuildRequires:	autoconf
 BuildRequires:	automake

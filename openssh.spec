@@ -42,7 +42,7 @@ BuildRequires:	automake
 BuildRequires:	libwrap-devel
 BuildRequires:	openssl-devel >= 0.9.7b
 BuildRequires:	pam-devel
-BuildRequires:	perl
+BuildRequires:	%{__perl}
 %{!?_without_gtk:BuildRequires:	pkgconfig}
 BuildRequires:	zlib-devel
 PreReq:		openssl >= 0.9.7
@@ -385,6 +385,7 @@ GNOME.
 %{__autoconf}
 
 %configure \
+	PERL=%{__perl} \
 	--with-pam \
 	--with-mantype=man \
 	--with-md5-passwords \

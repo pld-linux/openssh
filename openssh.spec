@@ -19,6 +19,7 @@ Source5:	%{name}.sysconfig
 Source6:	passwd.pamd
 Patch0:		%{name}-libwrap.patch
 Patch1:		%{name}-no_libnsl.patch
+Patch2:		%{name}-no-openssl-ver-check.patch
 URL:		http://www.openssh.com/
 BuildRequires:	XFree86-devel
 BuildRequires:	autoconf
@@ -29,7 +30,6 @@ BuildRequires:	pam-devel
 BuildRequires:	zlib-devel
 BuildRequires:	libwrap-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
-%requires_eq	openssl
 Prereq:		openssl
 Obsoletes:	ssh < %{version}
 Obsoletes:	ssh > %{version}
@@ -166,6 +166,7 @@ Ten pakiet zawiera ,,odpytywacz has³a'' dla GNOME.
 %setup  -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 autoconf

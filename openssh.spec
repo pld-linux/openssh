@@ -1,7 +1,7 @@
 Summary:	OpenSSH free Secure Shell (SSH) implementation
-Summary(pl):	,,wolna'' implementacja bezpiecznego shella (SSH)
+Summary(pl):	Publicznie dostêpna implementacja bezpiecznego shella (SSH)
 Name:		openssh
-Version:	2.1.1p2
+Version:	2.1.1p3
 Release:	1
 License:	BSD
 Group:		Applications/Networking

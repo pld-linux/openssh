@@ -1,7 +1,10 @@
 #
 # Conditional build:
 # _without_gnome - without gnome-askpass utility
-
+# _without_gtk	 - without gtk (2.x)
+#
+# default to gtk2-based gnome-askpass
+%{!?_without_gtk:%define _without_gnome 1}
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(de):	OpenSSH - freie Implementation der Secure Shell (SSH)
 Summary(es):	Implementación libre de SSH
@@ -36,6 +39,7 @@ URL:		http://www.openssh.com/
 BuildRequires:	autoconf
 BuildRequires:	automake
 %{!?_without_gnome:BuildRequires: gnome-libs-devel}
+%{!?_without_gtk:BuildRequires:	gtk+2-devel}
 BuildRequires:	libwrap-devel
 BuildRequires:	openssl-devel >= 0.9.6a
 BuildRequires:	pam-devel
@@ -241,6 +245,7 @@ Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/useradd
 Requires(post):	/sbin/chkconfig
 Requires(post):	chkconfig >= 0.9
+Requires(post):	grep
 Requires(postun):	/usr/sbin/userdel
 Requires:	/bin/login
 Requires:	util-linux
@@ -381,7 +386,6 @@ GNOME.
 %{__autoconf}
 
 %configure \
-	%{!?_without_gnome:--with-gnome-askpass} \
 	--with-pam \
 	--with-mantype=man \
 	--with-md5-passwords \
@@ -397,9 +401,15 @@ echo '#define LOGIN_PROGRAM           "/bin/login"' >>config.h
 
 %{__make}
 
-%{!?_without_gnome:cd contrib && %{__cc} %{rpmcflags} `gnome-config --cflags gnome gnomeui gtk`} \
-%{!?_without_gnome:gnome-ssh-askpass1.c -o gnome-ssh-askpass} \
-%{!?_without_gnome:`gnome-config --libs gnome gnomeui gtk` }
+cd contrib
+%if 0%{!?_without_gnome:1}
+%{__make} gnome-ssh-askpass1 \
+	CC="%{__cc} %{rpmldflags} %{rpmcflags}"
+%endif
+%if 0%{!?_without_gtk:1}
+%{__make} gnome-ssh-askpass2 \
+	CC="%{__cc} %{rpmldflags} %{rpmcflags}"
+%endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -413,9 +423,17 @@ install %{SOURCE5} $RPM_BUILD_ROOT/etc/sysconfig/sshd
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
 install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/ssh_config
 install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/sshd_config
+
 install -d $RPM_BUILD_ROOT%{_libexecdir}/ssh
-%{!?_without_gnome:install contrib/gnome-ssh-askpass $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass}
-%{!?_without_gnome:install %{SOURCE7} %{SOURCE8} $RPM_BUILD_ROOT/etc/profile.d}
+%if 0%{!?_without_gnome:1}
+install contrib/gnome-ssh-askpass1 $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
+%endif
+%if 0%{!?_without_gtk:1}
+install contrib/gnome-ssh-askpass2 $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
+%endif
+%if 0%{!?_without_gnome:1}%{!?_without_gtk:1}
+install %{SOURCE7} %{SOURCE8} $RPM_BUILD_ROOT/etc/profile.d
+%endif
 
 rm -f	$RPM_BUILD_ROOT%{_mandir}/man1/slogin.1
 echo ".so ssh.1" > $RPM_BUILD_ROOT%{_mandir}/man1/slogin.1
@@ -442,7 +460,8 @@ if [ -f /var/lock/subsys/sshd ]; then
 else
 	echo "Run \"/etc/rc.d/init.d/sshd start\" to start openssh daemon."
 fi
-if ! grep ssh /etc/security/passwd.conf >/dev/null 2>&1 ; then
+if ! grep -qs ssh /etc/security/passwd.conf ; then
+	umask 022
 	echo "ssh" >> /etc/security/passwd.conf
 fi
 
@@ -498,8 +517,10 @@ fi
 %attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/sysconfig/sshd
 %attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/security/blacklist.sshd
 
-%{!?_without_gnome:%files gnome-askpass}
-%{!?_without_gnome:%defattr(644,root,root,755)}
-%{!?_without_gnome:%dir %{_libexecdir}/ssh}
-%{!?_without_gnome:%attr(755,root,root) %{_libexecdir}/ssh/ssh-askpass}
-%{!?_without_gnome:%attr(755,root,root) /etc/profile.d/*}
+%if 0%{!?_without_gnome:1}%{!?_without_gtk:1}
+%files gnome-askpass
+%defattr(644,root,root,755)
+%dir %{_libexecdir}/ssh
+%attr(755,root,root) %{_libexecdir}/ssh/ssh-askpass
+%attr(755,root,root) /etc/profile.d/*
+%endif

@@ -1,7 +1,7 @@
 #
 # Conditional build:
 %bcond_with	gnome		# without gnome-askpass utility
-%bcond_without	gtk		# without gtk (2.x)
+%bcond_without	gtk		# without GTK+ (2.x)
 %bcond_with	ldap		# with ldap support
 %bcond_without	kerberos5	# without kerberos5 support
 %bcond_without	chroot		# without chrooted user environment support

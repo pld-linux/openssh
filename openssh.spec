@@ -20,7 +20,7 @@ BuildRequires:	zlib-devel
 BuildRequires:	pam-devel
 BuildRequires:	XFree86-devel
 BuildRequires:	gnome-libs-devel
-BuildRoot:	/tmp/%{name}-%{version}-root
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Obsoletes:	ssh < %{version}, ssh > %{version}
 
 %define		_sysconfdir	/etc/ssh

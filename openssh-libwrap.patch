@@ -1,0 +1,31 @@
+--- Makefile.in~	Thu Jan 27 04:15:48 2000
++++ Makefile.in	Fri Feb  4 16:30:04 2000
+@@ -23,6 +23,7 @@
+ CFLAGS=@CFLAGS@ $(PATHS) @DEFS@
+ EXTRA_TARGETS=@GNOME_ASKPASS@
+ LIBS=@LIBS@
++LIBWRAP=@LIBWRAP@
+ AR=@AR@
+ RANLIB=@RANLIB@
+ INSTALL=@INSTALL@
+@@ -62,7 +63,7 @@
+ 	$(CC) -o $@ $(SSHOBJS) $(LDFLAGS) -lssh $(LIBS)
+ 
+ sshd: libssh.a	$(SSHDOBJS)
+-	$(CC) -o $@ $(SSHDOBJS) $(LDFLAGS) -lssh $(LIBS)
++	$(CC) -o $@ $(SSHDOBJS) $(LDFLAGS) -lssh $(LIBWRAP) $(LIBS)
+ 
+ scp: libssh.a scp.o
+ 	$(CC) -o $@ scp.o $(LDFLAGS) -lssh $(LIBS) 
+--- configure.in~	Wed Jan 26 02:15:31 2000
++++ configure.in	Fri Feb  4 16:31:04 2000
+@@ -679,7 +679,8 @@
+ 	[
+ 		if test "x$withval" != "$xno" ; then
+ 			AC_DEFINE(LIBWRAP)
+-			LIBS="$LIBS -lwrap"
++			LIBWRAP="-lwrap"
++			AC_SUBST(LIBWRAP)
+ 		fi
+ 	]
+ )

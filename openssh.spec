@@ -1,7 +1,7 @@
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Name:		openssh
-Version:	1.2pre15
-Release:	2
+Version:	1.2pre17
+Release:	1
 Source0:	http://violet.ibs.com.au/openssh/files/%{name}-%{version}.tar.gz
 Source1:	opensshd.conf
 Source2:	openssh.conf
@@ -12,6 +12,7 @@ Source6:	passwd.pamd
 Patch0:		openssh-ssl.patch
 Patch1:		openssh-DESTDIR.patch
 Patch2:		openssh-PAM_NEW_AUTHTOK.patch
+Patch3:		http://www.misiek.eu.org/ipv6/openssh-1.2pre17-ipv6-untested-12121999.patch.gz
 License:	BSD
 Group:		Applications/Networking
 Group(pl):	Aplikacje/Sieciowe
@@ -111,13 +112,25 @@ This package contains the GNOME passphrase dialog.
 %prep
 %setup  -q
 %patch0 -p1
-%patch1 -p1
+%patch1 -p1 
 %patch2 -p1
+%patch3 -p1
 
 %build
 autoconf
 %configure \
-	--with-gnome-askpass
+	--with-gnome-askpass \
+	--with-tcp-wrappers \
+	--with-md5-passwords \
+	--enable-ipv6 \
+	--enable-log-auth 
+	
+#	--without-kerberos4 \
+#	--without-afs \
+#	--without-skey 
+
+echo '#define LOGIN_PROGRAM           "/bin/login"' >>config.h
+
 make
 
 %install

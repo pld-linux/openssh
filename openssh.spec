@@ -54,7 +54,7 @@ BuildRequires:	automake
 %{!?_without_gnome:BuildRequires: gnome-libs-devel}
 %{!?_without_gtk:BuildRequires:	gtk+2-devel}
 BuildRequires:	libwrap-devel
-BuildRequires:	openssl-devel >= 0.9.7c
+BuildRequires:	openssl-devel >= 0.9.7cc
 %{?_with_ldap:BuildRequires:	openldap-devel}
 %{?_with_kerberos5:BuildRequires:	heimdal-devel}
 BuildRequires:	pam-devel
@@ -62,7 +62,7 @@ BuildRequires:	%{__perl}
 %{!?_without_gtk:BuildRequires:	pkgconfig}
 BuildRequires:	zlib-devel
 PreReq:		FHS >= 2.1-24
-PreReq:		openssl >= 0.9.7
+PreReq:		openssl >= 0.9.7c
 Obsoletes:	ssh
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 

@@ -15,6 +15,7 @@ Source6:	passwd.pamd
 Patch0:		openssh-PAM_NEW_AUTHTOK.patch
 Patch1:		openssh-libwrap.patch
 BuildRequires:	openssl-devel >= 0.9.4-2
+BuildRequires:  rpm >= 3.0.4
 BuildRequires:	zlib-devel
 BuildRequires:	pam-devel
 BuildRequires:	XFree86-devel
@@ -147,9 +148,8 @@ install %{SOURCE5} $RPM_BUILD_ROOT/etc/sysconfig/sshd
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
 install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/ssh_config
 install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/sshd_config
-
-mv -f 	$RPM_BUILD_ROOT%{_libexecdir}/ssh/gnome-ssh-askpass \
-	$RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
+install -d $RPM_BUILD_ROOT%{_libexecdir}/ssh
+install ssh-askpass $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
 
 gzip -9fn ChangeLog OVERVIEW COPYING.Ylonen README README.Ylonen UPGRADING \
 	$RPM_BUILD_ROOT/%{_mandir}/man*/*

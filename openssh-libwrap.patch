@@ -1,6 +1,6 @@
-diff -Naur openssh-2.1.1p1/Makefile.in openssh-2.1.1p1-p/Makefile.in
---- openssh-2.1.1p1/Makefile.in	Sat Jun  3 16:57:40 2000
-+++ openssh-2.1.1p1-p/Makefile.in	Mon Jun 12 16:33:55 2000
+diff -Nru openssh-2.1.1p2/Makefile.in openssh-2.1.1p2.new/Makefile.in
+--- openssh-2.1.1p2/Makefile.in	Thu Jul  6 05:30:34 2000
++++ openssh-2.1.1p2.new/Makefile.in	Thu Jul  6 05:29:57 2000
 @@ -23,6 +23,7 @@
  PATHS=-DETCDIR=\"$(sysconfdir)\" -DSSH_PROGRAM=\"$(SSH_PROGRAM)\" -DSSH_ASKPASS_DEFAULT=\"$(ASKPASS_PROGRAM)\"
  CFLAGS=@CFLAGS@ $(PATHS) @DEFS@
@@ -18,10 +18,10 @@ diff -Naur openssh-2.1.1p1/Makefile.in openssh-2.1.1p1-p/Makefile.in
  
  scp: libopenbsd-compat.a libssh.a scp.o
  	$(LD) -o $@ scp.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS) 
-diff -Naur openssh-2.1.1p1/configure.in openssh-2.1.1p1-p/configure.in
---- openssh-2.1.1p1/configure.in	Fri Jun  9 03:58:35 2000
-+++ openssh-2.1.1p1-p/configure.in	Mon Jun 12 16:33:55 2000
-@@ -814,8 +814,11 @@
+diff -Nru openssh-2.1.1p2/configure.in openssh-2.1.1p2.new/configure.in
+--- openssh-2.1.1p2/configure.in	Thu Jul  6 05:30:34 2000
++++ openssh-2.1.1p2.new/configure.in	Thu Jul  6 05:31:54 2000
+@@ -929,8 +929,11 @@
  	[  --with-tcp-wrappers     Enable tcpwrappers support],
  	[
  		if test "x$withval" != "xno" ; then
@@ -34,16 +34,15 @@ diff -Naur openssh-2.1.1p1/configure.in openssh-2.1.1p1-p/configure.in
  			AC_MSG_CHECKING(for libwrap)
  			AC_TRY_LINK(
  				[
-@@ -826,6 +829,7 @@
+@@ -941,12 +944,14 @@
  				[
  					AC_MSG_RESULT(yes)
  					AC_DEFINE(LIBWRAP)
 +					AC_SUBST(LIBWRAP)
+ 					TCPW_MSG="yes" 
  				],
  				[
- 					AC_MSG_RESULT(no)
-@@ -833,6 +837,7 @@
- 					LIBS="$saved_LIBS"
+ 					AC_MSG_ERROR([*** libwrap missing])
  				]
  			)
 +			LIBS="$saved_LIBS"

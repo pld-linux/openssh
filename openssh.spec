@@ -33,20 +33,18 @@ Patch2:		%{name}-linux-ipv6.patch
 Patch3:		%{name}-pam_misc.patch
 Patch4:		%{name}-sigpipe.patch
 URL:		http://www.openssh.com/
-BuildRequires:	XFree86-devel
 BuildRequires:	autoconf
 BuildRequires:	automake
-BuildRequires:	chrpath
 %{!?_without_gnome:BuildRequires: gnome-libs-devel}
 BuildRequires:	libwrap-devel
 BuildRequires:	openssl-devel >= 0.9.6a
 BuildRequires:	pam-devel
 BuildRequires:	perl
 BuildRequires:	zlib-devel
-BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
-Prereq:		openssl
-Prereq:		FHS >= 2.1-24
+PreReq:		openssl
+PreReq:		FHS >= 2.1-24
 Obsoletes:	ssh
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_sysconfdir	/etc/ssh
 %define		_libexecdir	%{_libdir}/%{name}
@@ -392,7 +390,8 @@ GNOME.
 	--disable-suid-ssh \
 	--with-tcp-wrappers \
 	--with-privsep-path=%{_privsepdir} \
-	--with-pid-dir=%{_localstatedir}/run
+	--with-pid-dir=%{_localstatedir}/run \
+	--with-xauth=/usr/X11R6/bin/xauth
 
 echo '#define LOGIN_PROGRAM           "/bin/login"' >>config.h
 

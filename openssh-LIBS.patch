@@ -1,6 +1,6 @@
-diff -Nru openssh-2.1.0p2/Makefile.in openssh-2.1.0p2.new/Makefile.in
---- openssh-2.1.0p2/Makefile.in	Wed May 24 20:39:37 2000
-+++ openssh-2.1.0p2.new/Makefile.in	Wed May 24 20:40:28 2000
+diff -Naur openssh-2.1.1p1/Makefile.in openssh-2.1.1p1-p/Makefile.in
+--- openssh-2.1.1p1/Makefile.in	Mon Jun 12 16:34:55 2000
++++ openssh-2.1.1p1-p/Makefile.in	Mon Jun 12 16:36:51 2000
 @@ -70,22 +70,22 @@
  	$(RANLIB) $@
  
@@ -27,5 +27,5 @@ diff -Nru openssh-2.1.0p2/Makefile.in openssh-2.1.0p2.new/Makefile.in
 -	$(LD) -o $@ ssh-keygen.o log-client.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS) 
 +	$(LD) -o $@ ssh-keygen.o log-client.o $(LDFLAGS) -lssh -lopenbsd-compat -lcrypto
  
- $(MANPAGES) $(CONFIGFILES)::
- 	$(FIXPATHSCMD) $(srcdir)/$@
+ # test driver for the loginrec code - not built by default
+ logintest: logintest.o libopenbsd-compat.a libssh.a log-client.o loginrec.o

@@ -9,7 +9,7 @@ Summary(pt_BR):	ImplementaГЦo livre do SSH
 Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
-Version:	3.2.3p1
+Version:	3.3p1
 Release:	1
 License:	BSD
 Group:		Applications/Networking
@@ -389,14 +389,15 @@ fi
 %attr(0755,root,root) %{_bindir}/sftp
 %attr(0755,root,root) %{_bindir}/ssh-agent
 %attr(0755,root,root) %{_bindir}/ssh-add
-%attr(755,root,root) %{_bindir}/scp
+%attr(0755,root,root) %{_bindir}/scp
+%config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/ssh_config
 %{_mandir}/man1/scp.1*
 %{_mandir}/man1/ssh.1*
 %{_mandir}/man1/slogin.1*
 %{_mandir}/man1/sftp.1*
 %{_mandir}/man1/ssh-agent.1*
 %{_mandir}/man1/ssh-add.1*
-%config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/ssh_config
+%{_mandir}/man5/ssh_config.5*
 
 %files server
 %defattr(644,root,root,755)
@@ -405,6 +406,7 @@ fi
 %dir %{_libexecdir}
 %{_mandir}/man8/sshd.8*
 %{_mandir}/man8/sftp-server.8*
+%{_mandir}/man5/sshd_config.5*
 %attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/sshd_config
 %attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/pam.d/sshd
 %attr(640,root,root) %{_sysconfdir}/moduli

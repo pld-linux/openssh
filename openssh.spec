@@ -22,7 +22,7 @@ Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	3.7.1p2
-Release:	2
+Release:	3
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -54,7 +54,7 @@ BuildRequires:	automake
 %{!?_without_gnome:BuildRequires: gnome-libs-devel}
 %{!?_without_gtk:BuildRequires:	gtk+2-devel}
 BuildRequires:	libwrap-devel
-BuildRequires:	openssl-devel >= 0.9.7b
+BuildRequires:	openssl-devel >= 0.9.7c
 %{?_with_ldap:BuildRequires:	openldap-devel}
 %{?_with_kerberos5:BuildRequires:	heimdal-devel}
 BuildRequires:	pam-devel

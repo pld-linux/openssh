@@ -3,7 +3,7 @@
 # _without_gnome	- without gnome-askpass utility
 # _without_gtk		- without gtk (2.x)
 # _with_ldap		- with ldap support
-# _with_kerberos5		- with kerberos5 support
+# _with_kerberos5	- with kerberos5 support
 #
 # default to gtk2-based gnome-askpass
 
@@ -21,8 +21,8 @@ Summary(pt_BR):	ImplementaГЦo livre do SSH
 Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
-Version:	3.6.1p2%{?_with_ldap:ldap}
-Release:	3.2
+Version:	3.6.1p2
+Release:	4%{?_with_ldap:ldap}
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -42,7 +42,7 @@ Patch3:		%{name}-pam_misc.patch
 Patch4:		%{name}-sigpipe.patch
 # http://ldappubkey.gcu-squad.org/
 Patch5:		ldappubkey-ossh3.6-v2.patch
-Patch6:		openssh-heimdal.patch
+Patch6:		%{name}-heimdal.patch
 URL:		http://www.openssh.com/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -56,8 +56,8 @@ BuildRequires:	pam-devel
 BuildRequires:	%{__perl}
 %{!?_without_gtk:BuildRequires:	pkgconfig}
 BuildRequires:	zlib-devel
-PreReq:		openssl >= 0.9.7
 PreReq:		FHS >= 2.1-24
+PreReq:		openssl >= 0.9.7
 Obsoletes:	ssh
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -251,10 +251,10 @@ Summary(ru):	OpenSSH - сервер протокола Secure Shell (sshd)
 Summary(uk):	OpenSSH - сервер протоколу Secure Shell (sshd)
 Group:		Networking/Daemons
 PreReq:		%{name} = %{epoch}:%{version}
-PreReq:		rc-scripts >= 0.3.1-3
+PreReq:		rc-scripts >= 0.3.1-14
 Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/useradd
-Requires(post):	/sbin/chkconfig
+Requires(post,preun):	/sbin/chkconfig
 Requires(post):	chkconfig >= 0.9
 Requires(post):	grep
 Requires(postun):	/usr/sbin/userdel

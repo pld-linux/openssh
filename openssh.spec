@@ -217,11 +217,16 @@ rm -rf $RPM_BUILD_ROOT
 %post server
 /sbin/chkconfig --add sshd
 if [ ! -f %{_sysconfdir}/ssh_host_key -o ! -s %{_sysconfdir}/ssh_host_key ]; then
-	%{_bindir}/ssh-keygen -b 1024 -f %{_sysconfdir}/ssh_host_key -N '' 1>&2
+	%{_bindir}/ssh-keygen -t rsa1 -f %{_sysconfdir}/ssh_host_key -N '' 1>&2
 	chmod 600 %{_sysconfdir}/ssh_host_key
 fi
+if [ ! -f %{_sysconfdir}/ssh_host_rsa_key -o ! -s %{_sysconfdir}/ssh_host_rsa_key ]; then
+        %{_bindir}/ssh-keygen -t rsa -f %{_sysconfdir}/ssh_host_rsa_key -N '' 1>&2
+	chmod 600 %{_sysconfdir}/ssh_host_rsa_key
+fi
+
 if [ ! -f %{_sysconfdir}/ssh_host_dsa_key -o ! -s %{_sysconfdir}/ssh_host_dsa_key ]; then
-        %{_bindir}/ssh-keygen -d -f %{_sysconfdir}/ssh_host_dsa_key -N '' 1>&2
+        %{_bindir}/ssh-keygen -t dsa -f %{_sysconfdir}/ssh_host_dsa_key -N '' 1>&2
 	chmod 600 %{_sysconfdir}/ssh_host_dsa_key
 fi
 if [ -f /var/lock/subsys/sshd ]; then

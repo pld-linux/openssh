@@ -1,8 +1,8 @@
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(pl):	,,wolna'' implementacja bezpiecznego shella (SSH)
 Name:		openssh
-Version:	2.1.0
-Release:	3
+Version:	2.1.0p2
+Release:	1
 License:	BSD
 Group:		Applications/Networking
 Group(pl):	Aplikacje/Sieciowe
@@ -16,7 +16,6 @@ Source5:	openssh.sysconfig
 Source6:	passwd.pamd
 Patch0:		openssh-PAM_NEW_AUTHTOK.patch
 Patch1:		openssh-libwrap.patch
-Patch2:		openssh-known-hosts.patch
 Patch3:		openssh-login.patch
 BuildRequires:	openssl-devel >= 0.9.5a
 BuildRequires:	rpm >= 3.0.4
@@ -154,7 +153,6 @@ Ten pakiet zawiera ,,odpytywacz has³a'' dla GNOME.
 %setup  -q
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
 %patch3 -p1
 
 %build

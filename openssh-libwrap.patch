@@ -1,25 +1,25 @@
---- openssh-1.2.2p1/Makefile.in.wiget	Fri Mar  3 12:13:52 2000
-+++ openssh-1.2.2p1/Makefile.in	Tue Mar  7 15:44:57 2000
+--- openssh-1.2.3/Makefile.in.orig	Thu Apr  6 19:31:03 2000
++++ openssh-1.2.3/Makefile.in	Thu Apr  6 19:31:52 2000
 @@ -23,6 +23,7 @@
+ PATHS=-DETCDIR=\"$(sysconfdir)\" -DSSH_PROGRAM=\"$(SSH_PROGRAM)\" -DSSH_ASKPASS_DEFAULT=\"$(ASKPASS_PROGRAM)\"
  CFLAGS=@CFLAGS@ $(PATHS) @DEFS@
- EXTRA_TARGETS=@GNOME_ASKPASS@
  LIBS=@LIBS@
 +LIBWRAP=@LIBWRAP@
  AR=@AR@
  RANLIB=@RANLIB@
  INSTALL=@INSTALL@
-@@ -62,7 +63,7 @@
- 	$(CC) -o $@ $(SSHOBJS) $(LDFLAGS) -lssh $(LIBS)
+@@ -59,7 +60,7 @@
+ 	$(LD) -o $@ $(SSHOBJS) $(LDFLAGS) -lssh $(LIBS)
  
  sshd: libssh.a	$(SSHDOBJS)
--	$(CC) -o $@ $(SSHDOBJS) $(LDFLAGS) -lssh $(LIBS)
-+	$(CC) -o $@ $(SSHDOBJS) $(LDFLAGS) -lssh $(LIBWRAP) $(LIBS)
+-	$(LD) -o $@ $(SSHDOBJS) $(LDFLAGS) -lssh $(LIBS)
++	$(LD) -o $@ $(SSHDOBJS) $(LDFLAGS) -lssh $(LIBWRAP) $(LIBS) 
  
  scp: libssh.a scp.o
- 	$(CC) -o $@ scp.o $(LDFLAGS) -lssh $(LIBS) 
---- openssh-1.2.2p1/configure.in.wiget	Sun Mar  5 07:02:46 2000
-+++ openssh-1.2.2p1/configure.in	Tue Mar  7 15:50:14 2000
-@@ -711,6 +711,9 @@
+ 	$(LD) -o $@ scp.o $(LDFLAGS) -lssh $(LIBS) 
+--- openssh-1.2.3/configure.in.orig	Thu Apr  6 19:32:46 2000
++++ openssh-1.2.3/configure.in	Thu Apr  6 19:33:25 2000
+@@ -735,6 +735,9 @@
  				[
  					AC_MSG_RESULT(yes)
  					AC_DEFINE(LIBWRAP)

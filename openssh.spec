@@ -1,7 +1,7 @@
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Name:		openssh
 Version:	1.2.2
-Release:	1
+Release:	2
 License:	BSD
 Group:		Applications/Networking
 Group(pl):	Aplikacje/Sieciowe
@@ -14,6 +14,7 @@ Source5:	openssh.sysconfig
 Source6:	passwd.pamd
 Patch0:		openssh-PAM_NEW_AUTHTOK.patch
 Patch1:		openssh-libwrap.patch
+Patch2:		openssh-linux.patch
 BuildRequires:	openssl-devel >= 0.9.4-2
 BuildRequires:	zlib-devel
 BuildRequires:	pam-devel
@@ -112,6 +113,7 @@ This package contains the GNOME passphrase dialog.
 %setup  -q
 %patch0 -p1
 %patch1 -p0
+%patch2 -p1
 
 %build
 autoconf
@@ -159,10 +161,10 @@ rm -rf $RPM_BUILD_ROOT
 %post server
 /sbin/chkconfig --add sshd
 if [ ! -f /etc/ssh/ssh_host_key -o ! -s /etc/ssh/ssh_host_key ]; then
-	/usr/bin/ssh-keygen -b 1024 -f /etc/ssh/ssh_host_key -N '' >&2
+	/usr/bin/ssh-keygen -b 1024 -f /etc/ssh/ssh_host_key -N '' 1>&2
 fi
-if [ ! -f /var/lock/subsys/sshd ]; then
-	/etc/rc.d/init.d/sshd restart >&2
+if [ -f /var/lock/subsys/sshd ]; then
+	/etc/rc.d/init.d/sshd restart 1>&2
 fi
 if ! grep ssh /etc/security/passwd.conf >/dev/null 2>&1 ; then
 	echo "ssh" >> /etc/security/passwd.conf
@@ -170,8 +172,8 @@ fi
 
 %preun server
 if [ "$1" = 0 ]; then
-	if [ ! -f /var/lock/subsys/sshd ]; then
-		/etc/rc.d/init.d/sshd stop >&2
+	if [ -f /var/lock/subsys/sshd ]; then
+		/etc/rc.d/init.d/sshd stop 1>&2
 	fi
 	/sbin/chkconfig --del sshd
 fi

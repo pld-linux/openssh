@@ -1,0 +1,50 @@
+--- ./scp.c.org	Sat Sep  8 23:37:22 2001
++++ ./scp.c	Sun Sep  9 00:07:36 2001
+@@ -244,9 +244,11 @@
+ 	addargs("-oFallBackToRsh no");
+ 
+ 	fflag = tflag = 0;
+-	while ((ch = getopt(argc, argv, "dfprtvBCc:i:P:q46S:o:")) != -1)
++	while ((ch = getopt(argc, argv, "dfprtvBCc:i:P:q1246S:o:")) != -1)
+ 		switch (ch) {
+ 		/* User-visible flags. */
++		case '1':
++		case '2':
+ 		case '4':
+ 		case '6':
+ 		case 'C':
+@@ -958,7 +960,7 @@
+ usage()
+ {
+ 	(void) fprintf(stderr, "usage: scp "
+-	    "[-pqrvBC46] [-S ssh] [-P port] [-c cipher] [-i identity] f1 f2\n"
++	    "[-pqrvBC1246] [-S ssh] [-P port] [-c cipher] [-i identity] f1 f2\n"
+ 	    "   or: scp [options] f1 ... fn directory\n");
+ 	exit(1);
+ }
+--- ./scp.1.org	Sun Sep  9 00:03:53 2001
++++ ./scp.1	Sun Sep  9 00:05:56 2001
+@@ -19,7 +19,7 @@
+ .Nd secure copy (remote file copy program)
+ .Sh SYNOPSIS
+ .Nm scp
+-.Op Fl pqrvC46
++.Op Fl pqrvC1246
+ .Op Fl S Ar program
+ .Op Fl P Ar port
+ .Op Fl c Ar cipher
+@@ -110,6 +110,14 @@
+ .It Fl o Ar option
+ The given option is directly passed to
+ .Xr ssh 1 .
++.It Fl 1
++Forces
++.Nm
++to use SSH1 only.
++.It Fl 2
++Forces
++.Nm
++to use SSH2 only.
+ .It Fl 4
+ Forces
+ .Nm

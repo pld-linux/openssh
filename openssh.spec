@@ -5,6 +5,7 @@
 %bcond_with	ldap		# with ldap support
 %bcond_without	kerberos5	# without kerberos5 support
 %bcond_without	chroot		# without chrooted user environment support
+%bcond_with	sshagentsh	# with system-wide script for starting ssh-agent
 #
 # gtk2-based gnome-askpass means no gnome1-based
 %{?with_gtk:%undefine with_gnome}
@@ -38,6 +39,8 @@ Source9:	http://www.imasy.or.jp/~gotoh/ssh/connect.c
 # NoSource9-md5:	c78de727e1208799072be78c05d64398
 Source10:	http://www.imasy.or.jp/~gotoh/ssh/connect.html
 # NoSource10-md5:	f14cb61fafd067a3f5ce4eaa9643bf05
+Source11:	ssh-agent.sh
+Source12:	ssh-agent.conf
 Patch0:		%{name}-no_libnsl.patch
 Patch2:		%{name}-linux-ipv6.patch
 Patch3:		%{name}-pam_misc.patch
@@ -65,7 +68,8 @@ BuildRequires:	%{__perl}
 %{?with_gtk:BuildRequires:	pkgconfig}
 BuildRequires:	zlib-devel
 PreReq:		FHS >= 2.1-24
-PreReq:		openssl >= 0.9.7c
+PreReq:		openssl >= 0.9.7d
+%{?with_sshagentsh:Requires:	xinitrc}
 Obsoletes:	ssh
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -408,7 +412,7 @@ GNOME.
 %patch10 -p1
 
 %build
-cp /usr/share/automake/config.sub .
+cp %{_datadir}/automake/config.sub .
 %{__aclocal}
 %{__autoconf}
 %{?with_chroot:CPPFLAGS="-DCHROOT"}
@@ -451,6 +455,7 @@ cd contrib
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{pam.d,rc.d/init.d,sysconfig,security}} \
 	$RPM_BUILD_ROOT%{_libexecdir}/ssh
+%{?with_sshagentsh:install -d $RPM_BUILD_ROOT/etc/{profile.d,X11/xinit/xinitrc.d}}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
@@ -462,6 +467,11 @@ install %{SOURCE5} $RPM_BUILD_ROOT/etc/sysconfig/sshd
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
 install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/ssh_config
 install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/sshd_config
+%if %{with sshagentsh}
+install %{SOURCE11} $RPM_BUILD_ROOT/etc/profile.d/
+ln -sf	/etc/profile.d/ssh-agent.sh $RPM_BUILD_ROOT/etc/X11/xinit/xinitrc.d/ssh-agent.sh
+install %{SOURCE12} $RPM_BUILD_ROOT/etc/ssh/
+%endif
 
 bzip2 -dc %{SOURCE7} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
 
@@ -535,6 +545,11 @@ fi
 %attr(0755,root,root) %{_bindir}/ssh-add
 %attr(0755,root,root) %{_bindir}/scp
 %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/ssh_config
+%if %{with sshagentsh}
+%config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/ssh-agent.conf
+%attr(0755,root,root) /etc/profile.d/ssh-agent.sh
+%attr(0755,root,root) /etc/X11/xinit/xinitrc.d/ssh-agent.sh
+%endif
 %{_mandir}/man1/scp.1*
 %{_mandir}/man1/ssh.1*
 %{_mandir}/man1/slogin.1*

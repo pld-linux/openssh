@@ -20,7 +20,7 @@ Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	4.0p1
-Release:	1
+Release:	1.1
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -34,10 +34,10 @@ Source5:	%{name}.sysconfig
 Source6:	passwd.pamd
 Source7:	%{name}-askpass.sh
 Source8:	%{name}-askpass.csh
-Source9:	http://www.imasy.or.jp/~gotoh/ssh/connect.c
-# NoSource9-md5:	c78de727e1208799072be78c05d64398
-Source10:	http://www.imasy.or.jp/~gotoh/ssh/connect.html
-# NoSource10-md5:	f14cb61fafd067a3f5ce4eaa9643bf05
+Source9:	http://www.taiyo.co.jp/~gotoh/ssh/connect.c
+# NoSource9-md5:	e1c3cbed88f08ea778d90813d48cd428
+Source10:	http://www.taiyo.co.jp/~gotoh/ssh/connect.html
+# NoSource10-md5:	ec74f3e3b2ea3a7dc84c7988235b6fcf
 Patch0:		%{name}-no_libnsl.patch
 Patch2:		%{name}-linux-ipv6.patch
 Patch3:		%{name}-pam_misc.patch

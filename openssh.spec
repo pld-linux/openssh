@@ -17,7 +17,6 @@ Source6:	passwd.pamd
 Patch0:		%{name}-libwrap.patch
 Patch1:		%{name}-LIBS.patch
 Patch2:		%{name}-no_libnsl.patch
-Patch3:		%{name}-canonname.patch
 URL:		http://www.openssh.com/
 BuildRequires:	autoconf
 BuildRequires:	openssl-devel >= 0.9.5a
@@ -161,7 +160,6 @@ Ten pakiet zawiera ,,odpytywacz has³a'' dla GNOME.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
 
 %build
 autoconf

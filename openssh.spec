@@ -133,7 +133,7 @@ inoltrate attraverso un canale sicuro.
 Ssh (Secure Shell) to program s³u¿±cy do logowania siê na zdaln±
 maszynê i uruchamiania na niej aplikacji. W zamierzeniu openssh ma
 zast±piæ rlogin, rsh i dostarczyæ bezpieczne, szyfrowane po³±czenie
-pomiedzy dwoma hostami.
+pomiêdzy dwoma hostami.
 
 Ten pakiet zawiera podstawowe pliki potrzebne zarówno po stronie
 klienta jak i serwera OpenSSH. Aby by³ u¿yteczny, trzeba zainstalowaæ
@@ -229,7 +229,7 @@ conexiones codificadas con servidores SSH.
 Ssh (Secure Shell) to program s³u¿±cy do logowania siê na zdaln±
 maszynê i uruchamiania na niej aplikacji. W zamierzeniu openssh ma
 zast±piæ rlogin, rsh i dostarczyæ bezpieczne, szyfrowane po³±czenie
-pomiedzy dwoma hostami.
+pomiêdzy dwoma hostami.
 
 Ten pakiet zawiera klientów s³u¿±cych do ³±czenia siê z serwerami SSH.
 
@@ -309,7 +309,7 @@ Questo pacchetto installa sshd, il server di OpenSSH.
 Ssh (Secure Shell) to program s³u¿±cy do logowania siê na zdaln±
 maszynê i uruchamiania na niej aplikacji. W zamierzeniu openssh ma
 zast±piæ rlogin, rsh i dostarczyæ bezpieczne, szyfrowane po³±czenie
-pomiedzy dwoma hostami.
+pomiêdzy dwoma hostami.
 
 Ten pakiet zawiera serwer sshd (do którego mog± ³±czyæ siê klienci
 ssh).
@@ -376,7 +376,7 @@ entrada de passphrase en GNOME.
 Ssh (Secure Shell) to program s³u¿±cy do logowania siê na zdaln±
 maszynê i uruchamiania na niej aplikacji. W zamierzeniu openssh ma
 zast±piæ rlogin, rsh i dostarczyæ bezpieczne, szyfrowane po³±czenie
-pomiedzy dwoma hostami.
+pomiêdzy dwoma hostami.
 
 Ten pakiet zawiera ,,odpytywacz has³a'' dla GNOME.
 

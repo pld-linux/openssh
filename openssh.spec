@@ -2,7 +2,7 @@ Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(pl):	Publicznie dostêpna implementacja bezpiecznego shella (SSH)
 Name:		openssh
 Version:	2.3.0p1
-Release:	1
+Release:	2
 License:	BSD
 Group:		Applications/Networking
 Group(de):	Applikationen/Netzwerkwesen
@@ -18,14 +18,13 @@ Patch0:		%{name}-libwrap.patch
 Patch1:		%{name}-LIBS.patch
 Patch2:		%{name}-no_libnsl.patch
 URL:		http://www.openssh.com/
-BuildRequires:	autoconf
-BuildRequires:	openssl-devel >= 0.9.5a
-BuildRequires:	rpm >= 3.0.4
-BuildRequires:	zlib-devel
-BuildRequires:	pam-devel
 BuildRequires:	XFree86-devel
+BuildRequires:	autoconf
 BuildRequires:	gnome-libs-devel
 BuildRequires:	gtk+-devel
+BuildRequires:	openssl-devel >= 0.9.5a
+BuildRequires:	pam-devel
+BuildRequires:	zlib-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Prereq:		openssl >= 0.9.5a
 Obsoletes:	ssh < %{version}, ssh > %{version}

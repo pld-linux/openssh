@@ -196,7 +196,7 @@ install -d $RPM_BUILD_ROOT%{_libexecdir}/ssh
 install contrib/gnome-ssh-askpass \
 	$RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
 
-gzip -9nf ChangeLog OVERVIEW COPYING.Ylonen README README.Ylonen UPGRADING
+gzip -9nf ChangeLog OVERVIEW COPYING.Ylonen README README.Ylonen
 
 touch $RPM_BUILD_ROOT/etc/security/blacklist.sshd
 	
@@ -230,7 +230,7 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc {ChangeLog,OVERVIEW,COPYING.Ylonen,README,README.Ylonen,UPGRADING}.gz
+%doc {ChangeLog,OVERVIEW,COPYING.Ylonen,README,README.Ylonen}.gz
 %attr(755,root,root) %{_bindir}/ssh-keygen
 %{_mandir}/man1/ssh-keygen.1*
 %dir %{_sysconfdir}

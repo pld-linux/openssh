@@ -82,9 +82,9 @@ case "$1" in
 	exit $?
 	;;
   init)
-	echo "Now the SSH host key will be generated. Please note, that if you"
-	echo "will use password for the key, you will need to type it on each"
-	echo "reboot."
+	nls "Now the SSH host key will be generated. Please note, that if you"
+	nls "will use password for the key, you will need to type it on each"
+	nls "reboot."
 	/usr/bin/ssh-keygen -t rsa1 -f /etc/ssh/ssh_host_key
 	chmod 600 /etc/ssh/ssh_host_key
 	/usr/bin/ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key
@@ -94,8 +94,16 @@ case "$1" in
 	exit $?
 	;;
   reload)
-	msg_reloading OpenSSH
-	killproc sshd -HUP
+	if [ -f /var/lock/subsys/sshd ]; then
+		msg_reloading OpenSSH
+		busy
+		killproc sshd -HUP
+		RETVAL=$?
+		[ $RETVAL -eq 0 ] && ok || died
+	else
+		msg_not_running OpenSSH
+		exit 1
+	fi
 	;;
   *)
 	msg_usage "$0 {start|stop|init|restart|reload|status}"

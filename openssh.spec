@@ -25,7 +25,7 @@ BuildRequires:	XFree86-devel
 BuildRequires:	autoconf
 %{!?_without_gnome:BuildRequires: gnome-libs-devel}
 BuildRequires:	gtk+-devel
-BuildRequires:	openssl-devel >= 0.9.6b
+BuildRequires:	openssl-devel >= 0.9.6a
 BuildRequires:	pam-devel
 BuildRequires:	zlib-devel
 BuildRequires:	libwrap-devel

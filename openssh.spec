@@ -8,7 +8,7 @@ Summary(pl):	Publicznie dostêpna implementacja bezpiecznego shella (SSH)
 Summary(pt_BR):	Implementação livre do SSH
 Name:		openssh
 Version:	3.1p1
-Release:	3
+Release:	4
 License:	BSD
 Group:		Applications/Networking
 Source0:	ftp://ftp.ca.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
@@ -263,7 +263,7 @@ install -d $RPM_BUILD_ROOT%{_libexecdir}/ssh
 %{!?_without_gnome:install contrib/gnome-ssh-askpass $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass}
 
 rm -f	$RPM_BUILD_ROOT%{_mandir}/man1/slogin.1
-echo ".so man1/ssh.1" > $RPM_BUILD_ROOT%{_mandir}/man1/slogin.1
+echo ".so ssh.1" > $RPM_BUILD_ROOT%{_mandir}/man1/slogin.1
 
 gzip -9nf *.RNG TODO README OVERVIEW CREDITS Change*
 

@@ -1,6 +1,6 @@
---- openssh-2.9.9p2/scp.c.orig	Thu Sep 20 02:57:56 2001
-+++ openssh-2.9.9p2/scp.c	Fri Sep 28 05:29:09 2001
-@@ -242,9 +242,11 @@
+--- openssh-3.3p1/scp.c.orig	Fri Jun 21 02:41:52 2002
++++ openssh-3.3p1/scp.c	Sun Jun 23 21:29:30 2002
+@@ -233,9 +233,11 @@
  	addargs(&args, "-oClearAllForwardings yes");
  
  	fflag = tflag = 0;
@@ -13,14 +13,14 @@
  		case '4':
  		case '6':
  		case 'C':
-@@ -961,7 +963,7 @@
- usage()
+@@ -955,7 +957,7 @@
+ usage(void)
  {
  	(void) fprintf(stderr,
--	    "usage: scp [-pqrvBC46] [-F config] [-S ssh] [-P port] [-c cipher] [-i identity]\n"
-+	    "usage: scp [-pqrvBC1246] [-F config] [-S ssh] [-P port] [-c cipher] [-i identity]\n"
- 	    "           [-o option] f1 f2\n"
- 	    "   or: scp [options] f1 ... fn directory\n");
+-	    "usage: scp [-pqrvBC46] [-F config] [-S program] [-P port]\n"
++	    "usage: scp [-pqrvBC1246] [-F config] [-S program] [-P port]\n"
+ 	    "           [-c cipher] [-i identity] [-o option]\n"
+ 	    "           [[user@]host1:]file1 [...] [[user@]host2:]file2\n");
  	exit(1);
 --- openssh-2.9.9p2/scp.1.orig	Tue Sep 18 07:56:57 2001
 +++ openssh-2.9.9p2/scp.1	Fri Sep 28 05:30:54 2001

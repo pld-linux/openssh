@@ -386,7 +386,7 @@ GNOME.
 %patch9 -p1
 
 %build
-aclocal
+%{__aclocal}
 %{__autoconf}
 
 %configure \

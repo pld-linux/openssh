@@ -6,6 +6,7 @@ Release:	2
 License:	BSD
 Group:		Applications/Networking
 Group(pl):	Aplikacje/Sieciowe
+Group(de):	Applikationen/Netzwerkwesen
 Source0:	ftp://ftp.ca.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
 Source1:	%{name}d.conf
 Source2:	%{name}.conf
@@ -59,6 +60,7 @@ Summary(pl):	Klienci protoko³u Secure Shell
 Requires:	openssh
 Group:		Applications/Networking
 Group(pl):	Aplikacje/Sieciowe
+Group(de):	Applikationen/Netzwerkwesen
 Obsoletes:	ssh-clients < %{version}, ssh-clients > %{version}
 Requires:	%{name} = %{version}
 
@@ -90,6 +92,7 @@ Summary(pl):	Serwer protoko³u Secure Shell (sshd)
 Requires:	openssh chkconfig >= 0.9
 Group:		Networking/Daemons
 Group(pl):	Sieciowe/Serwery
+Group(de):	Netzwerkwesen/Server
 Obsoletes:	ssh-server < %{version}, ssh-server > %{version}
 Requires:	rc-scripts
 Requires:	/bin/login
@@ -126,6 +129,7 @@ Summary:	OpenSSH GNOME passphrase dialog
 Summary(pl):	Odpytywacz has³a OpenSSH dla GNOME
 Group:		Applications/Networking
 Group(pl):	Aplikacje/Sieciowe
+Group(de):	Applikationen/Netzwerkwesen
 Requires:	%{name} = %{version}
 Obsoletes:	ssh-extras < %{version}, ssh-extras > %{version}
 Obsoletes:	ssh-askpass < %{version}, ssh-askpass > %{version}

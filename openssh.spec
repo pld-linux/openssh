@@ -216,7 +216,6 @@ touch $RPM_BUILD_ROOT/etc/security/blacklist.sshd
 rm -rf $RPM_BUILD_ROOT
 
 %post server
-/sbin/chkconfig --add sshd
 if [ ! -f %{_sysconfdir}/ssh_host_key -o ! -s %{_sysconfdir}/ssh_host_key ]; then
 	%{_bindir}/ssh-keygen -t rsa1 -f %{_sysconfdir}/ssh_host_key -N '' 1>&2
 	chmod 600 %{_sysconfdir}/ssh_host_key
@@ -230,22 +229,13 @@ if [ ! -f %{_sysconfdir}/ssh_host_dsa_key -o ! -s %{_sysconfdir}/ssh_host_dsa_ke
         %{_bindir}/ssh-keygen -t dsa -f %{_sysconfdir}/ssh_host_dsa_key -N '' 1>&2
 	chmod 600 %{_sysconfdir}/ssh_host_dsa_key
 fi
-if [ -f /var/lock/subsys/sshd ]; then
-	/etc/rc.d/init.d/sshd restart 1>&2
-else
-	echo "Run \"/etc/rc.d/init.d/sshd start\" to start openssh daemon."
-fi
 if ! grep ssh /etc/security/passwd.conf >/dev/null 2>&1 ; then
 	echo "ssh" >> /etc/security/passwd.conf
 fi
+NAME=sshd; DESC="openssh daemon"; %chkconfig_add
 
 %preun server
-if [ "$1" = "0" ]; then
-	if [ -f /var/lock/subsys/sshd ]; then
-		/etc/rc.d/init.d/sshd stop 1>&2
-	fi
-	/sbin/chkconfig --del sshd
-fi
+NAME=sshd; %chkconfig_del
 
 %files
 %defattr(644,root,root,755)

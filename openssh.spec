@@ -36,6 +36,7 @@ Obsoletes:	ssh < %{version}
 Obsoletes:	ssh > %{version}
 
 %define		_sysconfdir	/etc/ssh
+%define		_libexecdir	%{_libdir}/%{name}
 
 %description
 Ssh (Secure Shell) a program for logging into a remote machine and for
@@ -95,7 +96,8 @@ Ten pakiet zawiera klientów s³u¿±cych do ³±czenia siê z serwerami SSH.
 %package server
 Summary:	OpenSSH Secure Shell protocol server (sshd)
 Summary(pl):	Serwer protoko³u Secure Shell (sshd)
-Requires:	openssh chkconfig >= 0.9
+Requires:	openssh
+Requires:	chkconfig >= 0.9
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
 Group(pl):	Sieciowe/Serwery
@@ -186,9 +188,9 @@ echo '#define LOGIN_PROGRAM           "/bin/login"' >>config.h
 
 %{__make}
 
-%{!?bcond_off_gnome: cd contrib && gcc $RPM_OPT_FLAGS `gnome-config --cflags gnome gnomeui` } \
+%{!?bcond_off_gnome: cd contrib && gcc $RPM_OPT_FLAGS `gnome-config --cflags gnome gnomeui gtk` } \
 %{!?bcond_off_gnome:	gnome-ssh-askpass.c -o gnome-ssh-askpass } \
-%{!?bcond_off_gnome:	`gnome-config --libs gnome gnomeui` }
+%{!?bcond_off_gnome:	`gnome-config --libs gnome gnomeui gtk` }
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -266,6 +268,7 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_sbindir}/sshd
 %attr(755,root,root) %{_libexecdir}/sftp-server
+%dir %{_libexecdir}
 %{_mandir}/man8/sshd.8*
 %{_mandir}/man8/sftp-server.8*
 %attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/sshd_config

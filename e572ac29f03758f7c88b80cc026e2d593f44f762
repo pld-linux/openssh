@@ -1,0 +1,2 @@
+- use full path to sshd on start (or sshd will die on SIGHUP)
+- s/no_gnome/_without_gnome/

@@ -1,40 +1,37 @@
-diff -ur openssh-2.3.0p1.orig/Makefile.in openssh-2.3.0p1/Makefile.in
---- openssh-2.3.0p1.orig/Makefile.in	Sun Nov  5 22:13:45 2000
-+++ openssh-2.3.0p1/Makefile.in	Tue Nov  7 16:13:15 2000
-@@ -22,6 +22,7 @@
- PATHS=-DETCDIR=\"$(sysconfdir)\" -DSSH_PROGRAM=\"$(SSH_PROGRAM)\" -DSSH_ASKPASS_DEFAULT=\"$(ASKPASS_PROGRAM)\"
- CFLAGS=@CFLAGS@ $(PATHS) @DEFS@
+diff -urN openssh-2.5.1p1.org/Makefile.in openssh-2.5.1p1/Makefile.in
+--- openssh-2.5.1p1.org/Makefile.in	Wed Feb 21 11:09:35 2001
++++ openssh-2.5.1p1/Makefile.in	Wed Feb 21 11:10:45 2001
+@@ -28,6 +28,7 @@
+ CFLAGS=@CFLAGS@
+ CPPFLAGS=@CPPFLAGS@ -I. -I$(srcdir)/openbsd-compat -I$(srcdir) $(PATHS) @DEFS@
  LIBS=@LIBS@
 +LIBWRAP=@LIBWRAP@
  AR=@AR@
  RANLIB=@RANLIB@
  INSTALL=@INSTALL@
-@@ -73,7 +74,7 @@
+@@ -95,7 +96,7 @@
  	$(LD) -o $@ $(SSHOBJS) $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS)
  
- sshd$(EXEEXT): libssh.a	libopenbsd-compat.a $(SSHDOBJS)
+ sshd$(EXEEXT): libssh.a	$(LIBCOMPAT) $(SSHDOBJS)
 -	$(LD) -o $@ $(SSHDOBJS) $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS)
 +	$(LD) -o $@ $(SSHDOBJS) $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS) $(LIBWRAP)
  
- scp$(EXEEXT): libopenbsd-compat.a libssh.a scp.o
- 	$(LD) -o $@ scp.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS) 
-diff -ur openssh-2.3.0p1.orig/configure.in openssh-2.3.0p1/configure.in
---- openssh-2.3.0p1.orig/configure.in	Tue Nov  7 16:11:05 2000
-+++ openssh-2.3.0p1/configure.in	Tue Nov  7 16:12:28 2000
-@@ -1121,8 +1121,11 @@
- 	[  --with-tcp-wrappers     Enable tcpwrappers support],
+ scp$(EXEEXT): $(LIBCOMPAT) libssh.a scp.o log-client.o
+ 	$(LD) -o $@ scp.o log-client.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS)
+diff -urN openssh-2.5.1p1.org/configure.in openssh-2.5.1p1/configure.in
+--- openssh-2.5.1p1.org/configure.in	Wed Feb 21 11:09:36 2001
++++ openssh-2.5.1p1/configure.in	Wed Feb 21 11:12:07 2001
+@@ -459,7 +459,8 @@
  	[
  		if test "x$withval" != "xno" ; then
-+			# we need to add -lwrap to LIBS only for configure
-+			# testing, and then remove
  			saved_LIBS="$LIBS"
--			LIBS="$LIBS -lwrap"
+-			LIBS="-lwrap $LIBS"
 +			LIBWRAP="-lwrap"
 +			LIBS="$LIBS $LIBWRAP"
  			AC_MSG_CHECKING(for libwrap)
  			AC_TRY_LINK(
  				[
-@@ -1133,12 +1136,14 @@
+@@ -470,12 +471,14 @@
  				[
  					AC_MSG_RESULT(yes)
  					AC_DEFINE(LIBWRAP)

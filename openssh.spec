@@ -1,7 +1,7 @@
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Name:		openssh
-Version:	1.2.2
-Release:	3
+Version:	1.2.2p1
+Release:	1
 License:	BSD
 Group:		Applications/Networking
 Group(pl):	Aplikacje/Sieciowe
@@ -112,7 +112,7 @@ This package contains the GNOME passphrase dialog.
 %prep
 %setup  -q
 %patch0 -p1
-%patch1 -p0
+%patch1 -p1
 %patch2 -p1
 
 %build
@@ -121,10 +121,13 @@ autoconf
 	--with-gnome-askpass \
 	--with-tcp-wrappers \
 	--with-md5-passwords \
-	--enable-ipv6 \
 	--with-ipaddr-display \
+	--enable-ipv6 \
 	--enable-log-auth 
-	
+
+# with ipv4-default sshd can't listen on IPv6 and IPv4 sockets
+#	--with-ipv4-default \
+# broken options
 #	--without-kerberos4 \
 #	--without-afs \
 #	--without-skey 

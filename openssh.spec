@@ -5,7 +5,7 @@ Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(pl):	Publicznie dostêpna implementacja bezpiecznego shella (SSH)
 Name:		openssh
 Version:	2.9p1
-Release:	2
+Release:	3
 License:	BSD
 Group:		Applications/Networking
 Group(de):	Applikationen/Netzwerkwesen
@@ -178,7 +178,7 @@ autoconf
 	--with-ipaddr-display \
 	--with-4in6 \
 	--disable-suid-ssh \
-	--with-pid-dir={_localstatedir}/run
+	--with-pid-dir=%{_localstatedir}/run
 
 echo '#define LOGIN_PROGRAM           "/bin/login"' >>config.h
 

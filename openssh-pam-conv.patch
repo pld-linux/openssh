@@ -1,0 +1,34 @@
+diff -ur openssh-3.7.1p2/auth-pam.c openssh-3.7.1p2-pam/auth-pam.c
+--- openssh-3.7.1p2/auth-pam.c	2003-09-23 11:24:21.000000000 +0200
++++ openssh-3.7.1p2-pam/auth-pam.c	2003-09-23 18:44:46.000000000 +0200
+@@ -175,12 +175,14 @@
+ 		case PAM_ERROR_MSG:
+ 			buffer_put_cstring(&buffer, 
+ 			    PAM_MSG_MEMBER(msg, i, msg));
++			buffer_put_char(&buffer, '\n');
+ 			ssh_msg_send(ctxt->pam_csock, 
+ 			    PAM_MSG_MEMBER(msg, i, msg_style), &buffer);
+ 			break;
+ 		case PAM_TEXT_INFO:
+ 			buffer_put_cstring(&buffer, 
+ 			    PAM_MSG_MEMBER(msg, i, msg));
++			buffer_put_char(&buffer, '\n');
+ 			ssh_msg_send(ctxt->pam_csock, 
+ 			    PAM_MSG_MEMBER(msg, i, msg_style), &buffer);
+ 			break;
+@@ -636,6 +638,7 @@
+ 			break;
+ 		case PAM_PROMPT_ECHO_ON:
+ 			fputs(PAM_MSG_MEMBER(msg, i, msg), stderr);
++			fputs("\n", stderr);
+ 			fgets(input, sizeof input, stdin);
+ 			reply[i].resp = xstrdup(input);
+ 			reply[i].resp_retcode = PAM_SUCCESS;
+@@ -643,6 +646,7 @@
+ 		case PAM_ERROR_MSG:
+ 		case PAM_TEXT_INFO:
+ 			fputs(PAM_MSG_MEMBER(msg, i, msg), stderr);
++			fputs("\n", stderr);
+ 			reply[i].resp_retcode = PAM_SUCCESS;
+ 			break;
+ 		default:

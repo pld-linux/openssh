@@ -53,9 +53,8 @@ diff -urN openssh-3.7.1p2.org/session.c openssh-3.7.1p2/session.c
  }
  
  static void
-diff -urN openssh-3.7.1p2.org/sshpty.c openssh-3.7.1p2/sshpty.c
---- openssh-3.7.1p2.org/sshpty.c	2003-12-26 20:14:53.000000000 +0100
-+++ openssh-3.7.1p2/sshpty.c	2003-12-26 20:15:14.000000000 +0100
+--- openssh-3.8p1/sshpty.c.orig	2004-01-21 07:07:17.000000000 +0100
++++ openssh-3.8p1/sshpty.c	2004-02-25 21:19:57.000000000 +0100
 @@ -22,6 +22,12 @@
  #include "log.h"
  #include "misc.h"
@@ -66,10 +65,10 @@ diff -urN openssh-3.7.1p2.org/sshpty.c openssh-3.7.1p2/sshpty.c
 +#include <selinux/selinux.h>
 +#endif
 +
- /* Pty allocated with _getpty gets broken if we do I_PUSH:es to it. */
- #if defined(HAVE__GETPTY) || defined(HAVE_OPENPTY)
- #undef HAVE_DEV_PTMX
-@@ -386,6 +392,37 @@
+ #ifdef HAVE_PTY_H
+ # include <pty.h>
+ #endif
+@@ -196,6 +202,37 @@
  	 * Warn but continue if filesystem is read-only and the uids match/
  	 * tty is owned by root.
  	 */
@@ -107,7 +106,7 @@ diff -urN openssh-3.7.1p2.org/sshpty.c openssh-3.7.1p2/sshpty.c
  	if (stat(ttyname, &st))
  		fatal("stat(%.100s) failed: %.100s", ttyname,
  		    strerror(errno));
-@@ -415,4 +452,5 @@
+@@ -225,4 +262,5 @@
  				    ttyname, (u_int)mode, strerror(errno));
  		}
  	}

@@ -1,0 +1,31 @@
+diff -Nru openssh-2.1.0p2/Makefile.in openssh-2.1.0p2.new/Makefile.in
+--- openssh-2.1.0p2/Makefile.in	Wed May 24 20:39:37 2000
++++ openssh-2.1.0p2.new/Makefile.in	Wed May 24 20:40:28 2000
+@@ -70,22 +70,22 @@
+ 	$(RANLIB) $@
+ 
+ ssh: libopenbsd-compat.a libssh.a $(SSHOBJS)
+-	$(LD) -o $@ $(SSHOBJS) $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS)
++	$(LD) -o $@ $(SSHOBJS) $(LDFLAGS) -lssh -lopenbsd-compat -lz -lcrypto
+ 
+ sshd: libssh.a	libopenbsd-compat.a $(SSHDOBJS)
+ 	$(LD) -o $@ $(SSHDOBJS) $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS) $(LIBWRAP)
+ 
+ scp: libopenbsd-compat.a libssh.a scp.o
+-	$(LD) -o $@ scp.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS) 
++	$(LD) -o $@ scp.o $(LDFLAGS) -lssh -lopenbsd-compat -lcrypto
+ 
+ ssh-add: libopenbsd-compat.a libssh.a ssh-add.o log-client.o
+-	$(LD) -o $@ ssh-add.o log-client.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS) 
++	$(LD) -o $@ ssh-add.o log-client.o $(LDFLAGS) -lssh -lopenbsd-compat -lcrypto
+ 
+ ssh-agent: libopenbsd-compat.a libssh.a ssh-agent.o log-client.o
+-	$(LD) -o $@ ssh-agent.o log-client.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS) 
++	$(LD) -o $@ ssh-agent.o log-client.o $(LDFLAGS) -lssh -lopenbsd-compat -lcrypto
+ 
+ ssh-keygen: libopenbsd-compat.a libssh.a ssh-keygen.o log-client.o
+-	$(LD) -o $@ ssh-keygen.o log-client.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS) 
++	$(LD) -o $@ ssh-keygen.o log-client.o $(LDFLAGS) -lssh -lopenbsd-compat -lcrypto
+ 
+ $(MANPAGES) $(CONFIGFILES)::
+ 	$(FIXPATHSCMD) $(srcdir)/$@

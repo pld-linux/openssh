@@ -70,9 +70,13 @@ case "$1" in
         /usr/bin/ssh-keygen -d -f /etc/ssh/ssh_host_dsa_key
 	chmod 600 /etc/ssh/ssh_host_dsa_key
 	exit $?
-	;;	
+	;;
+  reload)
+	msg_reloading OpenSSH
+	killproc sshd -HUP
+	;;
   *)
-	msg_Usage "$0 {start|stop|status|restart}"
+	msg_Usage "$0 {start|stop|init|status|restart|reload}"
 	exit 1
 esac
 

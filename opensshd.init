@@ -65,9 +65,11 @@ case "$1" in
 	echo "Now the SSH host key will be generated. Please note, that if you"
 	echo "will use password for the key, you will need to type it on each"
 	echo "reboot."
-	/usr/bin/ssh-keygen -b 1024 -f /etc/ssh/ssh_host_key
+	/usr/bin/ssh-keygen -t rsa1 -f /etc/ssh/ssh_host_key
 	chmod 600 /etc/ssh/ssh_host_key
-        /usr/bin/ssh-keygen -d -f /etc/ssh/ssh_host_dsa_key
+	/usr/bin/ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key
+	chmod 600 /etc/ssh/ssh_host_rsa_key
+        /usr/bin/ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key
 	chmod 600 /etc/ssh/ssh_host_dsa_key
 	exit $?
 	;;

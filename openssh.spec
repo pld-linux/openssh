@@ -1,7 +1,7 @@
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Name:		openssh
-Version:	1.2pre17
-Release:	2
+Version:	1.2.1pre24
+Release:	1	
 Source0:	http://violet.ibs.com.au/openssh/files/%{name}-%{version}.tar.gz
 Source1:	opensshd.conf
 Source2:	openssh.conf
@@ -11,7 +11,7 @@ Source5:	openssh.sysconfig
 Source6:	passwd.pamd
 Patch1:		openssh-DESTDIR.patch
 Patch2:		openssh-PAM_NEW_AUTHTOK.patch
-Patch3:		http://www.misiek.eu.org/ipv6/openssh-1.2pre17-ipv6-21121999.patch.gz
+Patch3:		http://www.misiek.eu.org/ipv6/openssh-1.2.1pre24-ipv6-03012000.patch.gz
 License:	BSD
 Group:		Applications/Networking
 Group(pl):	Aplikacje/Sieciowe
@@ -86,15 +86,16 @@ This package contains the secure shell daemon. The sshd is the server
 part of the secure shell protocol and allows ssh clients to connect to 
 your host.
 
-%package askpass
+%package gnome-askpass
 Summary:	OpenSSH GNOME passphrase dialog
 Group:		Applications/Networking
 Group(pl):	Aplikacje/Sieciowe
 Requires:	%{name} = %{version}
 Obsoletes:	ssh-extras
 Obsoletes:	ssh-askpass
+Obsoletes:	openssh-askpass
 
-%description askpass
+%description gnome-askpass
 Ssh (Secure Shell) a program for logging into a remote machine and for
 executing commands in a remote machine.  It is intended to replace
 rlogin and rsh, and provide secure encrypted communications between
@@ -110,8 +111,8 @@ This package contains the GNOME passphrase dialog.
 
 %prep
 %setup  -q
-%patch1 -p1 
-%patch2 -p1
+%patch1 -p1
+#%patch2 -p1
 %patch3 -p1
 
 %build
@@ -145,6 +146,9 @@ install %{SOURCE5} $RPM_BUILD_ROOT/etc/sysconfig/sshd
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
 install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/ssh_config
 install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/sshd_config
+
+mv -f 	$RPM_BUILD_ROOT%{_libexecdir}/ssh/gnome-ssh-askpass \
+	$RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
 
 gzip -9fn ChangeLog OVERVIEW COPYING.Ylonen README README.Ylonen UPGRADING \
 	$RPM_BUILD_ROOT/%{_mandir}/man*/*
@@ -204,7 +208,7 @@ fi
 %attr(754,root,root) /etc/rc.d/init.d/sshd
 %attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/sysconfig/sshd
 
-%files askpass
+%files gnome-askpass
 %defattr(644,root,root,755)
 %dir %{_libexecdir}/ssh
 %attr(755,root,root) %{_libexecdir}/ssh/ssh-askpass

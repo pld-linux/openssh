@@ -37,9 +37,9 @@ Source6:	passwd.pamd
 Source7:	%{name}-askpass.sh
 Source8:	%{name}-askpass.csh
 Source9:	http://www.imasy.or.jp/~gotoh/ssh/connect.c
-# Source9-md5:	c78de727e1208799072be78c05d64398
+# NoSource9-md5:	c78de727e1208799072be78c05d64398
 Source10:	http://www.imasy.or.jp/~gotoh/ssh/connect.html
-# Source10-md5:	f14cb61fafd067a3f5ce4eaa9643bf05
+# NoSource10-md5:	f14cb61fafd067a3f5ce4eaa9643bf05
 Patch0:		%{name}-no_libnsl.patch
 Patch2:		%{name}-linux-ipv6.patch
 Patch3:		%{name}-pam_misc.patch

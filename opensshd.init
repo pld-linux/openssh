@@ -1,0 +1,59 @@
+#!/bin/sh
+#
+# sshd		sshd (secure shell daemon)
+#
+# chkconfig:	345 55 45
+#
+# description:	sshd (secure shell daemon) is a server part of the ssh suite.
+#		Ssh can be used for remote login, remote file copying, TCP port
+#		forwarding etc. Ssh offers strong encryption and authentication.
+
+
+# Source function library
+. /etc/rc.d/init.d/functions
+
+# Get network config
+. /etc/sysconfig/network
+
+# Get service config
+[ -f /etc/sysconfig/sshd ] && . /etc/sysconfig/sshd
+
+# Check that networking is up.
+if [ "${NETWORKING}" = "no" ]; then
+	echo "WARNING: Networking is down. Sshd can't be runed."
+	exit 1
+fi
+
+
+# See how we were called.
+case "$1" in
+  start)
+	# Check if the service is already running?
+	if [ ! -f /var/lock/subsys/sshd ]; then
+		show Starting OpenSSHd
+		daemon sshd -h /etc/ssh/ssh_host_key
+	else
+		echo "OpenSSHd already is running"
+	fi
+	touch /var/lock/subsys/sshd
+	;;
+  stop)
+	show Stopping sshd
+	killproc sshd
+	rm -f /var/run/sshd.pid
+	rm -f /var/lock/subsys/sshd
+	;;
+  restart|reload)
+	$0 stop
+	$0 start
+	;;
+  status)
+	status sshd
+	;;
+  *)
+	echo "Usage: $0 {start|stop|status|restart|reload}"
+	exit 1
+esac
+
+exit 0
+

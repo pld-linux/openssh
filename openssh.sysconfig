@@ -1,0 +1,4 @@
+# Customized setings for ssh
+
+# Define nice level for ssh 
+SERVICE_RUN_NICE_LEVEL="+0"

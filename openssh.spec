@@ -14,7 +14,7 @@ Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	3.5p1
-Release:	2
+Release:	3
 Epoch:		1
 License:	BSD
 Group:		Applications/Networking
@@ -25,6 +25,8 @@ Source3:	%{name}d.init
 Source4:	%{name}d.pamd
 Source5:	%{name}.sysconfig
 Source6:	passwd.pamd
+Source7:	%{name}-askpass.sh
+Source8:	%{name}-askpass.csh
 Patch0:		%{name}-no_libnsl.patch
 Patch1:		%{name}-set_12.patch
 Patch2:		%{name}-linux-ipv6.patch
@@ -34,6 +36,7 @@ URL:		http://www.openssh.com/
 BuildRequires:	XFree86-devel
 BuildRequires:	autoconf
 BuildRequires:	automake
+BuildRequires:	chrpath
 %{!?_without_gnome:BuildRequires: gnome-libs-devel}
 BuildRequires:	libwrap-devel
 BuildRequires:	openssl-devel >= 0.9.6a
@@ -395,13 +398,13 @@ echo '#define LOGIN_PROGRAM           "/bin/login"' >>config.h
 
 %{__make}
 
-%{!?_without_gnome:cd contrib && %{__cc} %{rpmcflags} `gnome-config --cflags gnome gnomeui gtk` } \
-%{!?_without_gnome:gnome-ssh-askpass.c -o gnome-ssh-askpass } \
+%{!?_without_gnome:cd contrib && %{__cc} %{rpmcflags} `gnome-config --cflags gnome gnomeui gtk`} \
+%{!?_without_gnome:gnome-ssh-askpass1.c -o gnome-ssh-askpass} \
 %{!?_without_gnome:`gnome-config --libs gnome gnomeui gtk` }
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{pam.d,rc.d/init.d,sysconfig,security}}
+install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{pam.d,rc.d/init.d,sysconfig,security,profile.d}}
 
 %{__make} install DESTDIR="$RPM_BUILD_ROOT"
 
@@ -413,6 +416,7 @@ install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/ssh_config
 install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/sshd_config
 install -d $RPM_BUILD_ROOT%{_libexecdir}/ssh
 %{!?_without_gnome:install contrib/gnome-ssh-askpass $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass}
+%{!?_without_gnome:install %{SOURCE7} %{SOURCE8} $RPM_BUILD_ROOT/etc/profile.d}
 
 rm -f	$RPM_BUILD_ROOT%{_mandir}/man1/slogin.1
 echo ".so ssh.1" > $RPM_BUILD_ROOT%{_mandir}/man1/slogin.1

@@ -44,6 +44,7 @@ BuildRequires:	libwrap-devel
 BuildRequires:	openssl-devel >= 0.9.7
 BuildRequires:	pam-devel
 BuildRequires:	perl
+%{!?_without_gtk:BuildRequires:	pkgconfig}
 BuildRequires:	zlib-devel
 PreReq:		openssl >= 0.9.7
 PreReq:		FHS >= 2.1-24

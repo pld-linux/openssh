@@ -15,6 +15,7 @@ Epoch:		1
 License:	BSD
 Group:		Applications/Networking
 Source0:	ftp://ftp.ca.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
+# Source0-md5:	f153ccdb5a91fa06ec78d0c6313f4d77
 Source1:	%{name}d.conf
 Source2:	%{name}.conf
 Source3:	%{name}d.init
@@ -315,7 +316,7 @@ GNOME.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5
+%patch5 -p1
 
 %build
 aclocal

@@ -36,7 +36,7 @@ Patch7:		%{name}-3.4p1-owl-logging.diff
 Patch8:		%{name}-3.4p1-owl-fatal_cleanups.diff 
 Patch9:		%{name}-pam_misc.patch
 URL:		http://www.openssh.com/
-BuildRequires:	XFree86-devel
+%{!?_without_gnome:BuildRequires:	XFree86-devel}
 BuildRequires:	autoconf
 BuildRequires:	automake
 %{!?_without_gnome:BuildRequires: gnome-libs-devel}

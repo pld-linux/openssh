@@ -1,0 +1,6 @@
+#%PAM-1.0
+auth       required	/lib/security/pam_pwdb.so md5 shadow 
+account    required	/lib/security/pam_pwdb.so
+password   required	/lib/security/pam_cracklib.so difok=2 minlen=8 dcredit=2 ocredit=2 retry=3
+password   required	/lib/security/pam_pwdb.so md5 shadow use_authtok
+password   required	/lib/security/pam_make.so /var/db

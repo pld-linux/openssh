@@ -1,8 +1,12 @@
 #!/bin/sh
-# ssh-agent.sh sh/bash/zsh compatible script for /etc/profile.d/ .
-# Works like gnupg-agent-agent.sh . Copy this in /etc/profile.d/ ,
-# make ln -s /etc/profile.d/ssh-agent.sh /etc/X11/xinit/xinitrc.d/ssh-agent.sh
-# run echo "ssh_agent_enable=yes" > $HOME/.ssh/ssh-agent.conf . 
+# ssh-agent.sh is a sh/bash/zsh compatible script sourced from /etc/profile.d/
+# at user login. It reads configuration from /etc/ssh/ssh-agent.conf 
+# or ~/.ssh/ssh-agent.conf if any exist and, depending on settings 
+# in configuration file, runs ssh-agent with given options at first user login,
+# exports SSH_AGENT_PID SSH_AUTH_SOCK environment variables to all login 
+# sessions. If ssh-agent is already started for given user, script exports only
+# SSH_AGENT_PID SSH_AUTH_SOCK to new user's login session.
+
 [ -f /etc/ssh/ssh-agent.conf ] && SSH_AGENT_CONF="/etc/ssh/ssh-agent.conf"
 [ -f "${HOME}/.ssh/ssh-agent.conf" ] && SSH_AGENT_CONF="${HOME}/.ssh/ssh-agent.conf"
 if [ -s "$SSH_AGENT_CONF" ] ; then

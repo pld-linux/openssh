@@ -266,6 +266,7 @@ Requires(post):	grep
 Requires(postun):	/usr/sbin/userdel
 Requires:	/bin/login
 Requires:	util-linux
+Requires:	pam >= 0.77.3
 Provides:	ssh-server
 
 %description server

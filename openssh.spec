@@ -13,8 +13,8 @@ Summary(pt_BR):	ImplementaГЦo livre do SSH
 Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
-Version:	3.4p1
-Release:	3.2
+Version:	3.5p1
+Release:	1
 Epoch:		1
 License:	BSD
 Group:		Applications/Networking
@@ -28,13 +28,7 @@ Source6:	passwd.pamd
 Patch0:		%{name}-no_libnsl.patch
 Patch1:		%{name}-set_12.patch
 Patch2:		%{name}-linux-ipv6.patch
-Patch3:		%{name}-pseudo-mmap.patch
-Patch4:		%{name}-3.4p1-owl-hide-unknown.diff 
-Patch5:		%{name}-3.4p1-owl-always-auth.diff 
-Patch6:		%{name}-3.4p1-owl-password-changing.diff 
-Patch7:		%{name}-3.4p1-owl-logging.diff 
-Patch8:		%{name}-3.4p1-owl-fatal_cleanups.diff 
-Patch9:		%{name}-pam_misc.patch
+Patch3:		%{name}-pam_misc.patch
 URL:		http://www.openssh.com/
 BuildRequires:	XFree86-devel
 BuildRequires:	autoconf
@@ -378,12 +372,6 @@ GNOME.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
-%patch7 -p1
-%patch8 -p1
-%patch9 -p1
 
 %build
 %{__aclocal}

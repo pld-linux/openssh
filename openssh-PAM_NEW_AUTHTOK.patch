@@ -24,7 +24,7 @@ diff -Naur openssh-2.1.1p1/auth-pam.c openssh-2.1.1p1-p/auth-pam.c
  			break;
  		case PAM_NEW_AUTHTOK_REQD:
  			pam_msg_cat(NEW_AUTHTOK_MSG);
-+			forced_command = xmalloc(strlen("/usr/bin/passwd -N ssh") + 1);
++			forced_command = xmalloc(strlen("/usr/bin/passwd") + 1);
 +			strcpy(forced_command, "/usr/bin/passwd");
 +/*			pam_retval = pam_chauthtok((pam_handle_t *)pamh, PAM_CHANGE_EXPIRED_AUTHTOK); */
  			break;

@@ -8,7 +8,7 @@ Summary(pl):	Publicznie dostêpna implementacja bezpiecznego shella (SSH)
 Summary(pt_BR):	Implementação livre do SSH
 Name:		openssh
 Version:	3.0.2p1
-Release:	3
+Release:	4
 License:	BSD
 Group:		Applications/Networking
 Source0:	ftp://ftp.ca.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
@@ -22,6 +22,7 @@ Patch0:		%{name}-libwrap.patch
 Patch1:		%{name}-no_libnsl.patch
 Patch2:		%{name}-no-openssl-ver-check.patch
 Patch3:		%{name}-set_12.patch
+Patch4:		%{name}-pine-cert-20020301.patch
 URL:		http://www.openssh.com/
 BuildRequires:	XFree86-devel
 BuildRequires:	autoconf
@@ -225,6 +226,7 @@ entrada de passphrase no GNOME.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %build
 aclocal

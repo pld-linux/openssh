@@ -22,12 +22,12 @@ Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	3.6.1p2
-Release:	4%{?_with_ldap:ldap}
+Release:	5%{?_with_ldap:ldap}
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
 Source0:	ftp://ftp.ca.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{orig_ver}.tar.gz
-# Source0-md5: f3879270bffe479e1bd057aa36258696
+# Source0-md5:	f3879270bffe479e1bd057aa36258696
 Source1:	%{name}d.conf
 Source2:	%{name}.conf
 Source3:	%{name}d.init
@@ -36,6 +36,10 @@ Source5:	%{name}.sysconfig
 Source6:	passwd.pamd
 Source7:	%{name}-askpass.sh
 Source8:	%{name}-askpass.csh
+Source9:	http://www.imasy.or.jp/~gotoh/ssh/connect.c
+# Source9-md5:	c78de727e1208799072be78c05d64398
+Source10:	http://www.imasy.or.jp/~gotoh/ssh/connect.html
+# Source10-md5:	f14cb61fafd067a3f5ce4eaa9643bf05
 Patch0:		%{name}-no_libnsl.patch
 Patch2:		%{name}-linux-ipv6.patch
 Patch3:		%{name}-pam_misc.patch
@@ -417,6 +421,10 @@ echo '#define LOGIN_PROGRAM           "/bin/login"' >>config.h
 
 %{__make}
 
+cp -f %{SOURCE9} .
+cp -f %{SOURCE10} .
+%{__cc} %{rpmcflags} %{rpmldflags} connect.c -o connect
+
 cd contrib
 %if 0%{!?_without_gnome:1}
 %{__make} gnome-ssh-askpass1 \
@@ -433,6 +441,7 @@ install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{pam.d,rc.d/init.d,sysconfig,secu
 
 %{__make} install DESTDIR="$RPM_BUILD_ROOT"
 
+install connect    $RPM_BUILD_ROOT%{_bindir}
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/pam.d/sshd
 install %{SOURCE6} $RPM_BUILD_ROOT/etc/pam.d/passwdssh
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/sysconfig/sshd
@@ -503,6 +512,8 @@ fi
 
 %files clients
 %defattr(644,root,root,755)
+%doc connect.html
+%attr(0755,root,root) %{_bindir}/connect
 %attr(0755,root,root) %{_bindir}/ssh
 %attr(0755,root,root) %{_bindir}/slogin
 %attr(0755,root,root) %{_bindir}/sftp

@@ -136,9 +136,9 @@
       UseDNS  Specifies whether sshd should lookup the remote host name and
               check that the resolved host name for the remote IP address maps
               back to the very same IP address.  The default is ``yes''.
---- openssh-3.7.1p2/sshd_config.5	2003-09-02 14:57:05.000000000 +0200
-+++ openssh-3.7.1p2.pius/sshd_config.5	2003-10-07 20:49:08.000000000 +0200
-@@ -580,6 +580,16 @@
+--- openssh-3.8p1/sshd_config.5.orig	2004-02-18 04:31:24.000000000 +0100
++++ openssh-3.8p1/sshd_config.5	2004-02-25 21:17:23.000000000 +0100
+@@ -552,6 +552,16 @@
  The possible values are: DAEMON, USER, AUTH, LOCAL0, LOCAL1, LOCAL2,
  LOCAL3, LOCAL4, LOCAL5, LOCAL6, LOCAL7.
  The default is AUTH.
@@ -152,6 +152,6 @@
 +to whatever directory was before the . and continues with the normal ssh
 +functionality. For this to work properly you have to create special chroot-jail
 +environment in a /path/to/chroot directory.
- .It Cm UseDNS
- Specifies whether
- .Nm sshd
+ .It Cm TCPKeepAlive
+ Specifies whether the system should send TCP keepalive messages to the
+ other side.

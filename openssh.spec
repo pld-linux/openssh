@@ -1,7 +1,7 @@
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Name:		openssh
-Version:	1.2.1pre24
-Release:	3
+Version:	1.2.2
+Release:	1
 License:	BSD
 Group:		Applications/Networking
 Group(pl):	Aplikacje/Sieciowe
@@ -12,9 +12,8 @@ Source3:	opensshd.init
 Source4:	opensshd.pamd
 Source5:	openssh.sysconfig
 Source6:	passwd.pamd
-Patch1:		openssh-DESTDIR.patch
-Patch2:		openssh-PAM_NEW_AUTHTOK.patch
-Patch3:		http://www.misiek.eu.org/ipv6/openssh-1.2.1pre24-ipv6-03012000.patch.gz
+Patch0:		openssh-PAM_NEW_AUTHTOK.patch
+Patch1:		openssh-libwrap.patch
 BuildRequires:	openssl-devel >= 0.9.4-2
 BuildRequires:	zlib-devel
 BuildRequires:	pam-devel
@@ -111,9 +110,8 @@ This package contains the GNOME passphrase dialog.
 
 %prep
 %setup  -q
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
+%patch0 -p1
+%patch1 -p0
 
 %build
 autoconf
@@ -122,6 +120,7 @@ autoconf
 	--with-tcp-wrappers \
 	--with-md5-passwords \
 	--enable-ipv6 \
+	--with-ipaddr-display \
 	--enable-log-auth 
 	
 #	--without-kerberos4 \

@@ -1,5 +1,5 @@
 #
-# Conditional build:	
+# Conditional build:
 # _without_gnome - without gnome-askpass utility
 # _without_embed - don't build uClibc version
 
@@ -127,11 +127,11 @@ all patented algorithms to seperate libraries (OpenSSL).
 This package includes the clients necessary to make encrypted
 connections to SSH servers.
 
-%description -l es clients
+%description clients -l es
 Este paquete incluye los clientes que se necesitan para hacer
 conexiones codificadas con servidores SSH.
 
-%description -l pl clients
+%description clients -l pl
 Ssh (Secure Shell) to program s³u¿±cy do logowania siê na zdaln±
 maszynê i uruchamiania na niej aplikacji. W zamierzeniu openssh ma
 zast±piæ rlogin, rsh i dostarczyæ bezpieczne, szyfrowane po³±czenie
@@ -139,7 +139,7 @@ pomiedzy dwoma hostami.
 
 Ten pakiet zawiera klientów s³u¿±cych do ³±czenia siê z serwerami SSH.
 
-%description -l pt_BR clients
+%description clients -l pt_BR
 Esse pacote inclui os clientes necessários para fazer conexões
 encriptadas com servidores SSH.
 
@@ -194,7 +194,7 @@ host.
 
 %package embed
 Summary:	OpenSSH Secure Shell for embedded applications
-Summary:	OpenSSH Secure Shell dla aplikacji wbudowanych 
+Summary:	OpenSSH Secure Shell dla aplikacji wbudowanych
 Requires:	openssh
 Group:		Applications/Networking
 Obsoletes:	ssh-clients
@@ -202,7 +202,7 @@ Obsoletes:	ssh-clients
 %description embed
 OpenSSH for embedded enviroment. Client, server, scp and ssh-keygen.
 
-%description -l pl embed
+%description embed -l pl
 OpenSSH dla aplikacji wbudowanych. Klient, serwer, scp i ssh-keygen.
 
 
@@ -230,7 +230,7 @@ all patented algorithms to seperate libraries (OpenSSL).
 
 This package contains the GNOME passphrase dialog.
 
-%description gnome-askpass -l es 
+%description gnome-askpass -l es
 Este paquete contiene un programa que abre una caja de diálogo para
 entrada de passphrase en GNOME.
 
@@ -303,8 +303,8 @@ echo '#define LOGIN_PROGRAM           "/bin/login"' >>config.h
 %{__make}
 
 %{!?_without_gnome:cd contrib && %{__cc} %{rpmcflags} `gnome-config --cflags gnome gnomeui gtk` } \
-%{!?_without_gnome:	gnome-ssh-askpass.c -o gnome-ssh-askpass } \
-%{!?_without_gnome:	`gnome-config --libs gnome gnomeui gtk` }
+%{!?_without_gnome:gnome-ssh-askpass.c -o gnome-ssh-askpass } \
+%{!?_without_gnome:`gnome-config --libs gnome gnomeui gtk` }
 
 %install
 rm -rf $RPM_BUILD_ROOT

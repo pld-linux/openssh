@@ -1,11 +1,11 @@
 #
-# Conditional build:
+# Conditional build:	
 # bcond_off_gnome - without gnome-askpass utility
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(pl):	Publicznie dostêpna implementacja bezpiecznego shella (SSH)
 Name:		openssh
-Version:	2.3.0p1
-Release:	8
+Version:	2.5.1p1
+Release:	1
 License:	BSD
 Group:		Applications/Networking
 Group(de):	Applikationen/Netzwerkwesen
@@ -20,8 +20,6 @@ Source6:	passwd.pamd
 Patch0:		%{name}-libwrap.patch
 Patch1:		%{name}-LIBS.patch
 Patch2:		%{name}-no_libnsl.patch
-Patch3:		%{name}-securityfix.patch
-Patch4:		%{name}-pam-session.patch
 URL:		http://www.openssh.com/
 BuildRequires:	XFree86-devel
 BuildRequires:	autoconf
@@ -163,10 +161,8 @@ Ten pakiet zawiera ,,odpytywacz has³a'' dla GNOME.
 %prep
 %setup  -q
 %patch0 -p1
-%patch1 -p1
+#%patch1 -p1
 %patch2 -p1
-%patch3 -p1
-%patch4 -p1
 
 %build
 autoconf
@@ -177,7 +173,8 @@ autoconf
 	--with-ipaddr-display \
 	--enable-ipv6 \
 	--with-4in6 \
-	--enable-log-auth 
+	--enable-log-auth \
+	--disable-suid-ssh
 
 echo '#define LOGIN_PROGRAM           "/bin/login"' >>config.h
 
@@ -203,7 +200,7 @@ install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/sshd_config
 install -d $RPM_BUILD_ROOT%{_libexecdir}/ssh
 %{!?bcond_off_gnome:install contrib/gnome-ssh-askpass $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass}
 
-gzip -9nf ChangeLog OVERVIEW COPYING.Ylonen README README.Ylonen
+gzip -9nf *.RNG TODO README OVERVIEW CREDITS Change*
 
 touch $RPM_BUILD_ROOT/etc/security/blacklist.sshd
 	
@@ -239,19 +236,22 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc {ChangeLog,OVERVIEW,COPYING.Ylonen,README,README.Ylonen}.gz
-%attr(755,root,root) %{_bindir}/ssh-keygen
-%{_mandir}/man1/ssh-keygen.1*
+%doc *.gz
+%attr(755,root,root) %{_bindir}/ssh-key*
+%{_mandir}/man1/ssh-key*.1*
 %dir %{_sysconfdir}
 
 %files clients
 %defattr(644,root,root,755)
 %attr(0755,root,root) %{_bindir}/ssh
+%attr(0755,root,root) %{_bindir}/slogin
+%attr(0755,root,root) %{_bindir}/sftp
 %attr(0755,root,root) %{_bindir}/ssh-agent
 %attr(0755,root,root) %{_bindir}/ssh-add
 %attr(755,root,root) %{_bindir}/scp
 %{_mandir}/man1/scp.1*
 %{_mandir}/man1/ssh.1*
+%{_mandir}/man1/sftp.1*
 %{_mandir}/man1/ssh-agent.1*
 %{_mandir}/man1/ssh-add.1*
 %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/ssh_config
@@ -259,9 +259,12 @@ fi
 %files server
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_sbindir}/sshd
+%attr(755,root,root) %{_libexecdir}/sftp-server
 %{_mandir}/man8/sshd.8*
+%{_mandir}/man8/sftp-server.8*
 %attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/sshd_config
 %attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/pam.d/sshd
+%attr(640,root,root) %{_sysconfdir}/primes
 %attr(754,root,root) /etc/rc.d/init.d/sshd
 %attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/sysconfig/sshd
 %attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/security/blacklist.sshd

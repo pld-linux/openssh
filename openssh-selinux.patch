@@ -1,18 +1,40 @@
---- openssh-3.6.1p2/session.c.selinux	2003-10-13 10:22:17.975083901 -0400
-+++ openssh-3.6.1p2/session.c	2003-10-13 10:22:34.399253449 -0400
-@@ -58,6 +58,11 @@
- #include "session.h"
- #include "monitor_wrap.h"
+diff -urN openssh-3.7.1p2.org/Makefile.in openssh-3.7.1p2/Makefile.in
+--- openssh-3.7.1p2.org/Makefile.in	2003-12-26 20:14:52.000000000 +0100
++++ openssh-3.7.1p2/Makefile.in	2003-12-26 20:15:15.000000000 +0100
+@@ -40,7 +40,7 @@
+ 
+ CC=@CC@
+ LD=@LD@
+-CFLAGS=@CFLAGS@
++CFLAGS=@CFLAGS@ -DWITH_SELINUX
+ CPPFLAGS=-I. -I$(srcdir) @CPPFLAGS@ $(PATHS) @DEFS@
+ LIBS=@LIBS@
+ LIBPAM=@LIBPAM@
+@@ -53,7 +53,7 @@
+ SED=@SED@
+ ENT=@ENT@
+ XAUTH_PATH=@XAUTH_PATH@
+-LDFLAGS=-L. -Lopenbsd-compat/ @LDFLAGS@
++LDFLAGS=-L. -Lopenbsd-compat/ @LDFLAGS@ -lselinux 
+ EXEEXT=@EXEEXT@
+ 
+ INSTALL_SSH_PRNG_CMDS=@INSTALL_SSH_PRNG_CMDS@
+diff -urN openssh-3.7.1p2.org/session.c openssh-3.7.1p2/session.c
+--- openssh-3.7.1p2.org/session.c	2003-12-26 20:14:53.000000000 +0100
++++ openssh-3.7.1p2/session.c	2003-12-26 20:15:50.000000000 +0100
+@@ -62,6 +62,11 @@
+ #include "ssh-gss.h"
+ #endif
  
 +#ifdef WITH_SELINUX
 +#include <selinux/get_context_list.h>
 +#include <selinux/selinux.h>
 +#endif
 +
- #ifdef HAVE_CYGWIN
- #include <windows.h>
- #include <sys/cygwin.h>
-@@ -1268,6 +1273,18 @@
+ /* func */
+ 
+ Session *session_new(void);
+@@ -1295,6 +1300,18 @@
  #endif
  	if (getuid() != pw->pw_uid || geteuid() != pw->pw_uid)
  		fatal("Failed to set uids to %u.", (u_int) pw->pw_uid);
@@ -31,8 +53,9 @@
  }
  
  static void
---- openssh-3.6.1p2/sshpty.c.selinux	2003-02-23 19:54:10.000000000 -0500
-+++ openssh-3.6.1p2/sshpty.c	2003-10-13 10:22:18.079072312 -0400
+diff -urN openssh-3.7.1p2.org/sshpty.c openssh-3.7.1p2/sshpty.c
+--- openssh-3.7.1p2.org/sshpty.c	2003-12-26 20:14:53.000000000 +0100
++++ openssh-3.7.1p2/sshpty.c	2003-12-26 20:15:14.000000000 +0100
 @@ -22,6 +22,12 @@
  #include "log.h"
  #include "misc.h"
@@ -85,28 +108,8 @@
  		fatal("stat(%.100s) failed: %.100s", ttyname,
  		    strerror(errno));
 @@ -415,4 +452,5 @@
- 				    ttyname, mode, strerror(errno));
+ 				    ttyname, (u_int)mode, strerror(errno));
  		}
  	}
 +
  }
---- openssh-3.6.1p2/Makefile.in.selinux	2003-04-29 05:12:08.000000000 -0400
-+++ openssh-3.6.1p2/Makefile.in	2003-10-13 10:22:18.080072200 -0400
-@@ -40,7 +40,7 @@
- 
- CC=@CC@
- LD=@LD@
--CFLAGS=@CFLAGS@
-+CFLAGS=@CFLAGS@ -DWITH_SELINUX
- CPPFLAGS=-I. -I$(srcdir) @CPPFLAGS@ $(PATHS) @DEFS@
- LIBS=@LIBS@
- LIBPAM=@LIBPAM@
-@@ -52,7 +52,7 @@
- SED=@SED@
- ENT=@ENT@
- XAUTH_PATH=@XAUTH_PATH@
--LDFLAGS=-L. -Lopenbsd-compat/ @LDFLAGS@
-+LDFLAGS=-L. -Lopenbsd-compat/ @LDFLAGS@ -lselinux 
- EXEEXT=@EXEEXT@
- 
- INSTALL_SSH_PRNG_CMDS=@INSTALL_SSH_PRNG_CMDS@

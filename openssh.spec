@@ -20,7 +20,7 @@ Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	3.8p1
-Release:	1
+Release:	2
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -32,8 +32,6 @@ Source3:	%{name}d.init
 Source4:	%{name}d.pamd
 Source5:	%{name}.sysconfig
 Source6:	passwd.pamd
-Source7:	%{name}-askpass.sh
-Source8:	%{name}-askpass.csh
 Source9:	http://www.imasy.or.jp/~gotoh/ssh/connect.c
 # NoSource9-md5:	c78de727e1208799072be78c05d64398
 Source10:	http://www.imasy.or.jp/~gotoh/ssh/connect.html
@@ -451,7 +449,7 @@ cd contrib
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{pam.d,rc.d/init.d,sysconfig,security,profile.d}} \
+install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{pam.d,rc.d/init.d,sysconfig,security}} \
 	$RPM_BUILD_ROOT%{_libexecdir}/ssh
 
 %{__make} install \
@@ -470,9 +468,6 @@ install contrib/gnome-ssh-askpass1 $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
 %endif
 %if %{with gtk}
 install contrib/gnome-ssh-askpass2 $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
-%endif
-%if %{with gnome} || %{with gtk}
-install %{SOURCE7} %{SOURCE8} $RPM_BUILD_ROOT/etc/profile.d
 %endif
 
 rm -f	$RPM_BUILD_ROOT%{_mandir}/man1/slogin.1
@@ -570,5 +565,4 @@ fi
 %defattr(644,root,root,755)
 %dir %{_libexecdir}/ssh
 %attr(755,root,root) %{_libexecdir}/ssh/ssh-askpass
-%attr(755,root,root) /etc/profile.d/*
 %endif

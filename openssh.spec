@@ -54,7 +54,7 @@ BuildRequires:	automake
 %{!?_without_gnome:BuildRequires: gnome-libs-devel}
 %{!?_without_gtk:BuildRequires:	gtk+2-devel}
 BuildRequires:	libwrap-devel
-BuildRequires:	openssl-devel >= 0.9.7cc
+BuildRequires:	openssl-devel >= 0.9.7c
 %{?_with_ldap:BuildRequires:	openldap-devel}
 %{?_with_kerberos5:BuildRequires:	heimdal-devel}
 BuildRequires:	pam-devel

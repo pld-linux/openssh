@@ -38,7 +38,7 @@ case "$1" in
 	touch /var/lock/subsys/sshd
 	;;
   stop)
-	show Stopping sshd
+	show Stopping OpenSSHd
 	killproc sshd
 	rm -f /var/run/sshd.pid
 	rm -f /var/lock/subsys/sshd

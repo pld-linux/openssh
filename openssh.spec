@@ -15,12 +15,12 @@ Source6:	passwd.pamd
 Patch0:		openssh-PAM_NEW_AUTHTOK.patch
 Patch1:		openssh-libwrap.patch
 BuildRequires:	openssl-devel >= 0.9.4-2
-BuildRequires:  rpm >= 3.0.4
+BuildRequires:	rpm >= 3.0.4
 BuildRequires:	zlib-devel
 BuildRequires:	pam-devel
 BuildRequires:	XFree86-devel
 BuildRequires:	gnome-libs-devel
-BuildRequires:  gtk+-devel
+BuildRequires:	gtk+-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Prereq:		openssl >= 0.9.4-2
 Obsoletes:	ssh < %{version}, ssh > %{version}
@@ -29,18 +29,18 @@ Obsoletes:	ssh < %{version}, ssh > %{version}
 
 %description
 Ssh (Secure Shell) a program for logging into a remote machine and for
-executing commands in a remote machine. It is intended to replace rlogin and
-rsh, and provide secure encrypted communications between two untrusted hosts
-over an insecure network. X11 connections and arbitrary TCP/IP ports can
-also be forwarded over the secure channel.
+executing commands in a remote machine. It is intended to replace rlogin
+and rsh, and provide secure encrypted communications between two untrusted
+hosts over an insecure network. X11 connections and arbitrary TCP/IP ports
+can also be forwarded over the secure channel.
 
 OpenSSH is OpenBSD's rework of the last free version of SSH, bringing it up
 to date in terms of security and features, as well as removing all patented
 algorithms to seperate libraries (OpenSSL).
 
-This package includes the core files necessary for both the OpenSSH
-client and server. To make this package useful, you should also
-install openssh-clients, openssh-server, or both.
+This package includes the core files necessary for both the OpenSSH client
+and server. To make this package useful, you should also install
+openssh-clients, openssh-server, or both.
 
 %package clients
 Summary:	OpenSSH Secure Shell protocol clients
@@ -52,17 +52,17 @@ Requires:	%{name} = %{version}
 
 %description clients
 Ssh (Secure Shell) a program for logging into a remote machine and for
-executing commands in a remote machine. It is intended to replace rlogin and
-rsh, and provide secure encrypted communications between two untrusted hosts
-over an insecure network. X11 connections and arbitrary TCP/IP ports can
-also be forwarded over the secure channel.
+executing commands in a remote machine. It is intended to replace rlogin
+and rsh, and provide secure encrypted communications between two untrusted
+hosts over an insecure network. X11 connections and arbitrary TCP/IP ports
+can also be forwarded over the secure channel.
 
 OpenSSH is OpenBSD's rework of the last free version of SSH, bringing it up
 to date in terms of security and features, as well as removing all patented
 algorithms to seperate libraries (OpenSSL).
 
-This package includes the clients necessary to make encrypted connections to
-SSH servers.
+This package includes the clients necessary to make encrypted connections
+to SSH servers.
 
 %package server
 Summary:	OpenSSH Secure Shell protocol server (sshd)
@@ -77,17 +77,18 @@ Prereq:		%{name} = %{version}
 
 %description server
 Ssh (Secure Shell) a program for logging into a remote machine and for
-executing commands in a remote machine. It is intended to replace rlogin and
-rsh, and provide secure encrypted communications between two untrusted hosts
-over an insecure network. X11 connections and arbitrary TCP/IP ports can
-also be forwarded over the secure channel.
+executing commands in a remote machine. It is intended to replace rlogin
+and rsh, and provide secure encrypted communications between two untrusted
+hosts over an insecure network. X11 connections and arbitrary TCP/IP ports
+can also be forwarded over the secure channel.
 
 OpenSSH is OpenBSD's rework of the last free version of SSH, bringing it up
 to date in terms of security and features, as well as removing all patented
 algorithms to seperate libraries (OpenSSL).
 
 This package contains the secure shell daemon. The sshd is the server part
-of the secure shell protocol and allows ssh clients to connect to your host.
+of the secure shell protocol and allows ssh clients to connect to your
+host.
 
 %package gnome-askpass
 Summary:	OpenSSH GNOME passphrase dialog
@@ -137,8 +138,8 @@ echo '#define LOGIN_PROGRAM           "/bin/login"' >>config.h
 
 make
 cd contrib && gcc `gnome-config --cflags gnome gnomeui` \
-     gnome-ssh-askpass.c -o gnome-ssh-askpass \
-     `gnome-config --libs gnome gnomeui`
+	gnome-ssh-askpass.c -o gnome-ssh-askpass \
+	`gnome-config --libs gnome gnomeui`
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -154,9 +155,9 @@ install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
 install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/ssh_config
 install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/sshd_config
 install -d $RPM_BUILD_ROOT%{_libexecdir}/ssh
-install contrib/ssh-askpass $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
+install contrib/gnome-ssh-askpass $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
 
-gzip -9fn ChangeLog OVERVIEW COPYING.Ylonen README README.Ylonen UPGRADING \
+gzip -9nf ChangeLog OVERVIEW COPYING.Ylonen README README.Ylonen UPGRADING \
 	$RPM_BUILD_ROOT/%{_mandir}/man*/*
 
 touch $RPM_BUILD_ROOT/etc/security/blacklist.sshd

@@ -69,7 +69,6 @@ BuildRequires:	%{__perl}
 BuildRequires:	zlib-devel
 PreReq:		FHS >= 2.1-24
 PreReq:		openssl >= 0.9.7d
-%{?with_sshagentsh:Requires:	xinitrc}
 Obsoletes:	ssh
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -205,6 +204,7 @@ Summary(uk):	OpenSSH - кл╕╓нти протоколу Secure Shell
 Group:		Applications/Networking
 Provides:	ssh-clients
 Requires:	%{name} = %{epoch}:%{version}
+%{?with_sshagentsh:Requires:	xinitrc}
 Obsoletes:	ssh-clients
 
 %description clients

@@ -57,6 +57,7 @@ BuildRequires:	libwrap-devel
 BuildRequires:	openssl-devel >= 0.9.6k
 %{?with_ldap:BuildRequires:	openldap-devel}
 %{?with_kerberos5:BuildRequires:	heimdal-devel}
+%{?with_libedit:BuildRequires:	libedit-devel}
 BuildRequires:	pam-devel
 BuildRequires:	%{__perl}
 %{?with_gtk:BuildRequires:	pkgconfig}

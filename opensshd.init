@@ -19,9 +19,13 @@
 [ -f /etc/sysconfig/sshd ] && . /etc/sysconfig/sshd
 
 # Check that networking is up.
-if is_no "${NETWORKING}"; then
-        msg_network_down OpenSSH
-        exit 1
+if is_yes "${NETWORKING}"; then
+	if [ ! -f /var/lock/subsys/network ]; then
+		msg_network_down OpenSSH
+		exit 1
+	fi
+else
+	exit 0
 fi
 			
 
@@ -30,21 +34,21 @@ case "$1" in
   start)
 	# generate new keys with empty passwords if they do not exist
 	if [ ! -f /etc/ssh/ssh_host_key -o ! -s /etc/ssh/ssh_host_key ]; then
-	    /usr/bin/ssh-keygen -t rsa1 -f /etc/ssh/ssh_host_key -N '' 1>&2
-	    chmod 600 /etc/ssh/ssh_host_key
+		/usr/bin/ssh-keygen -t rsa1 -f /etc/ssh/ssh_host_key -N '' 1>&2
+		chmod 600 /etc/ssh/ssh_host_key
 	fi
 	if [ ! -f /etc/ssh/ssh_host_rsa_key -o ! -s /etc/ssh/ssh_host_rsa_key ]; then
-	    /usr/bin/ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N '' 1>&2
-	    chmod 600 /etc/ssh/ssh_host_rsa_key
+		/usr/bin/ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N '' 1>&2
+		chmod 600 /etc/ssh/ssh_host_rsa_key
 	fi
 	if [ ! -f /etc/ssh/ssh_host_dsa_key -o ! -s /etc/ssh/ssh_host_dsa_key ]; then
-	    /usr/bin/ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key -N '' 1>&2
-	    chmod 600 /etc/ssh/ssh_host_dsa_key
+		/usr/bin/ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key -N '' 1>&2
+		chmod 600 /etc/ssh/ssh_host_dsa_key
 	fi
 
 	if [ ! -f /etc/ssh/ssh_host_key ]; then
 		msg_not_running OpenSSH
-		nls "No SSH host key found! You must run \"$0 init\" first."
+		nls "No SSH host key found! You must run \"%s init\" first." "$0"
 		exit 1
 	fi
 
@@ -60,7 +64,7 @@ case "$1" in
 	fi
 	;;
   stop)
-        if [ -f /var/lock/subsys/sshd ]; then
+	if [ -f /var/lock/subsys/sshd ]; then
 		msg_stopping OpenSSH
 		killproc sshd
 		rm -f /var/run/sshd.pid /var/lock/subsys/sshd >/dev/null 2>&1
@@ -85,7 +89,7 @@ case "$1" in
 	chmod 600 /etc/ssh/ssh_host_key
 	/usr/bin/ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key
 	chmod 600 /etc/ssh/ssh_host_rsa_key
-        /usr/bin/ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key
+	/usr/bin/ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key
 	chmod 600 /etc/ssh/ssh_host_dsa_key
 	exit $?
 	;;
@@ -94,7 +98,7 @@ case "$1" in
 	killproc sshd -HUP
 	;;
   *)
-	msg_usage "$0 {start|stop|init|status|restart|reload}"
+	msg_usage "$0 {start|stop|init|restart|reload|status}"
 	exit 1
 esac
 

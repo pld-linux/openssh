@@ -6,19 +6,7 @@ diff -urN openssh-3.6.1p2-orig/configure.ac openssh-3.6.1p2/configure.ac
                                         [ AC_MSG_RESULT(yes)
                                           AC_DEFINE(HEIMDAL)
 -                                         K5LIBS="-lkrb5 -ldes -lcom_err -lasn1 -lroken"
-+                                         K5LIBS="-lkrb5 -lcom_err -lasn1 -lroken"
++                                         K5LIBS="-lkrb5 -lasn1 -lroken"
                                         ],
                                         [ AC_MSG_RESULT(no)
                                           K5LIBS="-lkrb5 -lk5crypto -lcom_err"
-diff -urN openssh-3.6.1p2-orig/servconf.c openssh-3.6.1p2/servconf.c
---- openssh-3.6.1p2-orig/servconf.c	2003-02-23 18:04:34.000000000 -0700
-+++ openssh-3.6.1p2/servconf.c	2003-07-26 16:57:54.000000000 -0600
-@@ -17,7 +17,7 @@
- #endif
- #if defined(KRB5)
- #ifdef HEIMDAL
--#include <krb.h>
-+#include <krb5.h>
- #else
- /* Bodge - but then, so is using the kerberos IV KEYFILE to get a Kerberos V
-  * keytab */

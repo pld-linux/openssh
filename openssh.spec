@@ -60,7 +60,7 @@ BuildRequires:	automake
 BuildRequires:	libselinux-devel
 BuildRequires:	libwrap-devel
 %{?with_ldap:BuildRequires:	openldap-devel}
-BuildRequires:	openssl-devel >= 0.9.7c
+BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	pam-devel
 BuildRequires:	%{__perl}
 %{?with_gtk:BuildRequires:	pkgconfig}

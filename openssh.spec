@@ -5,7 +5,7 @@ Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(pl):	Publicznie dostêpna implementacja bezpiecznego shella (SSH)
 Name:		openssh
 Version:	2.5.1p1
-Release:	3
+Release:	4
 License:	BSD
 Group:		Applications/Networking
 Group(de):	Applikationen/Netzwerkwesen
@@ -178,6 +178,7 @@ autoconf
 	--with-ipaddr-display \
 	--enable-ipv6 \
 	--with-4in6 \
+	--with-pam \
 	--enable-log-auth \
 	--disable-suid-ssh
 

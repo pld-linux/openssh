@@ -96,10 +96,8 @@ case "$1" in
   reload)
 	if [ -f /var/lock/subsys/sshd ]; then
 		msg_reloading OpenSSH
-		busy
 		killproc sshd -HUP
 		RETVAL=$?
-		[ $RETVAL -eq 0 ] && ok || died
 	else
 		msg_not_running OpenSSH
 		exit 1

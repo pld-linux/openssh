@@ -5,7 +5,7 @@ Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(pl):	Publicznie dostêpna implementacja bezpiecznego shella (SSH)
 Name:		openssh
 Version:	2.9p2
-Release:	2
+Release:	3
 License:	BSD
 Group:		Applications/Networking
 Group(de):	Applikationen/Netzwerkwesen
@@ -29,7 +29,8 @@ BuildRequires:	pam-devel
 BuildRequires:	zlib-devel
 BuildRequires:	libwrap-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
-Prereq:		openssl >= 0.9.6
+%requires_eq	openssl
+Prereq:		openssl
 Obsoletes:	ssh < %{version}
 Obsoletes:	ssh > %{version}
 

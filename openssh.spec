@@ -182,7 +182,7 @@ rm -rf $RPM_BUILD_ROOT
 
 install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{pam.d,rc.d/init.d,sysconfig,security}}
 
-make install DESTDIR="$RPM_BUILD_ROOT"
+%{__make} install DESTDIR="$RPM_BUILD_ROOT"
 
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/pam.d/sshd
 install %{SOURCE6} $RPM_BUILD_ROOT/etc/pam.d/passwdssh

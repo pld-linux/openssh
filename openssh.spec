@@ -6,6 +6,7 @@
 %bcond_without	kerberos5	# without kerberos5 support
 %bcond_without	chroot		# without chrooted user environment support
 %bcond_with	sshagentsh	# with system-wide script for starting ssh-agent
+%bcond_without	selinux		# build without SELinux support
 #
 # gtk2-based gnome-askpass means no gnome1-based
 %{?with_gtk:%undefine with_gnome}
@@ -21,7 +22,7 @@ Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	3.9p1
-Release:	2
+Release:	3
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -59,7 +60,7 @@ BuildRequires:	automake
 %{?with_gnome:BuildRequires:	gnome-libs-devel}
 %{?with_gtk:BuildRequires:	gtk+2-devel}
 %{?with_kerberos5:BuildRequires:	heimdal-devel}
-BuildRequires:	libselinux-devel
+%{?with_selinux:BuildRequires:	libselinux-devel}
 BuildRequires:	libwrap-devel
 %{?with_ldap:BuildRequires:	openldap-devel}
 BuildRequires:	openssl-devel >= 0.9.7d
@@ -410,8 +411,8 @@ GNOME.
 %{?with_kerberos5:%patch6 -p1}
 #%patch7 -p1
 %patch8 -p1
-%patch9 -p1
-%patch10 -p1
+%{?with_selinux:%patch9 -p1}
+%{?with_selinux:%patch10 -p1}
 
 %build
 cp %{_datadir}/automake/config.sub .

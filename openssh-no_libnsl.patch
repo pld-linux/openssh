@@ -1,12 +1,12 @@
-diff -urN openssh-2.5.1p1.org/configure.in openssh-2.5.1p1/configure.in
---- openssh-2.5.1p1.org/configure.in	Wed Feb 21 11:09:36 2001
-+++ openssh-2.5.1p1/configure.in	Wed Feb 21 11:14:11 2001
-@@ -132,6 +132,8 @@
+diff -urN openssh-3.0p1.orig/configure.ac openssh-3.0p1/configure.ac
+--- openssh-3.0p1.orig/configure.ac	Sat Nov  3 20:09:33 2001
++++ openssh-3.0p1/configure.ac	Wed Nov  7 16:22:54 2001
+@@ -123,6 +123,8 @@
  	AC_DEFINE(DONT_TRY_OTHER_AF)
  	AC_DEFINE(PAM_TTY_KLUDGE)
  	inet6_default_4in6=yes
 +	no_libnsl=1
-+	no_libsocket=1       
++	no_libsocket=1
  	;;
  mips-sony-bsd|mips-sony-newsos4)
  	AC_DEFINE(HAVE_NEWS4)

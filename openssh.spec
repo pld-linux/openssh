@@ -5,8 +5,8 @@
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(pl):	Publicznie dostêpna implementacja bezpiecznego shella (SSH)
 Name:		openssh
-Version:	2.9.9p2
-Release:	2
+Version:	3.0p1
+Release:	1
 License:	BSD
 Group:		Applications/Networking
 Group(de):	Applikationen/Netzwerkwesen
@@ -18,7 +18,7 @@ Source3:	%{name}d.init
 Source4:	%{name}d.pamd
 Source5:	%{name}.sysconfig
 Source6:	passwd.pamd
-Patch0:		%{name}-libwrap.patch
+Patch0:		%{name}3-libwrap.patch
 Patch1:		%{name}-no_libnsl.patch
 Patch2:		%{name}-no-openssl-ver-check.patch
 Patch3:		%{name}-set_12.patch
@@ -176,13 +176,13 @@ aclocal
 autoconf
 %configure \
 	%{!?_without_gnome:--with-gnome-askpass} \
-	--with-tcp-wrappers \
 	--with-pam \
 	--with-mantype=man \
 	--with-md5-passwords \
 	--with-ipaddr-display \
 	--with-4in6 \
 	--disable-suid-ssh \
+	--with-tcp-wrappers \
 	--with-pid-dir=%{_localstatedir}/run
 
 echo '#define LOGIN_PROGRAM           "/bin/login"' >>config.h

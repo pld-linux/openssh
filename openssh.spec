@@ -22,7 +22,7 @@ Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	3.7.1p1
-Release:	1%{?_with_ldap:ldap}
+Release:	2%{?_with_ldap:ldap}
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -195,6 +195,7 @@ Summary(pt_BR):	Clientes do OpenSSH
 Summary(ru):	OpenSSH - клиенты протокола Secure Shell
 Summary(uk):	OpenSSH - кл╕╓нти протоколу Secure Shell
 Group:		Applications/Networking
+Provides:	ssh-clients
 Requires:	%{name} = %{epoch}:%{version}
 Obsoletes:	ssh-clients
 
@@ -264,7 +265,7 @@ Requires(post):	grep
 Requires(postun):	/usr/sbin/userdel
 Requires:	/bin/login
 Requires:	util-linux
-Obsoletes:	ssh-server
+Provides:	ssh-server
 
 %description server
 Ssh (Secure Shell) a program for logging into a remote machine and for

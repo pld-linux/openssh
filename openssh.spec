@@ -269,7 +269,7 @@ fi
 %{_mandir}/man8/sftp-server.8*
 %attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/sshd_config
 %attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/pam.d/sshd
-%attr(640,root,root) %{_sysconfdir}/primes
+%attr(640,root,root) %{_sysconfdir}/moduli
 %attr(754,root,root) /etc/rc.d/init.d/sshd
 %attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/sysconfig/sshd
 %attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/security/blacklist.sshd

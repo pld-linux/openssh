@@ -202,9 +202,9 @@ Summary(pt_BR):	Clientes do OpenSSH
 Summary(ru):	OpenSSH - клиенты протокола Secure Shell
 Summary(uk):	OpenSSH - кл╕╓нти протоколу Secure Shell
 Group:		Applications/Networking
-Provides:	ssh-clients
-Requires:	%{name} = %{epoch}:%{version}
+Requires:	%{name} = %{epoch}:%{version}-%{release}
 %{?with_sshagentsh:Requires:	xinitrc}
+Provides:	ssh-clients
 Obsoletes:	ssh-clients
 
 %description clients
@@ -263,7 +263,7 @@ Summary(pt_BR):	Servidor OpenSSH para comunicaГУes encriptadas
 Summary(ru):	OpenSSH - сервер протокола Secure Shell (sshd)
 Summary(uk):	OpenSSH - сервер протоколу Secure Shell (sshd)
 Group:		Networking/Daemons
-PreReq:		%{name} = %{epoch}:%{version}
+PreReq:		%{name} = %{epoch}:%{version}-%{release}
 PreReq:		rc-scripts >= 0.3.1-15
 Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/useradd
@@ -350,7 +350,7 @@ Summary(pt_BR):	DiАlogo para entrada de passphrase para GNOME
 Summary(ru):	OpenSSH - диалог ввода ключевой фразы (passphrase) для GNOME
 Summary(uk):	OpenSSH - д╕алог вводу ключово╖ фрази (passphrase) для GNOME
 Group:		Applications/Networking
-Requires:	%{name} = %{epoch}:%{version}
+Requires:	%{name} = %{epoch}:%{version}-%{release}
 Obsoletes:	ssh-extras
 Obsoletes:	ssh-askpass
 Obsoletes:	openssh-askpass
@@ -537,18 +537,18 @@ fi
 %files clients
 %defattr(644,root,root,755)
 %doc connect.html
-%attr(0755,root,root) %{_bindir}/connect
-%attr(0755,root,root) %{_bindir}/ssh
-%attr(0755,root,root) %{_bindir}/slogin
-%attr(0755,root,root) %{_bindir}/sftp
-%attr(0755,root,root) %{_bindir}/ssh-agent
-%attr(0755,root,root) %{_bindir}/ssh-add
-%attr(0755,root,root) %{_bindir}/scp
+%attr(755,root,root) %{_bindir}/connect
+%attr(755,root,root) %{_bindir}/ssh
+%attr(755,root,root) %{_bindir}/slogin
+%attr(755,root,root) %{_bindir}/sftp
+%attr(755,root,root) %{_bindir}/ssh-agent
+%attr(755,root,root) %{_bindir}/ssh-add
+%attr(755,root,root) %{_bindir}/scp
 %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/ssh_config
 %if %{with sshagentsh}
 %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/ssh-agent.conf
-%attr(0755,root,root) /etc/profile.d/ssh-agent.sh
-%attr(0755,root,root) /etc/X11/xinit/xinitrc.d/ssh-agent.sh
+%attr(755,root,root) /etc/profile.d/ssh-agent.sh
+%attr(755,root,root) /etc/X11/xinit/xinitrc.d/ssh-agent.sh
 %endif
 %{_mandir}/man1/scp.1*
 %{_mandir}/man1/ssh.1*

@@ -1,0 +1,22 @@
+diff -Nru openssh-2.1.1p4/configure.in openssh-2.1.1p4.new/configure.in
+--- openssh-2.1.1p4/configure.in	Wed Aug 23 00:34:43 2000
++++ openssh-2.1.1p4.new/configure.in	Wed Aug 23 00:37:23 2000
+@@ -103,6 +103,8 @@
+ 	AC_DEFINE(DONT_TRY_OTHER_AF)
+ 	AC_DEFINE(PAM_TTY_KLUDGE)
+ 	inet6_default_4in6=yes
++	no_libnsl=1
++	no_libsocket=1
+ 	;;
+ *-*-netbsd*)
+ 	need_dash_r=1
+@@ -208,9 +210,6 @@
+ AC_CHECK_LIB(z, deflate, ,AC_MSG_ERROR([*** zlib missing - please install first ***]))
+ AC_CHECK_LIB(util, login, AC_DEFINE(HAVE_LIBUTIL_LOGIN) LIBS="$LIBS -lutil")
+ 
+-if test -z "$no_libsocket" ; then
+-	AC_CHECK_LIB(nsl, yp_match, , )
+-fi
+ if test -z "$no_libnsl" ; then
+ 	AC_CHECK_LIB(socket, main, , )
+ fi

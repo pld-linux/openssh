@@ -1,0 +1,59 @@
+diff -urN openssh-3.7.1p2.org/session.c openssh-3.7.1p2/session.c
+--- openssh-3.7.1p2.org/session.c	2004-01-05 14:23:20.406243719 +0100
++++ openssh-3.7.1p2/session.c	2004-01-05 14:31:01.863306724 +0100
+@@ -1327,15 +1327,23 @@
+ 	if (getuid() != pw->pw_uid || geteuid() != pw->pw_uid)
+ 		fatal("Failed to set uids to %u.", (u_int) pw->pw_uid);
+ #ifdef WITH_SELINUX
+-	if (is_selinux_enabled())
++	if (is_selinux_enabled() > 0)
+ 	  {
+ 	    security_context_t scontext;
+-	    if (get_default_context(pw->pw_name,NULL,&scontext))
+-	      fatal("Failed to get default security context for %s.", pw->pw_name);
+-	    if (setexeccon(scontext)) {
+-	      fatal("Failed to set exec security context %s for %s.", scontext, pw->pw_name);
++	    if (get_default_context(pw->pw_name,NULL,&scontext)) {
++	      if (security_getenforce())
++    		  fatal("Failed to get default security context for %s.", pw->pw_name);
++	      else
++		  error("Failed to get default security context for %s (SELinux in permissive mode, continuing).", pw->pw_name);
++	    } else {
++    		if (setexeccon(scontext)) {
++      		    if (security_getenforce())
++			fatal("Failed to set exec security context %s for %s.", scontext, pw->pw_name);
++		    else
++			error("Failed to set exec security context %s for %s (SELinux in permissive mode, continuing).", scontext, pw->pw_name);
++    		}
++    		freecon(scontext);
+ 	    }
+-	    freecon(scontext);
+ 	  }
+ #endif
+ }
+diff -urN openssh-3.7.1p2.org/sshpty.c openssh-3.7.1p2/sshpty.c
+--- openssh-3.7.1p2.org/sshpty.c	2004-01-05 14:23:20.667189473 +0100
++++ openssh-3.7.1p2/sshpty.c	2004-01-05 14:29:33.403698686 +0100
+@@ -397,8 +397,12 @@
+ 	  security_context_t 	  new_tty_context=NULL,
+ 	    user_context=NULL, old_tty_context=NULL; 
+ 
+-	  if (get_default_context(pw->pw_name,NULL,&user_context))
+-	      fatal("Failed to get default security context for %s.", pw->pw_name);
++	  if (get_default_context(pw->pw_name,NULL,&user_context)) {
++	      if (security_getenforce())
++    		  fatal("Failed to get default security context for %s.", pw->pw_name);
++	      else
++		  error("Failed to get default security context for %s (SELinux in permissive mode, continuing).", pw->pw_name);
++	  } else {
+ 
+ 	  if (getfilecon(ttyname, &old_tty_context)<0) {
+ 	    error("getfilecon(%.100s) failed: %.100s", ttyname,
+@@ -421,6 +425,7 @@
+ 	      freecon(old_tty_context);
+ 	    }
+ 	  freecon(user_context);
++	  }
+ 	}
+ #endif
+ 	if (stat(ttyname, &st))

@@ -1,12 +1,11 @@
-diff -urN openssh-3.6.1p2-orig/configure.ac openssh-3.6.1p2/configure.ac
---- openssh-3.6.1p2-orig/configure.ac	2003-07-26 16:45:10.000000000 -0600
-+++ openssh-3.6.1p2/configure.ac	2003-07-26 16:57:32.000000000 -0600
-@@ -1822,7 +1822,7 @@
-                                        [ char *tmp = heimdal_version; ],
-                                        [ AC_MSG_RESULT(yes)
-                                          AC_DEFINE(HEIMDAL)
--                                         K5LIBS="-lkrb5 -ldes -lcom_err -lasn1 -lroken"
-+                                         K5LIBS="-lkrb5 -lasn1 -lroken"
-                                        ],
-                                        [ AC_MSG_RESULT(no)
-                                          K5LIBS="-lkrb5 -lk5crypto -lcom_err"
+--- openssh-3.8p1/configure.ac.orig	2004-02-26 19:43:47.892696832 +0100
++++ openssh-3.8p1/configure.ac	2004-02-26 19:44:41.278580944 +0100
+@@ -2109,7 +2109,7 @@
+ 				       [ char *tmp = heimdal_version; ],
+ 				       [ AC_MSG_RESULT(yes)
+ 					 AC_DEFINE(HEIMDAL)
+-					 K5LIBS="-lkrb5 -ldes -lcom_err -lasn1 -lroken"
++					 K5LIBS="-lkrb5 -lasn1 -lroken"
+ 				       ],
+ 				       [ AC_MSG_RESULT(no)
+ 					 K5LIBS="-lkrb5 -lk5crypto -lcom_err"

@@ -468,7 +468,7 @@ if [ -n "`id -u sshd 2>/dev/null`" ]; then
 else
 	/usr/sbin/useradd -u 40 -d %{_privsepdir} -s /bin/false -M -r -c "OpenSSH PrivSep User" -g nobody sshd 1>&2
 fi
-	
+
 %post server
 /sbin/chkconfig --add sshd
 if [ -f /var/lock/subsys/sshd ]; then

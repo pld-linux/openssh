@@ -403,6 +403,7 @@ GNOME.
 %patch8 -p1
 
 %build
+cp /usr/share/automake/config.sub .
 %{__aclocal}
 %{__autoconf}
 %{?with_chroot:CPPFLAGS="-DCHROOT"}

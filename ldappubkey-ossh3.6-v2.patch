@@ -384,7 +384,7 @@ diff -ru openssh-3.6.1p1/servconf.c openssh-3.6.1p1-ldappubkey/servconf.c
 @@ -303,6 +322,9 @@
  	sClientAliveCountMax, sAuthorizedKeysFile, sAuthorizedKeysFile2,
  	sUsePrivilegeSeparation,
- 	sDeprecated
+ 	sDeprecated, sUnsupported
 +#ifdef WITH_LDAP_PUBKEY
 +	    ,sPubkey_from_ldap, sLdap_server, sBinddn, sBindpw, sMgroup
 +#endif
@@ -489,7 +489,7 @@ diff -ru openssh-3.6.1p1/servconf.h openssh-3.6.1p1-ldappubkey/servconf.h
 @@ -132,6 +148,9 @@
  	char   *authorized_keys_file;	/* File containing public keys */
  	char   *authorized_keys_file2;
- 	int	pam_authentication_via_kbd_int;
+ 	int	use_pam;		/* Enable auth via PAM */
 +#ifdef WITH_LDAP_PUBKEY
 +	ldap_opt myldap_opt;
 +#endif

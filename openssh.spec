@@ -1,7 +1,7 @@
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Name:		openssh
 Version:	1.2.1pre24
-Release:	1	
+Release:	2
 Source0:	http://violet.ibs.com.au/openssh/files/%{name}-%{version}.tar.gz
 Source1:	opensshd.conf
 Source2:	openssh.conf
@@ -112,7 +112,7 @@ This package contains the GNOME passphrase dialog.
 %prep
 %setup  -q
 %patch1 -p1
-#%patch2 -p1
+%patch2 -p1
 %patch3 -p1
 
 %build

@@ -7,8 +7,8 @@ Summary(es):	Implementación libre de SSH
 Summary(pl):	Publicznie dostêpna implementacja bezpiecznego shella (SSH)
 Summary(pt_BR):	Implementação livre do SSH
 Name:		openssh
-Version:	3.1p1
-Release:	4
+Version:	3.2.2p1
+Release:	0.1
 License:	BSD
 Group:		Applications/Networking
 Source0:	ftp://ftp.ca.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz

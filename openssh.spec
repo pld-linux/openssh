@@ -20,7 +20,7 @@ Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	3.8.1p1
-Release:	1
+Release:	2
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -32,6 +32,8 @@ Source3:	%{name}d.init
 Source4:	%{name}d.pamd
 Source5:	%{name}.sysconfig
 Source6:	passwd.pamd
+Source7:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/openssh-non-english-man-pages.tar.bz2
+# Source7-md5:	66943d481cc422512b537bcc2c7400d1
 Source9:	http://www.imasy.or.jp/~gotoh/ssh/connect.c
 # NoSource9-md5:	c78de727e1208799072be78c05d64398
 Source10:	http://www.imasy.or.jp/~gotoh/ssh/connect.html
@@ -461,6 +463,8 @@ install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
 install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/ssh_config
 install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/sshd_config
 
+bzip2 -dc %{SOURCE7} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
+
 %if %{with gnome}
 install contrib/gnome-ssh-askpass1 $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
 ln -s %{_libexecdir}/ssh/ssh-askpass $RPM_BUILD_ROOT%{_libexecdir}/ssh-askpass
@@ -538,6 +542,10 @@ fi
 %{_mandir}/man1/ssh-agent.1*
 %{_mandir}/man1/ssh-add.1*
 %{_mandir}/man5/ssh_config.5*
+%lang(it) %{_mandir}/it/man1/ssh.1*
+%lang(it) %{_mandir}/it/man5/ssh_config.5*
+%lang(pl) %{_mandir}/pl/man1/scp.1*
+%lang(zh_CN) %{_mandir}/zh_CN/man1/scp.1*
 
 # for host-based auth (suid required for accessing private host key)
 #%attr(4755,root,root) %{_libexecdir}/ssh-keysign

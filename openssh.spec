@@ -66,6 +66,7 @@ BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	pam-devel
 BuildRequires:	%{__perl}
 %{?with_gtk:BuildRequires:	pkgconfig}
+BuildRequires:	rpmbuild(macros) >= 1.159
 BuildRequires:	zlib-devel
 PreReq:		FHS >= 2.1-24
 PreReq:		openssl >= 0.9.7d
@@ -274,6 +275,7 @@ Requires(postun):	/usr/sbin/userdel
 Requires:	/bin/login
 Requires:	util-linux
 Requires:	pam >= 0.77.3
+Provides:	user(sshd)
 Provides:	ssh-server
 
 %description server
@@ -504,13 +506,13 @@ EOF
 rm -rf $RPM_BUILD_ROOT
 
 %pre server
-if [ -n "`id -u sshd 2>/dev/null`" ]; then
-	if [ "`id -u sshd`" != "40" ]; then
+if [ -n "`/bin/id -u sshd 2>/dev/null`" ]; then
+	if [ "`/bin/id -u sshd`" != "40" ]; then
 		echo "Error: user sshd doesn't have uid=40. Correct this before installing ssh server." 1>&2
 		exit 1
 	fi
 else
-	/usr/sbin/useradd -u 40 -d %{_privsepdir} -s /bin/false -M -r -c "OpenSSH PrivSep User" -g nobody sshd 1>&2
+	/usr/sbin/useradd -u 40 -d %{_privsepdir} -s /bin/false -c "OpenSSH PrivSep User" -g nobody sshd 1>&2
 fi
 
 %post server
@@ -535,7 +537,7 @@ fi
 
 %postun server
 if [ "$1" = "0" ]; then
-	/usr/sbin/userdel sshd
+	%userremove sshd
 fi
 
 %files

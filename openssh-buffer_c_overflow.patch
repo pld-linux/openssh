@@ -1,5 +1,5 @@
---- buffer.c~	Tue Sep 16 16:18:17 2003
-+++ buffer.c	Tue Sep 16 16:26:59 2003
+--- 1/buffer.c~	Tue Sep 16 16:18:17 2003
++++ 1/buffer.c	Tue Sep 16 16:26:59 2003
 @@ -69,6 +69,7 @@
  void *
  buffer_append_space(Buffer *buffer, u_int len)

@@ -1,15 +1,12 @@
 #
 # Conditional build:
-%bcond_without	chroot		# without chrooted user environment support
-%bcond_with	gnome		# with gnome-askpass (GNOME 1.x) utility
-%bcond_without	gtk		# without GTK+ (2.x)
+%bcond_without	gnome		# without gnome-askpass utility
+%bcond_with	gtk		# without gtk (2.x)
 %bcond_with	ldap		# with ldap support
 %bcond_without	libedit		# without libedit (editline/history support in sftp client)
-%bcond_without	kerberos5	# without kerberos5 support
-%bcond_without	selinux		# build without SELinux support
-%bcond_with	sshagentsh	# with system-wide script for starting ssh-agent
+%bcond_with	kerberos5	# without kerberos5 support
+%bcond_with	chroot		# without chrooted user environment support
 #
-# gtk2-based gnome-askpass means no gnome1-based
 %{?with_gtk:%undefine with_gnome}
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(de):	OpenSSH - freie Implementation der Secure Shell (SSH)
@@ -23,7 +20,7 @@ Summary(ru):	OpenSSH - Ó×ÏÂÏÄÎÁÑ ÒÅÁÌÉÚÁÃÉÑ ÐÒÏÔÏËÏÌÁ Secure Shell (SSH)
 Summary(uk):	OpenSSH - ×¦ÌØÎÁ ÒÅÁÌ¦ÚÁÃ¦Ñ ÐÒÏÔÏËÏÌÕ Secure Shell (SSH)
 Name:		openssh
 Version:	4.0p1
-Release:	2
+Release:	1.1
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -35,14 +32,12 @@ Source3:	%{name}d.init
 Source4:	%{name}d.pamd
 Source5:	%{name}.sysconfig
 Source6:	passwd.pamd
-Source7:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/openssh-non-english-man-pages.tar.bz2
-# Source7-md5:	66943d481cc422512b537bcc2c7400d1
+Source7:	%{name}-askpass.sh
+Source8:	%{name}-askpass.csh
 Source9:	http://www.taiyo.co.jp/~gotoh/ssh/connect.c
-# Source9-md5:	e1c3cbed88f08ea778d90813d48cd428
+# NoSource9-md5:	e1c3cbed88f08ea778d90813d48cd428
 Source10:	http://www.taiyo.co.jp/~gotoh/ssh/connect.html
-# Source10-md5:	ec74f3e3b2ea3a7dc84c7988235b6fcf
-Source11:	ssh-agent.sh
-Source12:	ssh-agent.conf
+# NoSource10-md5:	ec74f3e3b2ea3a7dc84c7988235b6fcf
 Patch0:		%{name}-no_libnsl.patch
 Patch2:		%{name}-linux-ipv6.patch
 Patch3:		%{name}-pam_misc.patch
@@ -53,26 +48,22 @@ Patch6:		%{name}-heimdal.patch
 Patch7:		%{name}-pam-conv.patch
 # http://chrootssh.sourceforge.net/download/osshChroot-3.7.1p2.diff
 Patch8:		%{name}-chroot.patch
-Patch9:		%{name}-selinux.patch
-Patch10:	%{name}-selinux-pld.patch
 URL:		http://www.openssh.com/
 BuildRequires:	autoconf
 BuildRequires:	automake
 %{?with_gnome:BuildRequires:	gnome-libs-devel}
 %{?with_gtk:BuildRequires:	gtk+2-devel}
+BuildRequires:	libwrap-devel
+BuildRequires:	openssl-devel >= 0.9.6k
+%{?with_ldap:BuildRequires:	openldap-devel}
 %{?with_kerberos5:BuildRequires:	heimdal-devel}
 %{?with_libedit:BuildRequires:	libedit-devel}
-%{?with_selinux:BuildRequires:	libselinux-devel}
-BuildRequires:	libwrap-devel
-%{?with_ldap:BuildRequires:	openldap-devel}
-BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	pam-devel
 BuildRequires:	%{__perl}
 %{?with_gtk:BuildRequires:	pkgconfig}
-BuildRequires:	rpmbuild(macros) >= 1.159
 BuildRequires:	zlib-devel
 PreReq:		FHS >= 2.1-24
-PreReq:		openssl >= 0.9.7d
+PreReq:		openssl >= 0.9.6k
 Obsoletes:	ssh
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -137,7 +128,7 @@ inoltrate attraverso un canale sicuro.
 Ssh (Secure Shell) to program s³u¿±cy do logowania siê na zdaln±
 maszynê i uruchamiania na niej aplikacji. W zamierzeniu openssh ma
 zast±piæ rlogin, rsh i dostarczyæ bezpieczne, szyfrowane po³±czenie
-pomiêdzy dwoma hostami.
+pomiedzy dwoma hostami.
 
 Ten pakiet zawiera podstawowe pliki potrzebne zarówno po stronie
 klienta jak i serwera OpenSSH. Aby by³ u¿yteczny, trzeba zainstalowaæ
@@ -206,9 +197,8 @@ Summary(pt_BR):	Clientes do OpenSSH
 Summary(ru):	OpenSSH - ËÌÉÅÎÔÙ ÐÒÏÔÏËÏÌÁ Secure Shell
 Summary(uk):	OpenSSH - ËÌ¦¤ÎÔÉ ÐÒÏÔÏËÏÌÕ Secure Shell
 Group:		Applications/Networking
-Requires:	%{name} = %{epoch}:%{version}-%{release}
-%{?with_sshagentsh:Requires:	xinitrc}
 Provides:	ssh-clients
+Requires:	%{name} = %{epoch}:%{version}
 Obsoletes:	ssh-clients
 
 %description clients
@@ -233,7 +223,7 @@ conexiones codificadas con servidores SSH.
 Ssh (Secure Shell) to program s³u¿±cy do logowania siê na zdaln±
 maszynê i uruchamiania na niej aplikacji. W zamierzeniu openssh ma
 zast±piæ rlogin, rsh i dostarczyæ bezpieczne, szyfrowane po³±czenie
-pomiêdzy dwoma hostami.
+pomiedzy dwoma hostami.
 
 Ten pakiet zawiera klientów s³u¿±cych do ³±czenia siê z serwerami SSH.
 
@@ -267,8 +257,8 @@ Summary(pt_BR):	Servidor OpenSSH para comunicações encriptadas
 Summary(ru):	OpenSSH - ÓÅÒ×ÅÒ ÐÒÏÔÏËÏÌÁ Secure Shell (sshd)
 Summary(uk):	OpenSSH - ÓÅÒ×ÅÒ ÐÒÏÔÏËÏÌÕ Secure Shell (sshd)
 Group:		Networking/Daemons
-PreReq:		%{name} = %{epoch}:%{version}-%{release}
-PreReq:		rc-scripts >= 0.3.1-15
+PreReq:		%{name} = %{epoch}:%{version}
+PreReq:		rc-scripts >= 0.3.1-3
 Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/useradd
 Requires(post,preun):	/sbin/chkconfig
@@ -278,7 +268,6 @@ Requires(postun):	/usr/sbin/userdel
 Requires:	/bin/login
 Requires:	util-linux
 Requires:	pam >= 0.77.3
-Provides:	user(sshd)
 Provides:	ssh-server
 
 %description server
@@ -314,7 +303,7 @@ Questo pacchetto installa sshd, il server di OpenSSH.
 Ssh (Secure Shell) to program s³u¿±cy do logowania siê na zdaln±
 maszynê i uruchamiania na niej aplikacji. W zamierzeniu openssh ma
 zast±piæ rlogin, rsh i dostarczyæ bezpieczne, szyfrowane po³±czenie
-pomiêdzy dwoma hostami.
+pomiedzy dwoma hostami.
 
 Ten pakiet zawiera serwer sshd (do którego mog± ³±czyæ siê klienci
 ssh).
@@ -355,7 +344,7 @@ Summary(pt_BR):	Diálogo para entrada de passphrase para GNOME
 Summary(ru):	OpenSSH - ÄÉÁÌÏÇ ××ÏÄÁ ËÌÀÞÅ×ÏÊ ÆÒÁÚÙ (passphrase) ÄÌÑ GNOME
 Summary(uk):	OpenSSH - Ä¦ÁÌÏÇ ××ÏÄÕ ËÌÀÞÏ×Ï§ ÆÒÁÚÉ (passphrase) ÄÌÑ GNOME
 Group:		Applications/Networking
-Requires:	%{name} = %{epoch}:%{version}-%{release}
+Requires:	%{name} = %{epoch}:%{version}
 Obsoletes:	ssh-extras
 Obsoletes:	ssh-askpass
 Obsoletes:	openssh-askpass
@@ -381,7 +370,7 @@ entrada de passphrase en GNOME.
 Ssh (Secure Shell) to program s³u¿±cy do logowania siê na zdaln±
 maszynê i uruchamiania na niej aplikacji. W zamierzeniu openssh ma
 zast±piæ rlogin, rsh i dostarczyæ bezpieczne, szyfrowane po³±czenie
-pomiêdzy dwoma hostami.
+pomiedzy dwoma hostami.
 
 Ten pakiet zawiera ,,odpytywacz has³a'' dla GNOME.
 
@@ -413,11 +402,8 @@ GNOME.
 %{?with_kerberos5:%patch6 -p1}
 #%patch7 -p1
 %patch8 -p1
-%{?with_selinux:%patch9 -p1}
-%{?with_selinux:%patch10 -p1}
 
 %build
-cp %{_datadir}/automake/config.sub .
 %{__aclocal}
 %{__autoconf}
 %{?with_chroot:CPPFLAGS="-DCHROOT"}
@@ -459,13 +445,12 @@ cd contrib
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{pam.d,rc.d/init.d,sysconfig,security,env.d}} \
+install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{pam.d,rc.d/init.d,sysconfig,security,profile.d}} \
 	$RPM_BUILD_ROOT%{_libexecdir}/ssh
-%{?with_sshagentsh:install -d $RPM_BUILD_ROOT/etc/{profile.d,X11/xinit/xinitrc.d}}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
-
+	
 install connect    $RPM_BUILD_ROOT%{_bindir}
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/pam.d/sshd
 install %{SOURCE6} $RPM_BUILD_ROOT/etc/pam.d/passwdssh
@@ -473,13 +458,6 @@ install %{SOURCE5} $RPM_BUILD_ROOT/etc/sysconfig/sshd
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
 install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/ssh_config
 install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/sshd_config
-%if %{with sshagentsh}
-install %{SOURCE11} $RPM_BUILD_ROOT/etc/profile.d/
-ln -sf	/etc/profile.d/ssh-agent.sh $RPM_BUILD_ROOT/etc/X11/xinit/xinitrc.d/ssh-agent.sh
-install %{SOURCE12} $RPM_BUILD_ROOT/etc/ssh/
-%endif
-
-bzip2 -dc %{SOURCE7} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
 
 %if %{with gnome}
 install contrib/gnome-ssh-askpass1 $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
@@ -488,13 +466,7 @@ install contrib/gnome-ssh-askpass1 $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
 install contrib/gnome-ssh-askpass2 $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
 %endif
 %if %{with gnome} || %{with gtk}
-cat << EOF >$RPM_BUILD_ROOT/etc/env.d/GNOME_SSH_ASKPASS_GRAB_SERVER
-#GNOME_SSH_ASKPASS_GRAB_SERVER="true"
-EOF
-cat << EOF >$RPM_BUILD_ROOT/etc/env.d/GNOME_SSH_ASKPASS_GRAB_POINTER
-#GNOME_SSH_ASKPASS_GRAB_POINTER="true"
-EOF
-ln -s %{_libexecdir}/ssh/ssh-askpass $RPM_BUILD_ROOT%{_libexecdir}/ssh-askpass
+install %{SOURCE7} %{SOURCE8} $RPM_BUILD_ROOT/etc/profile.d
 %endif
 
 rm -f	$RPM_BUILD_ROOT%{_mandir}/man1/slogin.1
@@ -502,21 +474,17 @@ echo ".so ssh.1" > $RPM_BUILD_ROOT%{_mandir}/man1/slogin.1
 
 touch $RPM_BUILD_ROOT/etc/security/blacklist.sshd
 
-cat << EOF >$RPM_BUILD_ROOT/etc/env.d/SSH_ASKPASS
-#SSH_ASKPASS="%{_libexecdir}/ssh-askpass"
-EOF
-
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %pre server
-if [ -n "`/bin/id -u sshd 2>/dev/null`" ]; then
-	if [ "`/bin/id -u sshd`" != "40" ]; then
+if [ -n "`id -u sshd 2>/dev/null`" ]; then
+	if [ "`id -u sshd`" != "40" ]; then
 		echo "Error: user sshd doesn't have uid=40. Correct this before installing ssh server." 1>&2
 		exit 1
 	fi
 else
-	/usr/sbin/useradd -u 40 -d %{_privsepdir} -s /bin/false -c "OpenSSH PrivSep User" -g nobody sshd 1>&2
+	/usr/sbin/useradd -u 40 -d %{_privsepdir} -s /bin/false -M -r -c "OpenSSH PrivSep User" -g nobody sshd 1>&2
 fi
 
 %post server
@@ -541,7 +509,7 @@ fi
 
 %postun server
 if [ "$1" = "0" ]; then
-	%userremove sshd
+	/usr/sbin/userdel sshd
 fi
 
 %files
@@ -550,7 +518,6 @@ fi
 %attr(755,root,root) %{_bindir}/ssh-key*
 %{_mandir}/man1/ssh-key*.1*
 %dir %{_sysconfdir}
-%dir %{_libexecdir}
 
 %files clients
 %defattr(644,root,root,755)
@@ -563,12 +530,6 @@ fi
 %attr(755,root,root) %{_bindir}/ssh-add
 %attr(755,root,root) %{_bindir}/scp
 %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/ssh_config
-%attr(644,root,root) %config(noreplace,missingok) %verify(not md5 size mtime) /etc/env.d/SSH_ASKPASS
-%if %{with sshagentsh}
-%config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/ssh-agent.conf
-%attr(755,root,root) /etc/profile.d/ssh-agent.sh
-%attr(755,root,root) /etc/X11/xinit/xinitrc.d/ssh-agent.sh
-%endif
 %{_mandir}/man1/scp.1*
 %{_mandir}/man1/ssh.1*
 %{_mandir}/man1/slogin.1*
@@ -576,10 +537,6 @@ fi
 %{_mandir}/man1/ssh-agent.1*
 %{_mandir}/man1/ssh-add.1*
 %{_mandir}/man5/ssh_config.5*
-%lang(it) %{_mandir}/it/man1/ssh.1*
-%lang(it) %{_mandir}/it/man5/ssh_config.5*
-%lang(pl) %{_mandir}/pl/man1/scp.1*
-%lang(zh_CN) %{_mandir}/zh_CN/man1/scp.1*
 
 # for host-based auth (suid required for accessing private host key)
 #%attr(4755,root,root) %{_libexecdir}/ssh-keysign
@@ -589,10 +546,9 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_sbindir}/sshd
 %attr(755,root,root) %{_libexecdir}/sftp-server
-%attr(755,root,root) %{_libexecdir}/ssh-keysign
+%dir %{_libexecdir}
 %{_mandir}/man8/sshd.8*
 %{_mandir}/man8/sftp-server.8*
-%{_mandir}/man8/ssh-keysign.8*
 %{_mandir}/man5/sshd_config.5*
 %attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/sshd_config
 %attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/pam.d/sshd
@@ -604,8 +560,7 @@ fi
 %if %{with gnome} || %{with gtk}
 %files gnome-askpass
 %defattr(644,root,root,755)
-%attr(644,root,root) %config(noreplace,missingok) %verify(not md5 size mtime) /etc/env.d/GNOME_SSH_ASKPASS*
 %dir %{_libexecdir}/ssh
 %attr(755,root,root) %{_libexecdir}/ssh/ssh-askpass
-%attr(755,root,root) %{_libexecdir}/ssh-askpass
+%attr(755,root,root) /etc/profile.d/*
 %endif

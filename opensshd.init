@@ -15,8 +15,6 @@
 # Get network config
 . /etc/sysconfig/network
 
-SERVICE_LIMITS="-u unlimited -Sc 0"
-
 # Get service config
 [ -f /etc/sysconfig/sshd ] && . /etc/sysconfig/sshd
 
@@ -38,17 +36,14 @@ case "$1" in
 	if [ ! -f /etc/ssh/ssh_host_key -o ! -s /etc/ssh/ssh_host_key ]; then
 		/usr/bin/ssh-keygen -t rsa1 -f /etc/ssh/ssh_host_key -N '' 1>&2
 		chmod 600 /etc/ssh/ssh_host_key
-		[ -x /sbin/restorecon ] && /sbin/restorecon /etc/ssh/ssh_host_key || :
 	fi
 	if [ ! -f /etc/ssh/ssh_host_rsa_key -o ! -s /etc/ssh/ssh_host_rsa_key ]; then
 		/usr/bin/ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N '' 1>&2
 		chmod 600 /etc/ssh/ssh_host_rsa_key
-		[ -x /sbin/restorecon ] && /sbin/restorecon /etc/ssh/ssh_host_rsa_key || :
 	fi
 	if [ ! -f /etc/ssh/ssh_host_dsa_key -o ! -s /etc/ssh/ssh_host_dsa_key ]; then
 		/usr/bin/ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key -N '' 1>&2
 		chmod 600 /etc/ssh/ssh_host_dsa_key
-		[ -x /sbin/restorecon ] && /sbin/restorecon /etc/ssh/ssh_host_dsa_key || :
 	fi
 
 	if [ ! -f /etc/ssh/ssh_host_key ]; then
@@ -60,6 +55,7 @@ case "$1" in
 	# Check if the service is already running?
 	if [ ! -f /var/lock/subsys/sshd ]; then
 		msg_starting OpenSSH
+		ULIMIT_C="-S -c 0"
 		daemon /usr/sbin/sshd 
 		RETVAL=$?
 		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/sshd		
@@ -90,14 +86,11 @@ case "$1" in
 	nls "will use password for the key, you will need to type it on each"
 	nls "reboot."
 	/usr/bin/ssh-keygen -t rsa1 -f /etc/ssh/ssh_host_key
-	[ -x /sbin/restorecon ] && /sbin/restorecon /etc/ssh/ssh_host_key || :
 	chmod 600 /etc/ssh/ssh_host_key
 	/usr/bin/ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key
-	[ -x /sbin/restorecon ] && /sbin/restorecon /etc/ssh/ssh_host_rsa_key || :
 	chmod 600 /etc/ssh/ssh_host_rsa_key
 	/usr/bin/ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key
 	chmod 600 /etc/ssh/ssh_host_dsa_key
-	[ -x /sbin/restorecon ] && /sbin/restorecon /etc/ssh/ssh_host_dsa_key || :
 	exit $?
 	;;
   reload|force-reload)

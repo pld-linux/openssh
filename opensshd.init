@@ -16,7 +16,7 @@
 . /etc/sysconfig/network
 
 SERVICE_LIMITS_HARD="-u unlimited"
-SERVICE_LIMITS_SOFT="-c 0"
+SERVICE_LIMITS_SOFT="-u unlimited -c 0"
 
 # Get service config
 [ -f /etc/sysconfig/sshd ] && . /etc/sysconfig/sshd

@@ -10,7 +10,7 @@ Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	3.2.3p1
-Release:	3
+Release:	4
 Epoch:		1
 License:	BSD
 Group:		Applications/Networking
@@ -26,6 +26,7 @@ Patch1:		%{name}-set_12.patch
 Patch2:		%{name}-linux-ipv6.patch
 Patch3:		%{name}-chall-sec.patch
 Patch4:		%{name}-pam-age.patch
+Patch5:		%{name}-pseudo-mmap32.patch
 URL:		http://www.openssh.com/
 BuildRequires:	XFree86-devel
 BuildRequires:	autoconf
@@ -315,6 +316,7 @@ GNOME.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 %build
 aclocal
@@ -330,6 +332,7 @@ aclocal
 	--disable-suid-ssh \
 	--with-tcp-wrappers \
 	--with-privsep-path=%{_privsepdir} \
+	--with-privsep-user=sshd \
 	--with-pid-dir=%{_localstatedir}/run
 
 echo '#define LOGIN_PROGRAM           "/bin/login"' >>config.h
@@ -363,6 +366,17 @@ touch $RPM_BUILD_ROOT/etc/security/blacklist.sshd
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%pre server
+if [ -n "`id -u sshd 2>/dev/null`" ]; then
+	if [ "`id -u sshd`" != "40" ]; then
+		echo "Warning: user sshd haven't uid=40. Correct this before installing openssh" 1>&2
+		exit 1
+	fi
+else
+	echo "Adding user sshd UID=40"
+	/usr/sbin/useradd -u 40 -r -d /usr/share/empty -s /bin/false -c "SSH PrivSep User" -g nobody sshd 1>&2
+fi
+
 %post server
 /sbin/chkconfig --add sshd
 if [ -f /var/lock/subsys/sshd ]; then
@@ -381,6 +395,12 @@ if [ "$1" = "0" ]; then
 	fi
 	/sbin/chkconfig --del sshd
 fi
+
+%postun server
+if [ "$1" = "0" ]; then
+	echo "Removing user sshd"
+	/usr/sbin/userdel sshd
+fi	
 
 %files
 %defattr(644,root,root,755)

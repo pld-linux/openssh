@@ -1,5 +1,6 @@
---- openssh-1.2.3/Makefile.in.orig	Thu Apr  6 19:31:03 2000
-+++ openssh-1.2.3/Makefile.in	Thu Apr  6 19:31:52 2000
+diff -bruN openssh-2.1.0/Makefile.in openssh-2.1.0.new/Makefile.in
+--- openssh-2.1.0/Makefile.in	Tue May  9 06:28:55 2000
++++ openssh-2.1.0.new/Makefile.in	Wed May 10 19:16:45 2000
 @@ -23,6 +23,7 @@
  PATHS=-DETCDIR=\"$(sysconfdir)\" -DSSH_PROGRAM=\"$(SSH_PROGRAM)\" -DSSH_ASKPASS_DEFAULT=\"$(ASKPASS_PROGRAM)\"
  CFLAGS=@CFLAGS@ $(PATHS) @DEFS@
@@ -8,24 +9,26 @@
  AR=@AR@
  RANLIB=@RANLIB@
  INSTALL=@INSTALL@
-@@ -59,7 +60,7 @@
- 	$(LD) -o $@ $(SSHOBJS) $(LDFLAGS) -lssh $(LIBS)
+@@ -71,7 +72,7 @@
+ 	$(LD) -o $@ $(SSHOBJS) $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS)
  
- sshd: libssh.a	$(SSHDOBJS)
--	$(LD) -o $@ $(SSHDOBJS) $(LDFLAGS) -lssh $(LIBS)
-+	$(LD) -o $@ $(SSHDOBJS) $(LDFLAGS) -lssh $(LIBWRAP) $(LIBS) 
+ sshd: libssh.a	libopenbsd-compat.a $(SSHDOBJS)
+-	$(LD) -o $@ $(SSHDOBJS) $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS)
++	$(LD) -o $@ $(SSHDOBJS) $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS) $(LIBWRAP)
  
- scp: libssh.a scp.o
- 	$(LD) -o $@ scp.o $(LDFLAGS) -lssh $(LIBS) 
---- openssh-1.2.3/configure.in.orig	Thu Apr  6 19:32:46 2000
-+++ openssh-1.2.3/configure.in	Thu Apr  6 19:33:25 2000
-@@ -735,6 +735,9 @@
+ scp: libopenbsd-compat.a libssh.a scp.o
+ 	$(LD) -o $@ scp.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS) 
+diff -bruN openssh-2.1.0/configure.in openssh-2.1.0.new/configure.in
+--- openssh-2.1.0/configure.in	Mon May  8 12:49:37 2000
++++ openssh-2.1.0.new/configure.in	Wed May 10 19:18:23 2000
+@@ -757,7 +757,9 @@
+ 	[
+ 		if test "x$withval" != "xno" ; then
+ 			saved_LIBS="$LIBS"
+-			LIBS="$LIBS -lwrap"
++			LIBWRAP="-lwrap"
++			AC_SUBSCT(LIBWRAP)
++			LIBS="$saved_LIBS"
+ 			AC_MSG_CHECKING(for libwrap)
+ 			AC_TRY_LINK(
  				[
- 					AC_MSG_RESULT(yes)
- 					AC_DEFINE(LIBWRAP)
-+					LIBWRAP="-lwrap"
-+					AC_SUBST(LIBWRAP)
-+					LIBS="$saved_LIBS"
- 				],
- 				[
- 					AC_MSG_RESULT(no)

@@ -1,11 +1,11 @@
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Name:		openssh
-Version:	1.2.3
-Release:	3
+Version:	2.1.0
+Release:	1
 License:	BSD
 Group:		Applications/Networking
 Group(pl):	Aplikacje/Sieciowe
-Source0:	ftp://ftp.franken.de/pub/Linux/openssh/files/%{name}-%{version}.tar.gz
+Source0:	ftp://ftp.ca.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
 Source1:	opensshd.conf
 Source2:	openssh.conf
 Source3:	opensshd.init

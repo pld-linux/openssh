@@ -1,9 +1,9 @@
 #%PAM-1.0
-auth		required	/lib/security/pam_listfile.so item=user sense=deny file=/etc/security/blacklist onerr=succeed
-auth		required	/lib/security/pam_listfile.so item=user sense=deny file=/etc/security/blacklist.passwd onerr=succeed
-auth		required	/lib/security/pam_unix.so
-account		required	/lib/security/pam_unix.so
-# password      [success=1 ignore=reset abort=die default=bad] /lib/security/pam_pwgen.so upper=1 digit=1
-password	required	/lib/security/pam_cracklib.so difok=2 minlen=8 dcredit=2 ocredit=2 retry=3
-password	required	/lib/security/pam_unix.so md5 shadow use_authtok
-password	required	/lib/security/pam_make.so /var/db
+auth		required	pam_listfile.so item=user sense=deny file=/etc/security/blacklist onerr=succeed
+auth		required	pam_listfile.so item=user sense=deny file=/etc/security/blacklist.passwd onerr=succeed
+auth		required	pam_unix.so
+account		required	pam_unix.so
+# password      [success=1 ignore=reset abort=die default=bad] pam_pwgen.so upper=1 digit=1
+password	required	pam_cracklib.so difok=2 minlen=8 dcredit=2 ocredit=2 retry=3
+password	required	pam_unix.so md5 shadow use_authtok
+password	required	pam_make.so /var/db

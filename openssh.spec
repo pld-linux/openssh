@@ -226,7 +226,7 @@ entrada de passphrase no GNOME.
 
 %build
 aclocal
-autoconf
+%{__autoconf}
 
 %configure \
 	%{!?_without_gnome:--with-gnome-askpass} \

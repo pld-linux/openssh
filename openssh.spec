@@ -10,7 +10,7 @@ Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	3.2.3p1
-Release:	2
+Release:	3
 License:	BSD
 Group:		Applications/Networking
 Source0:	ftp://ftp.ca.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
@@ -24,6 +24,7 @@ Patch0:		%{name}-no_libnsl.patch
 Patch1:		%{name}-set_12.patch
 Patch2:		%{name}-linux-ipv6.patch
 Patch3:		%{name}-chall-sec.patch
+Patch4:		%{name}-pam-age.patch
 URL:		http://www.openssh.com/
 BuildRequires:	XFree86-devel
 BuildRequires:	autoconf
@@ -311,6 +312,7 @@ GNOME.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %build
 aclocal
@@ -348,7 +350,7 @@ install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
 install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/ssh_config
 install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/sshd_config
 install -d $RPM_BUILD_ROOT%{_libexecdir}/ssh
-%{!?_without_gnome:install contrib/gnome-ssh-askpass $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass}
+%{!?_without_gnome:install contrib/gnome-ssh-askpass $RPM_BUILD_ROOT%{_libexecdir}/ssh-askpass}
 
 rm -f	$RPM_BUILD_ROOT%{_mandir}/man1/slogin.1
 echo ".so ssh.1" > $RPM_BUILD_ROOT%{_mandir}/man1/slogin.1
@@ -416,5 +418,4 @@ fi
 
 %{!?_without_gnome:%files gnome-askpass}
 %{!?_without_gnome:%defattr(644,root,root,755)}
-%{!?_without_gnome:%dir %{_libexecdir}/ssh}
-%{!?_without_gnome:%attr(755,root,root) %{_libexecdir}/ssh/ssh-askpass}
+%{!?_without_gnome:%attr(755,root,root) %{_libexecdir}/ssh-askpass}

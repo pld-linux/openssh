@@ -34,13 +34,14 @@ diff -Naur openssh-3.5p1/ssh.1 openssh-3.5p1-p/ssh.1
  .Op Fl b Ar bind_address
  .Op Fl c Ar cipher_spec
  .Op Fl e Ar escape_char
-@@ -412,6 +412,9 @@
+@@ -412,6 +412,10 @@
  .It Fl b Ar bind_address
  Specify the interface to transmit from on machines with multiple
  interfaces or aliased addresses.
 +.It Fl B
 +Enables processing of SIGPIPE. Useful when using ssh output as input for
-+another process, for example in a shell script.
++another process, for example in a shell script. Be careful - it may break
++port/X11 forwarding when used.
  .It Fl c Ar blowfish|3des|des
  Selects the cipher to use for encrypting the session.
  .Ar 3des

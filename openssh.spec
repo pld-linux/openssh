@@ -2,14 +2,16 @@ Summary:	OpenSSH free Secure Shell (SSH) implementation
 Name:		openssh
 Version:	1.2pre15
 Release:	2
-Source0:	openssh-%{version}.tar.gz
+Source0:	http://violet.ibs.com.au/openssh/files/%{name}-%{version}.tar.gz
 Source1:	opensshd.conf
 Source2:	openssh.conf
 Source3:	opensshd.init
 Source4:	opensshd.pamd
 Source5:	openssh.sysconfig
+Source6:	passwd.pamd
 Patch0:		openssh-ssl.patch
 Patch1:		openssh-DESTDIR.patch
+Patch2:		openssh-PAM_NEW_AUTHTOK.patch
 License:	BSD
 Group:		Applications/Networking
 Group(pl):	Aplikacje/Sieciowe
@@ -110,6 +112,7 @@ This package contains the GNOME passphrase dialog.
 %setup  -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 autoconf
@@ -126,6 +129,7 @@ make install \
 	DESTDIR="$RPM_BUILD_ROOT"
 
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/pam.d/sshd
+install %{SOURCE6} $RPM_BUILD_ROOT/etc/pam.d/passwdssh
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/sysconfig/sshd
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
 install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/ssh_config
@@ -145,6 +149,9 @@ fi
 if test -r /var/run/sshd.pid
 then
 	/etc/rc.d/init.d/sshd restart >&2
+fi
+if ! grep ssh /etc/security/passwd.conf >/dev/null 2>&1 ; then
+	echo "ssh" >> /etc/security/passwd.conf
 fi
 
 %preun server

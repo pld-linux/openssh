@@ -503,3 +503,4 @@ fi
 %{!?_without_gnome:%defattr(644,root,root,755)}
 %{!?_without_gnome:%dir %{_libexecdir}/ssh}
 %{!?_without_gnome:%attr(755,root,root) %{_libexecdir}/ssh/ssh-askpass}
+%{!?_without_gnome:%attr(755,root,root) /etc/profile.d/*}

@@ -323,6 +323,7 @@ aclocal
 	--with-4in6 \
 	--disable-suid-ssh \
 	--with-tcp-wrappers \
+	--with-privsep-path=%{_var}/empty/sshd \
 	--with-pid-dir=%{_localstatedir}/run
 
 echo '#define LOGIN_PROGRAM           "/bin/login"' >>config.h
@@ -345,6 +346,7 @@ install %{SOURCE5} $RPM_BUILD_ROOT/etc/sysconfig/sshd
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
 install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/ssh_config
 install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/sshd_config
+install -d -m-m755 %{SOURCE7} $RPM_BUILD_ROOT%%{_var}/empty/sshd
 install -d $RPM_BUILD_ROOT%{_libexecdir}/ssh
 %{!?_without_gnome:install contrib/gnome-ssh-askpass $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass}
 
@@ -356,6 +358,11 @@ touch $RPM_BUILD_ROOT/etc/security/blacklist.sshd
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%pre server
+%{_sbindir}/groupadd -r -g %{sshd_gid} sshd 2>/dev/null || :
+%{_sbindir}/useradd -d /var/empty/sshd -s /bin/false -u %{sshd_uid} \
+        -g sshd -M -r sshd 2>/dev/null || :
+	
 %post server
 /sbin/chkconfig --add sshd
 if [ -f /var/lock/subsys/sshd ]; then
@@ -403,6 +410,7 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_sbindir}/sshd
 %attr(755,root,root) %{_libexecdir}/sftp-server
+%dir %attr(0111,root,root) %{_var}/empty/sshd
 %dir %{_libexecdir}
 %{_mandir}/man8/sshd.8*
 %{_mandir}/man8/sftp-server.8*

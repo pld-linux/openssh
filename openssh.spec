@@ -401,7 +401,7 @@ GNOME.
 %patch3 -p1
 %patch4 -p1
 %{?with_ldap:%patch5 -p1}
-#%{?with_kerberos5:%patch6 -p1}
+%{?with_kerberos5:%patch6 -p1}
 #%patch7 -p1
 %patch8 -p1
 %patch9 -p1

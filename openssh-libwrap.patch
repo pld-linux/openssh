@@ -20,14 +20,14 @@ diff -bruN openssh-2.1.0/Makefile.in openssh-2.1.0.new/Makefile.in
  	$(LD) -o $@ scp.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS) 
 diff -bruN openssh-2.1.0/configure.in openssh-2.1.0.new/configure.in
 --- openssh-2.1.0/configure.in	Mon May  8 12:49:37 2000
-+++ openssh-2.1.0.new/configure.in	Wed May 10 20:23:33 2000
++++ openssh-2.1.0.new/configure.in	Wed May 10 20:29:00 2000
 @@ -757,7 +757,10 @@
  	[
  		if test "x$withval" != "xno" ; then
  			saved_LIBS="$LIBS"
 -			LIBS="$LIBS -lwrap"
 +			LIBWRAP="-lwrap"
-+			AC_SUBSCT(LIBWRAP)
++			AC_SUBST(LIBWRAP)
 +			AC_DEFINE(LIBWRAP)
 +			LIBS="$saved_LIBS"
  			AC_MSG_CHECKING(for libwrap)

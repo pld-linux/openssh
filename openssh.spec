@@ -1,12 +1,13 @@
 #
 # Conditional build:
-%bcond_with	gnome		# without gnome-askpass utility
+%bcond_without	chroot		# without chrooted user environment support
+%bcond_with	gnome		# with gnome-askpass (GNOME 1.x) utility
 %bcond_without	gtk		# without GTK+ (2.x)
 %bcond_with	ldap		# with ldap support
+%bcond_without	libedit		# without libedit (editline/history support in sftp client)
 %bcond_without	kerberos5	# without kerberos5 support
-%bcond_without	chroot		# without chrooted user environment support
-%bcond_with	sshagentsh	# with system-wide script for starting ssh-agent
 %bcond_without	selinux		# build without SELinux support
+%bcond_with	sshagentsh	# with system-wide script for starting ssh-agent
 #
 # gtk2-based gnome-askpass means no gnome1-based
 %{?with_gtk:%undefine with_gnome}
@@ -60,6 +61,7 @@ BuildRequires:	automake
 %{?with_gnome:BuildRequires:	gnome-libs-devel}
 %{?with_gtk:BuildRequires:	gtk+2-devel}
 %{?with_kerberos5:BuildRequires:	heimdal-devel}
+%{?with_libedit:BuildRequires:	libedit-devel}
 %{?with_selinux:BuildRequires:	libselinux-devel}
 BuildRequires:	libwrap-devel
 %{?with_ldap:BuildRequires:	openldap-devel}
@@ -426,6 +428,7 @@ cp %{_datadir}/automake/config.sub .
 	--with-mantype=man \
 	--with-md5-passwords \
 	--with-ipaddr-display \
+	%{?with_libedit:--with-libedit} \
 	--with-4in6 \
 	--disable-suid-ssh \
 	--with-tcp-wrappers \

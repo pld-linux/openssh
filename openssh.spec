@@ -55,15 +55,15 @@ BuildRequires:	autoconf
 BuildRequires:	automake
 %{?with_gnome:BuildRequires:	gnome-libs-devel}
 %{?with_gtk:BuildRequires:	gtk+2-devel}
-BuildRequires:	libwrap-devel
-BuildRequires:	openssl-devel >= 0.9.7c
-%{?with_ldap:BuildRequires:	openldap-devel}
 %{?with_kerberos5:BuildRequires:	heimdal-devel}
+BuildRequires:	libselinux-devel
+BuildRequires:	libwrap-devel
+%{?with_ldap:BuildRequires:	openldap-devel}
+BuildRequires:	openssl-devel >= 0.9.7c
 BuildRequires:	pam-devel
 BuildRequires:	%{__perl}
 %{?with_gtk:BuildRequires:	pkgconfig}
 BuildRequires:	zlib-devel
-BuildRequires:	libselinux-devel
 PreReq:		FHS >= 2.1-24
 PreReq:		openssl >= 0.9.7c
 Obsoletes:	ssh
@@ -454,7 +454,7 @@ install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{pam.d,rc.d/init.d,sysconfig,secu
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
-	
+
 install connect    $RPM_BUILD_ROOT%{_bindir}
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/pam.d/sshd
 install %{SOURCE6} $RPM_BUILD_ROOT/etc/pam.d/passwdssh
@@ -469,7 +469,7 @@ install contrib/gnome-ssh-askpass1 $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
 %if %{with gtk}
 install contrib/gnome-ssh-askpass2 $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
 %endif
-%if %{with gnome}%{with gtk}
+%if %{with gnome} || %{with gtk}
 install %{SOURCE7} %{SOURCE8} $RPM_BUILD_ROOT/etc/profile.d
 %endif
 
@@ -563,7 +563,7 @@ fi
 %attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/sysconfig/sshd
 %attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/security/blacklist.sshd
 
-%if %{with gnome}%{with gtk}
+%if %{with gnome} || %{with gtk}
 %files gnome-askpass
 %defattr(644,root,root,755)
 %dir %{_libexecdir}/ssh

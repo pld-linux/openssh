@@ -1,7 +1,8 @@
 #
 # Conditional build:
-# _without_gnome - without gnome-askpass utility
-# _without_gtk	 - without gtk (2.x)
+# _without_gnome	- without gnome-askpass utility
+# _without_gtk		- without gtk (2.x)
+# _without_ldap		- without ldap support
 #
 # default to gtk2-based gnome-askpass
 %{!?_without_gtk:%define _without_gnome 1}
@@ -17,7 +18,7 @@ Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	3.6.1p2
-Release:	0.3
+Release:	0.4
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -43,6 +44,7 @@ BuildRequires:	automake
 %{!?_without_gtk:BuildRequires:	gtk+2-devel}
 BuildRequires:	libwrap-devel
 BuildRequires:	openssl-devel >= 0.9.7b
+%{!?_without_ldap:BuildRequires:	openldap-devel}
 BuildRequires:	pam-devel
 BuildRequires:	%{__perl}
 %{!?_without_gtk:BuildRequires:	pkgconfig}
@@ -381,7 +383,7 @@ GNOME.
 %patch2 -p1
 %patch3 -p1
 #%patch4 -p1
-%patch5 -p1
+%{!?_without_ldap:%patch5 -p1}
 
 %build
 %{__aclocal}
@@ -396,6 +398,8 @@ GNOME.
 	--with-4in6 \
 	--disable-suid-ssh \
 	--with-tcp-wrappers \
+	%{!?_without_ldap:--with-libs="-lldap -llber"} \
+	%{!?_without_ldap:--with-cppflags="-DWITH_LDAP_PUBKEY"} \
 	--with-privsep-path=%{_privsepdir} \
 	--with-pid-dir=%{_localstatedir}/run \
 	--with-xauth=/usr/X11R6/bin/xauth

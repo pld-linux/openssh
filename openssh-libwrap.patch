@@ -28,6 +28,7 @@ diff -bruN openssh-2.1.0/configure.in openssh-2.1.0.new/configure.in
 -			LIBS="$LIBS -lwrap"
 +			LIBWRAP="-lwrap"
 +			AC_SUBST(LIBWRAP)
++			AC_DEFINE(LIBWRAP)
 +			LIBS="$saved_LIBS"
  			AC_MSG_CHECKING(for libwrap)
  			AC_TRY_LINK(

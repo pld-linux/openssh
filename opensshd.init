@@ -20,7 +20,7 @@
 
 # Check that networking is up.
 if is_no "${NETWORKING}"; then
-        msg_Network_Down OpenSSH
+        msg_network_down OpenSSH
         exit 1
 fi
 			
@@ -43,7 +43,7 @@ case "$1" in
 	fi
 
 	if [ ! -f /etc/ssh/ssh_host_key ]; then
-		msg_Not_Running OpenSSH
+		msg_not_running OpenSSH
 		nls "No SSH host key found! You must run \"$0 init\" first."
 		exit 1
 	fi
@@ -55,7 +55,7 @@ case "$1" in
 		RETVAL=$?
 		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/sshd		
 	else
-		msg_Already_Running OpenSSH
+		msg_already_running OpenSSH
 	fi
 	;;
   stop)
@@ -64,7 +64,7 @@ case "$1" in
 		killproc sshd
 		rm -f /var/run/sshd.pid /var/lock/subsys/sshd >/dev/null 2>&1
 	else
-		msg_Not_Running OpenSSH
+		msg_not_running OpenSSH
 		exit 1
 	fi	
 	;;
@@ -93,7 +93,7 @@ case "$1" in
 	killproc sshd -HUP
 	;;
   *)
-	msg_Usage "$0 {start|stop|init|status|restart|reload}"
+	msg_usage "$0 {start|stop|init|status|restart|reload}"
 	exit 1
 esac
 

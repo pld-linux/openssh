@@ -500,7 +500,10 @@ fi
 %{_mandir}/man1/ssh-agent.1*
 %{_mandir}/man1/ssh-add.1*
 %{_mandir}/man5/ssh_config.5*
-%{_mandir}/man8/ssh-keysign.8*
+
+# for host-based auth (suid required for accessing private host key)
+#%attr(4755,root,root) %{_libexecdir}/ssh-keysign
+#%{_mandir}/man8/ssh-keysign.8*
 
 %files server
 %defattr(644,root,root,755)

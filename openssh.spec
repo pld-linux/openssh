@@ -184,7 +184,7 @@ echo '#define LOGIN_PROGRAM           "/bin/login"' >>config.h
 
 %{__make}
 
-%{!?bcond_off_gnome: cd contrib && gcc $RPM_OPT_FLAGS `gnome-config --cflags gnome gnomeui gtk` } \
+%{!?bcond_off_gnome: cd contrib && %{__cc} %{rpmcflags} `gnome-config --cflags gnome gnomeui gtk` } \
 %{!?bcond_off_gnome:	gnome-ssh-askpass.c -o gnome-ssh-askpass } \
 %{!?bcond_off_gnome:	`gnome-config --libs gnome gnomeui gtk` }
 
@@ -204,7 +204,7 @@ install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/sshd_config
 install -d $RPM_BUILD_ROOT%{_libexecdir}/ssh
 %{!?bcond_off_gnome:install contrib/gnome-ssh-askpass $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass}
 
-rm	$RPM_BUILD_ROOT%{_mandir}/man1/slogin.1
+rm -f	$RPM_BUILD_ROOT%{_mandir}/man1/slogin.1
 echo ".so man1/ssh.1" > $RPM_BUILD_ROOT%{_mandir}/man1/slogin.1
 
 gzip -9nf *.RNG TODO README OVERVIEW CREDITS Change*

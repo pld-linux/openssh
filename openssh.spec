@@ -20,7 +20,7 @@ Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	3.8p1
-Release:	0.3
+Release:	1
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking

@@ -403,17 +403,14 @@ GNOME.
 
 %prep
 %setup -q
-
-echo "Please, look and fix patches !!"
-exit 1
 %patch0 -p1
 %patch2 -p1
 %patch3 -p1
-## %patch4 -p1
+%patch4 -p1
 %{?with_ldap:%patch5 -p1}
 %{?with_kerberos5:%patch6 -p1}
 #%patch7 -p1
-## %patch8 -p1
+%patch8 -p1
 %{?with_selinux:%patch9 -p1}
 %{?with_selinux:%patch10 -p1}
 

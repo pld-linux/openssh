@@ -14,7 +14,7 @@ Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	3.4p1
-Release:	3.1
+Release:	3.2
 Epoch:		1
 License:	BSD
 Group:		Applications/Networking
@@ -31,10 +31,10 @@ Patch2:		%{name}-linux-ipv6.patch
 Patch3:		%{name}-pseudo-mmap.patch
 Patch4:		%{name}-3.4p1-owl-hide-unknown.diff 
 Patch5:		%{name}-3.4p1-owl-always-auth.diff 
-Patch6:		%{name}-3.4p1-owl-pam_userpass.diff 
-Patch7:		%{name}-3.4p1-owl-password-changing.diff 
-Patch8:		%{name}-3.4p1-owl-logging.diff 
-Patch9:		%{name}-3.4p1-owl-fatal_cleanups.diff 
+Patch6:		%{name}-3.4p1-owl-password-changing.diff 
+Patch7:		%{name}-3.4p1-owl-logging.diff 
+Patch8:		%{name}-3.4p1-owl-fatal_cleanups.diff 
+Patch9:		%{name}-pam_misc.patch
 URL:		http://www.openssh.com/
 BuildRequires:	XFree86-devel
 BuildRequires:	autoconf

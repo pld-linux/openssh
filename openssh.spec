@@ -5,7 +5,7 @@ Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(pl):	Publicznie dostêpna implementacja bezpiecznego shella (SSH)
 Name:		openssh
 Version:	2.3.0p1
-Release:	5
+Release:	6
 License:	BSD
 Group:		Applications/Networking
 Group(de):	Applikationen/Netzwerkwesen
@@ -97,10 +97,10 @@ Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
 Group(pl):	Sieciowe/Serwery
 Obsoletes:	ssh-server < %{version}, ssh-server > %{version}
-Requires:	rc-scripts
 Requires:	/bin/login
 Requires:	util-linux
 Prereq:		pam
+Prereq:		rc-scripts
 Prereq:		%{name} = %{version}
 
 %description server

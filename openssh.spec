@@ -22,7 +22,7 @@ Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	3.6.1p2
-Release:	5%{?_with_ldap:ldap}
+Release:	6%{?_with_ldap:ldap}
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -255,7 +255,7 @@ Summary(ru):	OpenSSH - сервер протокола Secure Shell (sshd)
 Summary(uk):	OpenSSH - сервер протоколу Secure Shell (sshd)
 Group:		Networking/Daemons
 PreReq:		%{name} = %{epoch}:%{version}
-PreReq:		rc-scripts >= 0.3.1-14
+PreReq:		rc-scripts >= 0.3.1-15
 Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/useradd
 Requires(post,preun):	/sbin/chkconfig

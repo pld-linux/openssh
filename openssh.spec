@@ -2,7 +2,7 @@ Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(pl):	,,wolna'' implementacja bezpiecznego shella (SSH)
 Name:		openssh
 Version:	2.1.0p2
-Release:	1
+Release:	2
 License:	BSD
 Group:		Applications/Networking
 Group(pl):	Aplikacje/Sieciowe
@@ -17,6 +17,7 @@ Source6:	passwd.pamd
 Patch0:		openssh-PAM_NEW_AUTHTOK.patch
 Patch1:		openssh-libwrap.patch
 Patch3:		openssh-login.patch
+Patch4:		openssh-LIBS.patch
 BuildRequires:	openssl-devel >= 0.9.5a
 BuildRequires:	rpm >= 3.0.4
 BuildRequires:	zlib-devel
@@ -155,9 +156,11 @@ Ten pakiet zawiera ,,odpytywacz has³a'' dla GNOME.
 %patch0 -p1
 %patch1 -p1
 %patch3 -p1
+%patch4 -p1
 
 %build
 autoconf
+LDFLAGS="-s"; export LDFLAGS
 %configure \
 	--with-gnome-askpass \
 	--with-tcp-wrappers \
@@ -188,7 +191,7 @@ install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
 install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/ssh_config
 install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/sshd_config
 install -d $RPM_BUILD_ROOT%{_libexecdir}/ssh
-install -s contrib/gnome-ssh-askpass \
+install contrib/gnome-ssh-askpass \
 	$RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
 
 gzip -9nf ChangeLog OVERVIEW COPYING.Ylonen README README.Ylonen UPGRADING \

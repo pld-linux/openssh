@@ -1,6 +1,7 @@
 #
 # Conditional build:	
 # _without_gnome - without gnome-askpass utility
+
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(pl):	Publicznie dostêpna implementacja bezpiecznego shella (SSH)
 Name:		openssh
@@ -26,7 +27,6 @@ BuildRequires:	XFree86-devel
 BuildRequires:	autoconf
 BuildRequires:	automake
 %{!?_without_gnome:BuildRequires: gnome-libs-devel}
-BuildRequires:	gtk+-devel
 BuildRequires:	openssl-devel >= 0.9.6a
 BuildRequires:	pam-devel
 BuildRequires:	zlib-devel

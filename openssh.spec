@@ -100,7 +100,7 @@ Group(pl):	Sieciowe/Serwery
 Obsoletes:	ssh-server < %{version}, ssh-server > %{version}
 Requires:	/bin/login
 Requires:	util-linux
-Requires:	rc-scripts
+Prereq:		rc-scripts
 Prereq:		chkconfig
 Prereq:		%{name} = %{version}
 

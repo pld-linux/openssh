@@ -398,6 +398,7 @@ GNOME.
 #%patch4 -p1
 %{?_with_ldap:%patch5 -p1}
 %{?_with_kerberos5:%patch6 -p1}
+%patch7 -p1
 
 %build
 %{__aclocal}

@@ -3,6 +3,7 @@
 # _without_gnome	- without gnome-askpass utility
 # _without_gtk		- without gtk (2.x)
 # _with_ldap		- with ldap support
+# _with_kerberos5		- with kerberos5 support
 #
 # default to gtk2-based gnome-askpass
 
@@ -41,6 +42,7 @@ Patch3:		%{name}-pam_misc.patch
 Patch4:		%{name}-sigpipe.patch
 # http://ldappubkey.gcu-squad.org/
 Patch5:		ldappubkey-ossh3.6-v2.patch
+Patch6:		openssh-heimdal.patch
 URL:		http://www.openssh.com/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -49,6 +51,7 @@ BuildRequires:	automake
 BuildRequires:	libwrap-devel
 BuildRequires:	openssl-devel >= 0.9.7b
 %{?_with_ldap:BuildRequires:	openldap-devel}
+%{?_with_kerberos5:BuildRequires:	heimdal-devel}
 BuildRequires:	pam-devel
 BuildRequires:	%{__perl}
 %{!?_without_gtk:BuildRequires:	pkgconfig}
@@ -388,6 +391,7 @@ GNOME.
 %patch3 -p1
 #%patch4 -p1
 %{?_with_ldap:%patch5 -p1}
+%{?_with_kerberos5:%patch6 -p1}
 
 %build
 %{__aclocal}
@@ -404,6 +408,7 @@ GNOME.
 	--with-tcp-wrappers \
 	%{?_with_ldap:--with-libs="-lldap -llber"} \
 	%{?_with_ldap:--with-cppflags="-DWITH_LDAP_PUBKEY"} \
+	%{?_with_kerberos5:--with-kerberos5} \
 	--with-privsep-path=%{_privsepdir} \
 	--with-pid-dir=%{_localstatedir}/run \
 	--with-xauth=/usr/X11R6/bin/xauth

@@ -15,7 +15,7 @@ if [ -s "$SSH_AGENT_CONF" ] ; then
 		SSH_AGENT_DATA="${HOME}/.ssh/SSH-AGENT-DATA"
 		if [ -s "$SSH_AGENT_DATA" ] ; then
         		. "$SSH_AGENT_DATA" > /dev/null
-		        if [ "$(ps -p "$SSH_AGENT_PID" | tail -n1 | awk '{print $4}')" != "ssh-agent" ] ; then
+		        if [ "$(ps uhp "$SSH_AGENT_PID" 2>/dev/null | awk '$1 ~ ENVIRON["USER"] {print $11}')" != "ssh-agent" ] ; then
         		        ssh-agent $ssh_agent_flags > "$SSH_AGENT_DATA" 
 		                . "$SSH_AGENT_DATA" > /dev/null
 		        fi

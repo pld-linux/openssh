@@ -92,6 +92,7 @@ Obsoletes:	ssh-server < %{version}, ssh-server > %{version}
 Requires:	rc-scripts
 Requires:	/bin/login
 Requires:	util-linux
+Prereq:		pam
 Prereq:		%{name} = %{version}
 
 %description server

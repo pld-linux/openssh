@@ -1,7 +1,7 @@
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Name:		openssh
 Version:	1.2.3
-Release:	2
+Release:	3
 License:	BSD
 Group:		Applications/Networking
 Group(pl):	Aplikacje/Sieciowe
@@ -166,6 +166,8 @@ if [ ! -f /etc/ssh/ssh_host_key -o ! -s /etc/ssh/ssh_host_key ]; then
 fi
 if [ -f /var/lock/subsys/sshd ]; then
 	/etc/rc.d/init.d/sshd restart 1>&2
+else
+	echo "Run \"/etc/rc.d/init.d/sshd start\" to start openssh daemon."
 fi
 if ! grep ssh /etc/security/passwd.conf >/dev/null 2>&1 ; then
 	echo "ssh" >> /etc/security/passwd.conf

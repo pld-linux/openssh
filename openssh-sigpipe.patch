@@ -1,5 +1,6 @@
---- openssh-3.8p1/clientloop.c.orig	2003-12-17 06:33:11.000000000 +0100
-+++ openssh-3.8p1/clientloop.c	2004-02-25 21:25:43.000000000 +0100
+diff -urN openssh-3.8.1p1.org/clientloop.c openssh-3.8.1p1/clientloop.c
+--- openssh-3.8.1p1.org/clientloop.c	2004-04-29 01:37:05.496553160 +0200
++++ openssh-3.8.1p1/clientloop.c	2004-04-29 01:37:29.691874912 +0200
 @@ -99,6 +99,9 @@
   */
  extern char *host;
@@ -19,8 +20,21 @@
  	if (have_pty)
  		signal(SIGWINCH, window_change_handler);
  
---- openssh-3.8p1/ssh.1.orig	2003-12-17 06:33:11.000000000 +0100
-+++ openssh-3.8p1/ssh.1	2004-02-25 21:28:27.000000000 +0100
+diff -urN openssh-3.8.1p1.org/ssh.0 openssh-3.8.1p1/ssh.0
+--- openssh-3.8.1p1.org/ssh.0	2004-04-29 01:37:06.122458008 +0200
++++ openssh-3.8.1p1/ssh.0	2004-04-29 01:39:29.069726720 +0200
+@@ -228,6 +228,8 @@
+              that enable them to authenticate using the identities loaded into
+              the agent.
+ 
++     -B      Enable SIGPIPE processing.
++
+      -a      Disables forwarding of the authentication agent connection.
+ 
+      -b bind_address
+diff -urN openssh-3.8.1p1.org/ssh.1 openssh-3.8.1p1/ssh.1
+--- openssh-3.8.1p1.org/ssh.1	2004-04-29 01:37:05.604536744 +0200
++++ openssh-3.8.1p1/ssh.1	2004-04-29 01:37:29.693874608 +0200
 @@ -43,7 +43,7 @@
  .Nd OpenSSH SSH client (remote login program)
  .Sh SYNOPSIS
@@ -41,8 +55,9 @@
  .It Fl C
  Requests compression of all data (including stdin, stdout, stderr, and
  data for forwarded X11 and TCP/IP connections).
---- openssh-3.8p1/ssh.c.orig	2003-12-17 06:33:11.000000000 +0100
-+++ openssh-3.8p1/ssh.c	2004-02-25 21:30:51.000000000 +0100
+diff -urN openssh-3.8.1p1.org/ssh.c openssh-3.8.1p1/ssh.c
+--- openssh-3.8.1p1.org/ssh.c	2004-04-29 01:37:05.651529600 +0200
++++ openssh-3.8.1p1/ssh.c	2004-04-29 01:37:29.699873696 +0200
 @@ -135,6 +135,9 @@
  /* Should we execute a command or invoke a subsystem? */
  int subsystem_flag = 0;
@@ -53,15 +68,7 @@
  /* # of replies received for global requests */
  static int client_global_request_id = 0;
  
-@@ -153,6 +156,7 @@
- 	fprintf(stderr, "  -F config   Config file (default: ~/%s).\n",
- 	     _PATH_SSH_USER_CONFFILE);
- 	fprintf(stderr, "  -A          Enable authentication agent forwarding.\n");
-+	fprintf(stderr, "  -B          Enable SIGPIPE processing.\n");
- 	fprintf(stderr, "  -a          Disable authentication agent forwarding (default).\n");
- 	fprintf(stderr, "  -X          Enable X11 connection forwarding.\n");
- 	fprintf(stderr, "  -Y          Enable trusted X11 connection forwarding.\n");
-@@ -265,7 +269,7 @@
+@@ -228,7 +231,7 @@
  
  again:
  	while ((opt = getopt(ac, av,
@@ -70,7 +77,7 @@
  		switch (opt) {
  		case '1':
  			options.protocol = SSH_PROTO_1;
-@@ -308,6 +312,9 @@
+@@ -271,6 +274,9 @@
  		case 'A':
  			options.forward_agent = 1;
  			break;

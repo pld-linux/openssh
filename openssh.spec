@@ -23,7 +23,7 @@ Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	4.0p1
-Release:	0.2
+Release:	0.3
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -48,7 +48,7 @@ Patch2:		%{name}-linux-ipv6.patch
 Patch3:		%{name}-pam_misc.patch
 Patch4:		%{name}-sigpipe.patch
 # http://www.opendarwin.org/projects/openssh-lpk/
-Patch5:		%{name}-lpk-4.0p1-0.2.1.patch
+Patch5:		%{name}-lpk-4.0p1-0.3.patch
 Patch6:		%{name}-heimdal.patch
 Patch7:		%{name}-pam-conv.patch
 # http://chrootssh.sourceforge.net/download/osshChroot-3.7.1p2.diff

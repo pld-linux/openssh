@@ -20,7 +20,7 @@ Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	3.7.1p2
-Release:	4.4
+Release:	4.5
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -49,6 +49,7 @@ Patch7:		%{name}-pam-conv.patch
 # http://chrootssh.sourceforge.net/download/osshChroot-3.7.1p2.diff
 Patch8:		%{name}-chroot.patch
 Patch9:		%{name}-selinux.patch
+Patch10:	%{name}-selinux-pld.patch
 URL:		http://www.openssh.com/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -404,6 +405,7 @@ GNOME.
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
 
 %build
 cp /usr/share/automake/config.sub .

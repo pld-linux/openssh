@@ -33,23 +33,24 @@ Obsoletes:	ssh < %{version}, ssh > %{version}
 
 %description
 Ssh (Secure Shell) a program for logging into a remote machine and for
-executing commands in a remote machine. It is intended to replace rlogin
-and rsh, and provide secure encrypted communications between two untrusted
-hosts over an insecure network. X11 connections and arbitrary TCP/IP ports
-can also be forwarded over the secure channel.
+executing commands in a remote machine. It is intended to replace
+rlogin and rsh, and provide secure encrypted communications between
+two untrusted hosts over an insecure network. X11 connections and
+arbitrary TCP/IP ports can also be forwarded over the secure channel.
 
-OpenSSH is OpenBSD's rework of the last free version of SSH, bringing it up
-to date in terms of security and features, as well as removing all patented
-algorithms to seperate libraries (OpenSSL).
+OpenSSH is OpenBSD's rework of the last free version of SSH, bringing
+it up to date in terms of security and features, as well as removing
+all patented algorithms to seperate libraries (OpenSSL).
 
-This package includes the core files necessary for both the OpenSSH client
-and server. To make this package useful, you should also install
-openssh-clients, openssh-server, or both.
+This package includes the core files necessary for both the OpenSSH
+client and server. To make this package useful, you should also
+install openssh-clients, openssh-server, or both.
 
 %description -l pl
-Ssh (Secure Shell) to program s³u¿±cy do logowania siê na zdaln± maszynê i
-uruchamiania na niej aplikacji. W zamierzeniu openssh ma zast±piæ rlogin,
-rsh i dostarczyæ bezpieczne, szyfrowane po³±czenie pomiedzy dwoma hostami.
+Ssh (Secure Shell) to program s³u¿±cy do logowania siê na zdaln±
+maszynê i uruchamiania na niej aplikacji. W zamierzeniu openssh ma
+zast±piæ rlogin, rsh i dostarczyæ bezpieczne, szyfrowane po³±czenie
+pomiedzy dwoma hostami.
 
 %package clients
 Summary:	OpenSSH Secure Shell protocol clients
@@ -62,22 +63,23 @@ Requires:	%{name} = %{version}
 
 %description clients
 Ssh (Secure Shell) a program for logging into a remote machine and for
-executing commands in a remote machine. It is intended to replace rlogin
-and rsh, and provide secure encrypted communications between two untrusted
-hosts over an insecure network. X11 connections and arbitrary TCP/IP ports
-can also be forwarded over the secure channel.
+executing commands in a remote machine. It is intended to replace
+rlogin and rsh, and provide secure encrypted communications between
+two untrusted hosts over an insecure network. X11 connections and
+arbitrary TCP/IP ports can also be forwarded over the secure channel.
 
-OpenSSH is OpenBSD's rework of the last free version of SSH, bringing it up
-to date in terms of security and features, as well as removing all patented
-algorithms to seperate libraries (OpenSSL).
+OpenSSH is OpenBSD's rework of the last free version of SSH, bringing
+it up to date in terms of security and features, as well as removing
+all patented algorithms to seperate libraries (OpenSSL).
 
-This package includes the clients necessary to make encrypted connections
-to SSH servers.
+This package includes the clients necessary to make encrypted
+connections to SSH servers.
 
 %description -l pl clients
-Ssh (Secure Shell) to program s³u¿±cy do logowania siê na zdaln± maszynê i
-uruchamiania na niej aplikacji. W zamierzeniu openssh ma zast±piæ rlogin,
-rsh i dostarczyæ bezpieczne, szyfrowane po³±czenie pomiedzy dwoma hostami.
+Ssh (Secure Shell) to program s³u¿±cy do logowania siê na zdaln±
+maszynê i uruchamiania na niej aplikacji. W zamierzeniu openssh ma
+zast±piæ rlogin, rsh i dostarczyæ bezpieczne, szyfrowane po³±czenie
+pomiedzy dwoma hostami.
 
 Ten pakiet zawiera klientów s³u¿±cych do ³±czenia siê z serwerami SSH.
 
@@ -95,25 +97,27 @@ Prereq:		%{name} = %{version}
 
 %description server
 Ssh (Secure Shell) a program for logging into a remote machine and for
-executing commands in a remote machine. It is intended to replace rlogin
-and rsh, and provide secure encrypted communications between two untrusted
-hosts over an insecure network. X11 connections and arbitrary TCP/IP ports
-can also be forwarded over the secure channel.
+executing commands in a remote machine. It is intended to replace
+rlogin and rsh, and provide secure encrypted communications between
+two untrusted hosts over an insecure network. X11 connections and
+arbitrary TCP/IP ports can also be forwarded over the secure channel.
 
-OpenSSH is OpenBSD's rework of the last free version of SSH, bringing it up
-to date in terms of security and features, as well as removing all patented
-algorithms to seperate libraries (OpenSSL).
+OpenSSH is OpenBSD's rework of the last free version of SSH, bringing
+it up to date in terms of security and features, as well as removing
+all patented algorithms to seperate libraries (OpenSSL).
 
-This package contains the secure shell daemon. The sshd is the server part
-of the secure shell protocol and allows ssh clients to connect to your
-host.
+This package contains the secure shell daemon. The sshd is the server
+part of the secure shell protocol and allows ssh clients to connect to
+your host.
 
 %description -l pl server
-Ssh (Secure Shell) to program s³u¿±cy do logowania siê na zdaln± maszynê i
-uruchamiania na niej aplikacji. W zamierzeniu openssh ma zast±piæ rlogin,
-rsh i dostarczyæ bezpieczne, szyfrowane po³±czenie pomiedzy dwoma hostami.
+Ssh (Secure Shell) to program s³u¿±cy do logowania siê na zdaln±
+maszynê i uruchamiania na niej aplikacji. W zamierzeniu openssh ma
+zast±piæ rlogin, rsh i dostarczyæ bezpieczne, szyfrowane po³±czenie
+pomiedzy dwoma hostami.
 
-Ten pakiet zawiera serwer sshd (do którego mog± ³±czyæ siê klienci ssh).
+Ten pakiet zawiera serwer sshd (do którego mog± ³±czyæ siê klienci
+ssh).
 
 %package gnome-askpass
 Summary:	OpenSSH GNOME passphrase dialog
@@ -127,21 +131,22 @@ Obsoletes:	openssh-askpass < %{version}, openssh-askpass > %{version}
 
 %description gnome-askpass
 Ssh (Secure Shell) a program for logging into a remote machine and for
-executing commands in a remote machine. It is intended to replace rlogin
-and rsh, and provide secure encrypted communications between two untrusted
-hosts over an insecure network. X11 connections and arbitrary TCP/IP ports
-can also be forwarded over the secure channel.
+executing commands in a remote machine. It is intended to replace
+rlogin and rsh, and provide secure encrypted communications between
+two untrusted hosts over an insecure network. X11 connections and
+arbitrary TCP/IP ports can also be forwarded over the secure channel.
 
-OpenSSH is OpenBSD's rework of the last free version of SSH, bringing it up
-to date in terms of security and features, as well as removing all patented
-algorithms to seperate libraries (OpenSSL).
+OpenSSH is OpenBSD's rework of the last free version of SSH, bringing
+it up to date in terms of security and features, as well as removing
+all patented algorithms to seperate libraries (OpenSSL).
 
 This package contains the GNOME passphrase dialog.
 
 %description -l pl gnome-askpass
-Ssh (Secure Shell) to program s³u¿±cy do logowania siê na zdaln± maszynê i
-uruchamiania na niej aplikacji. W zamierzeniu openssh ma zast±piæ rlogin,
-rsh i dostarczyæ bezpieczne, szyfrowane po³±czenie pomiedzy dwoma hostami.
+Ssh (Secure Shell) to program s³u¿±cy do logowania siê na zdaln±
+maszynê i uruchamiania na niej aplikacji. W zamierzeniu openssh ma
+zast±piæ rlogin, rsh i dostarczyæ bezpieczne, szyfrowane po³±czenie
+pomiedzy dwoma hostami.
 
 Ten pakiet zawiera ,,odpytywacz has³a'' dla GNOME.
 

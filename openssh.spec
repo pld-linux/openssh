@@ -7,7 +7,7 @@ Summary(es):	Implementación libre de SSH
 Summary(pl):	Publicznie dostêpna implementacja bezpiecznego shella (SSH)
 Summary(pt_BR):	Implementação livre do SSH
 Name:		openssh
-Version:	3.2.2p1
+Version:	3.2.3p1
 Release:	1
 License:	BSD
 Group:		Applications/Networking

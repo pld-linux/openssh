@@ -42,8 +42,8 @@ Patch0:		%{name}-no_libnsl.patch
 Patch2:		%{name}-linux-ipv6.patch
 Patch3:		%{name}-pam_misc.patch
 Patch4:		%{name}-sigpipe.patch
-# http://ldappubkey.gcu-squad.org/
-Patch5:		ldappubkey-ossh3.6-v2.patch
+# http://www.opendarwin.org/projects/openssh-lpk/
+Patch5:		%{name}-lpk-4.0p1-0.3.patch
 Patch6:		%{name}-heimdal.patch
 Patch7:		%{name}-pam-conv.patch
 # http://chrootssh.sourceforge.net/download/osshChroot-3.7.1p2.diff

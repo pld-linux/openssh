@@ -37,7 +37,7 @@ BuildRequires:	autoconf
 BuildRequires:	automake
 %{!?_without_gnome:BuildRequires: gnome-libs-devel}
 BuildRequires:	libwrap-devel
-BuildRequires:	openssl-devel >= 0.9.6a
+BuildRequires:	openssl-devel >= 0.9.6m
 BuildRequires:	pam-devel
 BuildRequires:	perl
 BuildRequires:	zlib-devel

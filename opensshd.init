@@ -19,41 +19,46 @@
 [ -f /etc/sysconfig/sshd ] && . /etc/sysconfig/sshd
 
 # Check that networking is up.
-if [ "${NETWORKING}" = "no" ]; then
-	echo "WARNING: Networking is down. Sshd can't be runed."
-	exit 1
+if is_no "${NETWORKING}"; then
+        msg_Network_Down OpenSSH
+        exit 1
 fi
-
+			
 
 # See how we were called.
 case "$1" in
   start)
 	# Check if the service is already running?
 	if [ ! -f /var/lock/subsys/sshd ]; then
-		show Starting OpenSSHd
+		msg_starting OpenSSH
 		daemon sshd -h /etc/ssh/ssh_host_key
+		RETVAL=$?
+		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/sshd		
 	else
-		echo "OpenSSHd already is running"
+		msg_Already_Running OpenSSH
 	fi
-	touch /var/lock/subsys/sshd
 	;;
   stop)
-	show Stopping OpenSSHd
-	killproc sshd
-	rm -f /var/run/sshd.pid
-	rm -f /var/lock/subsys/sshd
+        if [ -f /var/lock/subsys/sshd ]; then
+		msg_stopping OpenSSH
+		killproc sshd
+		rm -f /var/run/sshd.pid /var/lock/subsys/sshd >/dev/null 2>&1
+	else
+		msg_Not_Running OpenSSH
+		exit 1
+	fi	
 	;;
-  restart|reload)
+  restart)
 	$0 stop
 	$0 start
 	;;
   status)
 	status sshd
+	exit $?
 	;;
   *)
-	echo "Usage: $0 {start|stop|status|restart|reload}"
+	msg_Usage "$0 {start|stop|status|restart}"
 	exit 1
 esac
 
-exit 0
-
+exit $RETVAL

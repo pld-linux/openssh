@@ -17,7 +17,7 @@ Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	3.6.1p2
-Release:	0.2
+Release:	0.3
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -34,6 +34,8 @@ Patch0:		%{name}-no_libnsl.patch
 Patch2:		%{name}-linux-ipv6.patch
 Patch3:		%{name}-pam_misc.patch
 Patch4:		%{name}-sigpipe.patch
+# http://ldappubkey.gcu-squad.org/
+Patch5:		ldappubkey-ossh3.6-v2.patch
 URL:		http://www.openssh.com/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -379,6 +381,7 @@ GNOME.
 %patch2 -p1
 %patch3 -p1
 #%patch4 -p1
+%patch5 -p1
 
 %build
 %{__aclocal}

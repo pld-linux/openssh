@@ -3,7 +3,7 @@
 # _without_gnome	- without gnome-askpass utility
 # _without_gtk		- without gtk (2.x)
 # _with_ldap		- with ldap support
-# _with_kerberos5	- with kerberos5 support
+# _without_kerberos5	- without kerberos5 support
 #
 # default to gtk2-based gnome-askpass
 
@@ -54,7 +54,7 @@ BuildRequires:	automake
 BuildRequires:	libwrap-devel
 BuildRequires:	openssl-devel >= 0.9.7c
 %{?_with_ldap:BuildRequires:	openldap-devel}
-%{?_with_kerberos5:BuildRequires:	heimdal-devel}
+%{!?_without_kerberos5:BuildRequires:	heimdal-devel}
 BuildRequires:	pam-devel
 BuildRequires:	%{__perl}
 %{!?_without_gtk:BuildRequires:	pkgconfig}
@@ -396,7 +396,7 @@ GNOME.
 %patch3 -p1
 #%patch4 -p1
 %{?_with_ldap:%patch5 -p1}
-%{?_with_kerberos5:%patch6 -p1}
+%{!?_without_kerberos5:%patch6 -p1}
 %patch7 -p1
 
 %build
@@ -405,6 +405,7 @@ GNOME.
 
 %configure \
 	PERL=%{__perl} \
+	--with-dns \
 	--with-pam \
 	--with-mantype=man \
 	--with-md5-passwords \
@@ -414,7 +415,7 @@ GNOME.
 	--with-tcp-wrappers \
 	%{?_with_ldap:--with-libs="-lldap -llber"} \
 	%{?_with_ldap:--with-cppflags="-DWITH_LDAP_PUBKEY"} \
-	%{?_with_kerberos5:--with-kerberos5} \
+	%{!?_without_kerberos5:--with-kerberos5} \
 	--with-privsep-path=%{_privsepdir} \
 	--with-pid-dir=%{_localstatedir}/run \
 	--with-xauth=/usr/X11R6/bin/xauth
@@ -540,9 +541,11 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_sbindir}/sshd
 %attr(755,root,root) %{_libexecdir}/sftp-server
+%attr(755,root,root) %{_libexecdir}/ssh-keysign
 %dir %{_libexecdir}
 %{_mandir}/man8/sshd.8*
 %{_mandir}/man8/sftp-server.8*
+%{_mandir}/man8/ssh-keysign.8*
 %{_mandir}/man5/sshd_config.5*
 %attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/sshd_config
 %attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/pam.d/sshd

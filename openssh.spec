@@ -42,6 +42,7 @@ Obsoletes:	ssh
 
 %define		_sysconfdir	/etc/ssh
 %define		_libexecdir	%{_libdir}/%{name}
+%define		_privsepdir	/usr/share/empty
 
 %description
 Ssh (Secure Shell) a program for logging into a remote machine and for
@@ -328,6 +329,7 @@ aclocal
 	--with-4in6 \
 	--disable-suid-ssh \
 	--with-tcp-wrappers \
+	--with-privsep-path=%{_privsepdir} \
 	--with-pid-dir=%{_localstatedir}/run
 
 echo '#define LOGIN_PROGRAM           "/bin/login"' >>config.h

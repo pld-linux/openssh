@@ -1,5 +1,5 @@
 Summary:	OpenSSH free Secure Shell (SSH) implementation
-Summary(pl):   ,,wolna'' implementacja bezpiecznego shella (SSH)
+Summary(pl):	,,wolna'' implementacja bezpiecznego shella (SSH)
 Name:		openssh
 Version:	2.1.0
 Release:	2
@@ -46,13 +46,13 @@ and server. To make this package useful, you should also install
 openssh-clients, openssh-server, or both.
 
 %description -l pl
-Ssh (Secure Shell) to program s³u¿±cy do logowania siê na zdaln± maszynê
-i uruchamiania na niej aplikacji. W zamierzeniu openssh ma zast±piæ rlogin,
+Ssh (Secure Shell) to program s³u¿±cy do logowania siê na zdaln± maszynê i
+uruchamiania na niej aplikacji. W zamierzeniu openssh ma zast±piæ rlogin,
 rsh i dostarczyæ bezpieczne, szyfrowane po³±czenie pomiedzy dwoma hostami.
 
 %package clients
 Summary:	OpenSSH Secure Shell protocol clients
-Summary(pl):    Klienci protoko³u Secure Shell
+Summary(pl):	Klienci protoko³u Secure Shell
 Requires:	openssh
 Group:		Applications/Networking
 Group(pl):	Aplikacje/Sieciowe
@@ -74,15 +74,15 @@ This package includes the clients necessary to make encrypted connections
 to SSH servers.
 
 %description -l pl clients
-Ssh (Secure Shell) to program s³u¿±cy do logowania siê na zdaln± maszynê
-i uruchamiania na niej aplikacji. W zamierzeniu openssh ma zast±piæ rlogin,
+Ssh (Secure Shell) to program s³u¿±cy do logowania siê na zdaln± maszynê i
+uruchamiania na niej aplikacji. W zamierzeniu openssh ma zast±piæ rlogin,
 rsh i dostarczyæ bezpieczne, szyfrowane po³±czenie pomiedzy dwoma hostami.
 
 Ten pakiet zawiera klientów s³u¿±cych do ³±czenia siê z serwerami SSH.
 
 %package server
 Summary:	OpenSSH Secure Shell protocol server (sshd)
-Summary(pl):    Serwer protoko³u Secure Shell (sshd)
+Summary(pl):	Serwer protoko³u Secure Shell (sshd)
 Requires:	openssh chkconfig >= 0.9
 Group:		Networking/Daemons
 Group(pl):	Sieciowe/Serwery
@@ -108,8 +108,8 @@ of the secure shell protocol and allows ssh clients to connect to your
 host.
 
 %description -l pl server
-Ssh (Secure Shell) to program s³u¿±cy do logowania siê na zdaln± maszynê
-i uruchamiania na niej aplikacji. W zamierzeniu openssh ma zast±piæ rlogin,
+Ssh (Secure Shell) to program s³u¿±cy do logowania siê na zdaln± maszynê i
+uruchamiania na niej aplikacji. W zamierzeniu openssh ma zast±piæ rlogin,
 rsh i dostarczyæ bezpieczne, szyfrowane po³±czenie pomiedzy dwoma hostami.
 
 Ten pakiet zawiera serwer sshd (do którego mog± ³±czyæ siê klienci ssh).
@@ -138,8 +138,8 @@ algorithms to seperate libraries (OpenSSL).
 This package contains the GNOME passphrase dialog.
 
 %description -l pl gnome-askpass
-Ssh (Secure Shell) to program s³u¿±cy do logowania siê na zdaln± maszynê
-i uruchamiania na niej aplikacji. W zamierzeniu openssh ma zast±piæ rlogin,
+Ssh (Secure Shell) to program s³u¿±cy do logowania siê na zdaln± maszynê i
+uruchamiania na niej aplikacji. W zamierzeniu openssh ma zast±piæ rlogin,
 rsh i dostarczyæ bezpieczne, szyfrowane po³±czenie pomiedzy dwoma hostami.
 
 Ten pakiet zawiera ,,odpytywacz has³a'' dla GNOME.

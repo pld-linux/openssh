@@ -16,9 +16,9 @@ Summary(pt_BR):	ImplementaГЦo livre do SSH
 Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
-Version:	3.5p1
-Release:	4
-Epoch:		2
+Version:	3.6p1
+Release:	1
+Epoch:		1
 License:	BSD
 Group:		Applications/Networking
 Source0:	ftp://ftp.ca.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
@@ -31,7 +31,6 @@ Source6:	passwd.pamd
 Source7:	%{name}-askpass.sh
 Source8:	%{name}-askpass.csh
 Patch0:		%{name}-no_libnsl.patch
-Patch1:		%{name}-set_12.patch
 Patch2:		%{name}-linux-ipv6.patch
 Patch3:		%{name}-pam_misc.patch
 Patch4:		%{name}-sigpipe.patch
@@ -377,10 +376,9 @@ GNOME.
 %prep
 %setup  -q
 %patch0 -p1
-%patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
+#%patch4 -p1
 
 %build
 %{__aclocal}

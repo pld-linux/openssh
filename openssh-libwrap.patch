@@ -1,42 +1,43 @@
-diff -urN openssh-2.5.1p1.org/Makefile.in openssh-2.5.1p1/Makefile.in
---- openssh-2.5.1p1.org/Makefile.in	Wed Feb 21 11:09:35 2001
-+++ openssh-2.5.1p1/Makefile.in	Wed Feb 21 11:10:45 2001
-@@ -28,6 +28,7 @@
+diff -urN openssh-3.0p1.orig/Makefile.in openssh-3.0p1/Makefile.in
+--- openssh-3.0p1.orig/Makefile.in	Mon Oct 22 02:53:59 2001
++++ openssh-3.0p1/Makefile.in	Wed Nov  7 15:47:33 2001
+@@ -30,6 +30,7 @@
  CFLAGS=@CFLAGS@
- CPPFLAGS=@CPPFLAGS@ -I. -I$(srcdir)/openbsd-compat -I$(srcdir) $(PATHS) @DEFS@
+ CPPFLAGS=-I. -I$(srcdir) @CPPFLAGS@ $(PATHS) @DEFS@
  LIBS=@LIBS@
 +LIBWRAP=@LIBWRAP@
  AR=@AR@
  RANLIB=@RANLIB@
  INSTALL=@INSTALL@
-@@ -95,7 +96,7 @@
+@@ -98,7 +99,7 @@
  	$(LD) -o $@ $(SSHOBJS) $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS)
  
  sshd$(EXEEXT): libssh.a	$(LIBCOMPAT) $(SSHDOBJS)
 -	$(LD) -o $@ $(SSHDOBJS) $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS)
 +	$(LD) -o $@ $(SSHDOBJS) $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS) $(LIBWRAP)
  
- scp$(EXEEXT): $(LIBCOMPAT) libssh.a scp.o log-client.o
- 	$(LD) -o $@ scp.o log-client.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS)
-diff -urN openssh-2.5.1p1.org/configure.in openssh-2.5.1p1/configure.in
---- openssh-2.5.1p1.org/configure.in	Wed Feb 21 11:09:36 2001
-+++ openssh-2.5.1p1/configure.in	Wed Feb 21 11:12:07 2001
-@@ -459,7 +459,8 @@
- 	[
- 		if test "x$withval" != "xno" ; then
- 			saved_LIBS="$LIBS"
+ scp$(EXEEXT): $(LIBCOMPAT) libssh.a scp.o
+ 	$(LD) -o $@ scp.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS)
+diff -urN openssh-3.0p1.orig/configure.ac openssh-3.0p1/configure.ac
+--- openssh-3.0p1.orig/configure.ac	Sat Nov  3 20:09:33 2001
++++ openssh-3.0p1/configure.ac	Wed Nov  7 15:48:55 2001
+@@ -546,7 +546,9 @@
+ 					CPPFLAGS="-I${withval} ${CPPFLAGS}"
+ 				fi
+ 			fi
 -			LIBS="-lwrap $LIBS"
 +			LIBWRAP="-lwrap"
 +			LIBS="$LIBS $LIBWRAP"
++ 
  			AC_MSG_CHECKING(for libwrap)
  			AC_TRY_LINK(
  				[
-@@ -470,12 +471,14 @@
+@@ -557,12 +559,14 @@
  				[
  					AC_MSG_RESULT(yes)
  					AC_DEFINE(LIBWRAP)
 +					AC_SUBST(LIBWRAP)
- 					TCPW_MSG="yes" 
+ 					TCPW_MSG="yes"
  				],
  				[
  					AC_MSG_ERROR([*** libwrap missing])

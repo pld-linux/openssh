@@ -5,9 +5,9 @@
 %bcond_with	ldap		# with ldap support
 %bcond_without	kerberos5	# without kerberos5 support
 %bcond_without	chroot		# without chrooted user environment support
-
-# default to gtk2-based gnome-askpass
-%{?with_gtk:%define _without_gnome 1}
+#
+# gtk2-based gnome-askpass means no gnome1-based
+%{?with_gtk:%undefine with_gnome}
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(de):	OpenSSH - freie Implementation der Secure Shell (SSH)
 Summary(es):	Implementación libre de SSH

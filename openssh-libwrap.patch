@@ -20,16 +20,33 @@ diff -bruN openssh-2.1.0/Makefile.in openssh-2.1.0.new/Makefile.in
  	$(LD) -o $@ scp.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS) 
 diff -bruN openssh-2.1.0/configure.in openssh-2.1.0.new/configure.in
 --- openssh-2.1.0/configure.in	Mon May  8 12:49:37 2000
-+++ openssh-2.1.0.new/configure.in	Wed May 10 20:29:00 2000
-@@ -757,7 +757,10 @@
++++ openssh-2.1.0.new/configure.in	Wed May 10 20:44:06 2000
+@@ -756,8 +756,11 @@
+ 	[  --with-tcp-wrappers     Enable tcpwrappers support],
  	[
  		if test "x$withval" != "xno" ; then
++			# we need to add -lwrap to LIBS only for configure
++			# testing, and then remove
  			saved_LIBS="$LIBS"
 -			LIBS="$LIBS -lwrap"
 +			LIBWRAP="-lwrap"
-+			AC_SUBST(LIBWRAP)
-+			AC_DEFINE(LIBWRAP)
-+			LIBS="$saved_LIBS"
++			LIBS="$LIBS $LIBWRAP"
  			AC_MSG_CHECKING(for libwrap)
  			AC_TRY_LINK(
  				[
+@@ -768,6 +771,7 @@
+ 				[
+ 					AC_MSG_RESULT(yes)
+ 					AC_DEFINE(LIBWRAP)
++					AC_SUBST(LIBWRAP)
+ 				],
+ 				[
+ 					AC_MSG_RESULT(no)
+@@ -775,6 +779,7 @@
+ 					LIBS="$saved_LIBS"
+ 				]
+ 			)
++			LIBS="$saved_LIBS"
+ 		fi
+ 	]
+ )

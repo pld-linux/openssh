@@ -20,6 +20,7 @@ BuildRequires:	zlib-devel
 BuildRequires:	pam-devel
 BuildRequires:	XFree86-devel
 BuildRequires:	gnome-libs-devel
+BuildRequires:  gtk+-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Prereq:		openssl >= 0.9.4-2
 Obsoletes:	ssh < %{version}, ssh > %{version}
@@ -135,6 +136,9 @@ autoconf
 echo '#define LOGIN_PROGRAM           "/bin/login"' >>config.h
 
 make
+cd contrib && gcc `gnome-config --cflags gnome gnomeui` \
+     gnome-ssh-askpass.c -o gnome-ssh-askpass \
+     `gnome-config --libs gnome gnomeui`
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -150,7 +154,7 @@ install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
 install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/ssh_config
 install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/sshd_config
 install -d $RPM_BUILD_ROOT%{_libexecdir}/ssh
-install ssh-askpass $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
+install contrib/ssh-askpass $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
 
 gzip -9fn ChangeLog OVERVIEW COPYING.Ylonen README README.Ylonen UPGRADING \
 	$RPM_BUILD_ROOT/%{_mandir}/man*/*

@@ -1,7 +1,10 @@
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Name:		openssh
 Version:	1.2.1pre24
-Release:	2
+Release:	3
+License:	BSD
+Group:		Applications/Networking
+Group(pl):	Aplikacje/Sieciowe
 Source0:	http://violet.ibs.com.au/openssh/files/%{name}-%{version}.tar.gz
 Source1:	opensshd.conf
 Source2:	openssh.conf
@@ -12,9 +15,6 @@ Source6:	passwd.pamd
 Patch1:		openssh-DESTDIR.patch
 Patch2:		openssh-PAM_NEW_AUTHTOK.patch
 Patch3:		http://www.misiek.eu.org/ipv6/openssh-1.2.1pre24-ipv6-03012000.patch.gz
-License:	BSD
-Group:		Applications/Networking
-Group(pl):	Aplikacje/Sieciowe
 BuildRequires:	openssl-devel >= 0.9.4-2
 BuildRequires:	zlib-devel
 BuildRequires:	pam-devel

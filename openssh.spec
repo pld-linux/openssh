@@ -3,14 +3,19 @@
 # _without_gnome - without gnome-askpass utility
 
 Summary:	OpenSSH free Secure Shell (SSH) implementation
+Summary(de):	OpenSSH - freie Implementation der Secure Shell (SSH)
 Summary(es):	Implementación libre de SSH
+Summary(fr):	Implémentation libre du shell sécurisé OpenSSH (SSH)
+Summary(it):	Implementazione gratuita OpenSSH della Secure Shell
 Summary(pl):	Publicznie dostêpna implementacja bezpiecznego shella (SSH)
+Summary(pt):	Implementação livre OpenSSH do protocolo 'Secure Shell' (SSH)
 Summary(pt_BR):	Implementação livre do SSH
 Summary(ru):	OpenSSH - Ó×ÏÂÏÄÎÁÑ ÒÅÁÌÉÚÁÃÉÑ ĞÒÏÔÏËÏÌÁ Secure Shell (SSH)
 Summary(uk):	OpenSSH - ×¦ÌØÎÁ ÒÅÁÌ¦ÚÁÃ¦Ñ ĞÒÏÔÏËÏÌÕ Secure Shell (SSH)
 Name:		openssh
 Version:	3.4p1
 Release:	3
+Epoch:		1
 License:	BSD
 Group:		Applications/Networking
 Source0:	ftp://ftp.ca.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
@@ -58,6 +63,14 @@ This package includes the core files necessary for both the OpenSSH
 client and server. To make this package useful, you should also
 install openssh-clients, openssh-server, or both.
 
+%description -l de
+OpenSSH (Secure Shell) stellt den Zugang zu anderen Rechnern her. Es
+ersetzt telnet, rlogin, rexec und rsh und stellt eine sichere,
+verschlüsselte Verbindung zwischen zwei nicht vertrauenswürdigen Hosts
+über eine unsicheres Netzwerk her. X11 Verbindungen und beliebige
+andere TCP/IP Ports können ebenso über den sicheren Channel
+weitergeleitet werden.
+
 %description -l es
 SSH es un programa para accesar y ejecutar órdenes en computadores
 remotos. Sustituye rlogin y rsh, y suministra un canal de comunicación
@@ -74,11 +87,36 @@ algoritmos patentados y colocándolos en bibliotecas separadas
 Este paquete contiene "port" para Linux de OpenSSH. Se debe instalar
 también el paquete openssh-clients u openssh-server o ambos.
 
+%description -l fr
+OpenSSH (Secure Shell) fournit un accès à un système distant. Il
+remplace telnet, rlogin, rexec et rsh, tout en assurant des
+communications cryptées securisées entre deux hôtes non fiabilisés sur
+un réseau non sécurisé. Des connexions X11 et des ports TCP/IP
+arbitraires peuvent également être transmis sur le canal sécurisé.
+
+%description -l it
+OpenSSH (Secure Shell) fornisce l'accesso ad un sistema remoto.
+Sostituisce telnet, rlogin, rexec, e rsh, e fornisce comunicazioni
+sicure e crittate tra due host non fidati su una rete non sicura. Le
+connessioni X11 ad una porta TCP/IP arbitraria possono essere
+inoltrate attraverso un canale sicuro.
+
 %description -l pl
 Ssh (Secure Shell) to program s³u¿±cy do logowania siê na zdaln±
 maszynê i uruchamiania na niej aplikacji. W zamierzeniu openssh ma
 zast±piæ rlogin, rsh i dostarczyæ bezpieczne, szyfrowane po³±czenie
 pomiedzy dwoma hostami.
+
+Ten pakiet zawiera podstawowe pliki potrzebne zarówno po stronie
+klienta jak i serwera OpenSSH. Aby by³ u¿yteczny, trzeba zainstalowaæ
+co najmniej jeden z pakietów: openssh-clients lub openssh-server.
+
+%description -l pt
+OpenSSH (Secure Shell) fornece acesso a um sistema remoto. Substitui o
+telnet, rlogin, rexec, e o rsh e fornece comunicações seguras e
+cifradas entre duas máquinas sem confiança mútua sobre uma rede
+insegura. Ligações X11 e portos TCP/IP arbitrários também poder ser
+reenviados pelo canal seguro.
 
 %description -l pt_BR
 SSH é um programa para acessar e executar comandos em máquinas
@@ -185,8 +223,12 @@ Ssh (Secure Shell) - ÃÅ ĞÒÏÇÒÁÍÁ ÄÌÑ "ÚÁÈÏÄÕ" (login) ÄÏ ×¦ÄÄÁÌÅÎÏ§
 
 %package server
 Summary:	OpenSSH Secure Shell protocol server (sshd)
+Summary(de):	OpenSSH Secure Shell Protocol-Server (sshd)
 Summary(es):	Servidor OpenSSH para comunicaciones codificadas
+Summary(fr):	Serveur de protocole du shell sécurisé OpenSSH (sshd)
+Summary(it):	Server OpenSSH per il protocollo Secure Shell (sshd)
 Summary(pl):	Serwer protoko³u Secure Shell (sshd)
+Summary(pt):	Servidor do protocolo 'Secure Shell' OpenSSH (sshd)
 Summary(pt_BR):	Servidor OpenSSH para comunicações encriptadas
 Summary(ru):	OpenSSH - ÓÅÒ×ÅÒ ĞÒÏÔÏËÏÌÁ Secure Shell (sshd)
 Summary(uk):	OpenSSH - ÓÅÒ×ÅÒ ĞÒÏÔÏËÏÌÕ Secure Shell (sshd)
@@ -217,10 +259,19 @@ This package contains the secure shell daemon. The sshd is the server
 part of the secure shell protocol and allows ssh clients to connect to
 your host.
 
+%description server -l de
+Dieses Paket installiert den sshd, den Server-Teil der OpenSSH.
+
 %description server -l es
 Este paquete contiene el servidor SSH. sshd es la parte servidor del
 protocolo secure shell y permite que clientes ssh se conecten a su
 servidor.
+
+%description server -l fr
+Ce paquetage installe le 'sshd', partie serveur de OpenSSH.
+
+%description server -l it
+Questo pacchetto installa sshd, il server di OpenSSH.
 
 %description server -l pl
 Ssh (Secure Shell) to program s³u¿±cy do logowania siê na zdaln±
@@ -230,6 +281,9 @@ pomiedzy dwoma hostami.
 
 Ten pakiet zawiera serwer sshd (do którego mog± ³±czyæ siê klienci
 ssh).
+
+%description server -l pt
+Este pacote intala o sshd, o servidor do OpenSSH.
 
 %description server -l pt_BR
 Esse pacote contém o servidor SSH. O sshd é a parte servidor do
@@ -254,8 +308,12 @@ Ssh (Secure Shell) - ÃÅ ĞÒÏÇÒÁÍÁ ÄÌÑ "ÚÁÈÏÄÕ" (login) ÄÏ ×¦ÄÄÁÌÅÎÏ§
 
 %package gnome-askpass
 Summary:	OpenSSH GNOME passphrase dialog
+Summary(de):	OpenSSH GNOME Passwort-Dialog
 Summary(es):	Diálogo para introducción de passphrase para GNOME
+Summary(fr):	Dialogue pass-phrase GNOME d'OpenSSH
+Summary(it):	Finestra di dialogo GNOME per la frase segreta di OpenSSH
 Summary(pl):	Odpytywacz has³a OpenSSH dla GNOME
+Summary(pt):	Diálogo de pedido de senha para GNOME do OpenSSH
 Summary(pt_BR):	Diálogo para entrada de passphrase para GNOME
 Summary(ru):	OpenSSH - ÄÉÁÌÏÇ ××ÏÄÁ ËÌÀŞÅ×ÏÊ ÆÒÁÚÙ (passphrase) ÄÌÑ GNOME
 Summary(uk):	OpenSSH - Ä¦ÁÌÏÇ ××ÏÄÕ ËÌÀŞÏ×Ï§ ÆÒÁÚÉ (passphrase) ÄÌÑ GNOME

@@ -1,0 +1,19 @@
+--- openssh-3.7.1p1/auth-pam.c~	Tue Sep 16 08:00:52 2003
++++ openssh-3.7.1p1/auth-pam.c	Thu Sep 18 17:25:02 2003
+@@ -599,6 +599,8 @@
+ pam_chauthtok_conv(int n, const struct pam_message **msg,
+     struct pam_response **resp, void *data)
+ {
++	return misc_conv(n, msg, resp, data);
++#if 0
+ 	char input[PAM_MAX_MSG_SIZE];
+ 	int i;
+ 
+@@ -635,6 +637,7 @@
+ 	xfree(*resp);
+ 	*resp = NULL;
+ 	return (PAM_CONV_ERR);
++#endif
+ }
+ 
+ /*

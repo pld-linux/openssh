@@ -17,6 +17,7 @@ Source6:	passwd.pamd
 Patch0:		openssh-PAM_NEW_AUTHTOK.patch
 Patch1:		openssh-libwrap.patch
 Patch2:		openssh-known-hosts.patch
+Patch3:		openssh-login.patch
 BuildRequires:	openssl-devel >= 0.9.5a
 BuildRequires:	rpm >= 3.0.4
 BuildRequires:	zlib-devel
@@ -149,6 +150,7 @@ Ten pakiet zawiera ,,odpytywacz has³a'' dla GNOME.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 autoconf

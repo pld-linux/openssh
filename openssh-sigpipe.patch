@@ -1,7 +1,6 @@
-diff -Naur openssh-3.5p1/clientloop.c openssh-3.5p1-p/clientloop.c
---- openssh-3.5p1/clientloop.c	Wed Sep  4 08:32:13 2002
-+++ openssh-3.5p1-p/clientloop.c	Tue Nov  5 15:46:26 2002
-@@ -96,6 +96,9 @@
+--- openssh-3.8p1/clientloop.c.orig	2003-12-17 06:33:11.000000000 +0100
++++ openssh-3.8p1/clientloop.c	2004-02-25 21:25:43.000000000 +0100
+@@ -99,6 +99,9 @@
   */
  extern char *host;
  
@@ -11,30 +10,27 @@ diff -Naur openssh-3.5p1/clientloop.c openssh-3.5p1-p/clientloop.c
  /*
   * Flag to indicate that we have received a window change signal which has
   * not yet been processed.  This will cause a message indicating the new
-@@ -892,6 +895,10 @@
- 	signal(SIGINT, signal_handler);
- 	signal(SIGQUIT, signal_handler);
- 	signal(SIGTERM, signal_handler);
-+
+@@ -940,6 +943,8 @@
+ 		signal(SIGQUIT, signal_handler);
+ 	if (signal(SIGTERM, SIG_IGN) != SIG_IGN)
+ 		signal(SIGTERM, signal_handler);
 +	if (enable_sigpipe)
 +		signal(SIGPIPE, signal_handler);
-+
  	if (have_pty)
  		signal(SIGWINCH, window_change_handler);
  
-diff -Naur openssh-3.5p1/ssh.1 openssh-3.5p1-p/ssh.1
---- openssh-3.5p1/ssh.1	Mon Sep 30 04:00:56 2002
-+++ openssh-3.5p1-p/ssh.1	Tue Nov  5 15:51:54 2002
-@@ -48,7 +48,7 @@
- .Op Ar command
- .Pp
+--- openssh-3.8p1/ssh.1.orig	2003-12-17 06:33:11.000000000 +0100
++++ openssh-3.8p1/ssh.1	2004-02-25 21:28:27.000000000 +0100
+@@ -43,7 +43,7 @@
+ .Nd OpenSSH SSH client (remote login program)
+ .Sh SYNOPSIS
  .Nm ssh
--.Op Fl afgknqstvxACNTX1246
-+.Op Fl afgknqstvxABCNTX1246
+-.Op Fl 1246AaCfgkNnqsTtVvXxY
++.Op Fl 1246ABaCfgkNnqsTtVvXxY
  .Op Fl b Ar bind_address
  .Op Fl c Ar cipher_spec
- .Op Fl e Ar escape_char
-@@ -412,6 +412,10 @@
+ .Op Fl D Ar port
+@@ -426,6 +426,10 @@
  .It Fl b Ar bind_address
  Specify the interface to transmit from on machines with multiple
  interfaces or aliased addresses.
@@ -42,13 +38,12 @@ diff -Naur openssh-3.5p1/ssh.1 openssh-3.5p1-p/ssh.1
 +Enables processing of SIGPIPE. Useful when using ssh output as input for
 +another process, for example in a shell script. Be careful - it may break
 +port/X11 forwarding when used.
- .It Fl c Ar blowfish|3des|des
- Selects the cipher to use for encrypting the session.
- .Ar 3des
-diff -Naur openssh-3.5p1/ssh.c openssh-3.5p1-p/ssh.c
---- openssh-3.5p1/ssh.c	Thu Sep 19 04:05:04 2002
-+++ openssh-3.5p1-p/ssh.c	Tue Nov  5 15:44:57 2002
-@@ -143,6 +143,9 @@
+ .It Fl C
+ Requests compression of all data (including stdin, stdout, stderr, and
+ data for forwarded X11 and TCP/IP connections).
+--- openssh-3.8p1/ssh.c.orig	2003-12-17 06:33:11.000000000 +0100
++++ openssh-3.8p1/ssh.c	2004-02-25 21:30:51.000000000 +0100
+@@ -135,6 +135,9 @@
  /* Should we execute a command or invoke a subsystem? */
  int subsystem_flag = 0;
  
@@ -58,30 +53,30 @@ diff -Naur openssh-3.5p1/ssh.c openssh-3.5p1-p/ssh.c
  /* # of replies received for global requests */
  static int client_global_request_id = 0;
  
-@@ -161,6 +164,7 @@
+@@ -153,6 +156,7 @@
  	fprintf(stderr, "  -F config   Config file (default: ~/%s).\n",
  	     _PATH_SSH_USER_CONFFILE);
  	fprintf(stderr, "  -A          Enable authentication agent forwarding.\n");
 +	fprintf(stderr, "  -B          Enable SIGPIPE processing.\n");
  	fprintf(stderr, "  -a          Disable authentication agent forwarding (default).\n");
- #ifdef AFS
- 	fprintf(stderr, "  -k          Disable Kerberos ticket and AFS token forwarding.\n");
-@@ -275,7 +279,7 @@
+ 	fprintf(stderr, "  -X          Enable X11 connection forwarding.\n");
+ 	fprintf(stderr, "  -Y          Enable trusted X11 connection forwarding.\n");
+@@ -265,7 +269,7 @@
  
  again:
  	while ((opt = getopt(ac, av,
--	    "1246ab:c:e:fgi:kl:m:no:p:qstvxACD:F:I:L:NPR:TVX")) != -1) {
-+	    "1246ab:c:e:fgi:kl:m:no:p:qstvxABCD:F:I:L:NPR:TVX")) != -1) {
+-	    "1246ab:c:e:fgi:kl:m:no:p:qstvxACD:F:I:L:NPR:TVXY")) != -1) {
++	    "1246ab:c:e:fgi:kl:m:no:p:qstvxABCD:F:I:L:NPR:TVXY")) != -1) {
  		switch (opt) {
  		case '1':
  			options.protocol = SSH_PROTO_1;
-@@ -314,6 +318,9 @@
+@@ -308,6 +312,9 @@
  		case 'A':
  			options.forward_agent = 1;
  			break;
 +		case 'B':
 +			enable_sigpipe = 1;
 +			break;
- #ifdef AFS
  		case 'k':
- 			options.kerberos_tgt_passing = 0;
+ 			options.gss_deleg_creds = 0;
+ 			break;

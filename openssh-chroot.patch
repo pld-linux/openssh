@@ -62,9 +62,9 @@
  	int	use_dns;
  	int	client_alive_interval;	/*
  					 * poke the client this often to
---- openssh-3.7.1p2/session.c	2003-09-23 10:59:08.000000000 +0200
-+++ openssh-3.7.1p2.pius/session.c	2003-10-07 20:49:08.000000000 +0200
-@@ -1231,6 +1231,10 @@
+--- openssh-4.0p1/session.c.orig	2005-03-06 12:38:52.000000000 +0100
++++ openssh-4.0p1/session.c	2005-03-10 15:14:04.000000000 +0100
+@@ -1258,6 +1258,10 @@
  void
  do_setusercontext(struct passwd *pw)
  {
@@ -75,11 +75,10 @@
  #ifndef HAVE_CYGWIN
  	if (getuid() == 0 || geteuid() == 0)
  #endif /* HAVE_CYGWIN */
-@@ -1268,6 +1272,28 @@
- 			exit(1);
+@@ -1315,6 +1319,26 @@
+ 			restore_uid();
  		}
- 		endgrent();
-+
+ #endif
 +#ifdef CHROOT
 +		if (options.use_chroot) {
 +			user_dir = xstrdup(pw->pw_dir);
@@ -100,10 +99,9 @@
 +			}
 +		}
 +#endif /* CHROOT */
-+
  # ifdef USE_PAM
  		/*
- 		 * PAM credentials may take the form of supplementary groups. 
+ 		 * PAM credentials may take the form of supplementary groups.
 --- openssh-3.7.1p2/sshd_config	2003-09-02 14:51:18.000000000 +0200
 +++ openssh-3.7.1p2.pius/sshd_config	2003-10-07 20:49:08.000000000 +0200
 @@ -71,6 +71,10 @@

@@ -4,7 +4,7 @@
 %bcond_without	gtk		# without gtk (2.x)
 %bcond_with	ldap		# with ldap support
 %bcond_without	kerberos5	# without kerberos5 support
-%bcond_with	chroot		# with user chrooted env support
+%bcond_without	chroot		# without chrooted user environment support
 
 # default to gtk2-based gnome-askpass
 %{?with_gtk:%define _without_gnome 1}
@@ -20,7 +20,7 @@ Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	3.7.1p2
-Release:	3.1
+Release:	3.2
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -400,12 +400,12 @@ GNOME.
 %{?with_ldap:%patch5 -p1}
 %{?with_kerberos5:%patch6 -p1}
 %patch7 -p1
-%{?with_chroot:%patch8 -p1}
+%patch8 -p1
 
 %build
 %{__aclocal}
 %{__autoconf}
-
+%{?with_chroot:CPPFLAGS="-DCHROOT"}
 %configure \
 	PERL=%{__perl} \
 	--with-dns \

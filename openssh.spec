@@ -453,7 +453,7 @@ cd contrib
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{pam.d,rc.d/init.d,sysconfig,security}} \
+install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{pam.d,rc.d/init.d,sysconfig,security,env.d}} \
 	$RPM_BUILD_ROOT%{_libexecdir}/ssh
 %{?with_sshagentsh:install -d $RPM_BUILD_ROOT/etc/{profile.d,X11/xinit/xinitrc.d}}
 
@@ -477,10 +477,17 @@ bzip2 -dc %{SOURCE7} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
 
 %if %{with gnome}
 install contrib/gnome-ssh-askpass1 $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
-ln -s %{_libexecdir}/ssh/ssh-askpass $RPM_BUILD_ROOT%{_libexecdir}/ssh-askpass
 %endif
 %if %{with gtk}
 install contrib/gnome-ssh-askpass2 $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
+%endif
+%if %{with gnome} || %{with gtk}
+cat << EOF >$RPM_BUILD_ROOT/etc/env.d/GNOME_SSH_ASKPASS_GRAB_SERVER
+#GNOME_SSH_ASKPASS_GRAB_SERVER="true"
+EOF
+cat << EOF >$RPM_BUILD_ROOT/etc/env.d/GNOME_SSH_ASKPASS_GRAB_POINTER
+#GNOME_SSH_ASKPASS_GRAB_POINTER="true"
+EOF
 ln -s %{_libexecdir}/ssh/ssh-askpass $RPM_BUILD_ROOT%{_libexecdir}/ssh-askpass
 %endif
 
@@ -488,6 +495,10 @@ rm -f	$RPM_BUILD_ROOT%{_mandir}/man1/slogin.1
 echo ".so ssh.1" > $RPM_BUILD_ROOT%{_mandir}/man1/slogin.1
 
 touch $RPM_BUILD_ROOT/etc/security/blacklist.sshd
+
+cat << EOF >$RPM_BUILD_ROOT/etc/env.d/SSH_ASKPASS
+#SSH_ASKPASS="%{_libexecdir}/ssh-askpass"
+EOF
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -545,6 +556,7 @@ fi
 %attr(755,root,root) %{_bindir}/ssh-add
 %attr(755,root,root) %{_bindir}/scp
 %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/ssh_config
+%attr(644,root,root) %config(noreplace,missingok) %verify(not md5 size mtime) /etc/env.d/SSH_ASKPASS
 %if %{with sshagentsh}
 %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/ssh-agent.conf
 %attr(755,root,root) /etc/profile.d/ssh-agent.sh
@@ -586,6 +598,7 @@ fi
 %if %{with gnome} || %{with gtk}
 %files gnome-askpass
 %defattr(644,root,root,755)
+%attr(644,root,root) %config(noreplace,missingok) %verify(not md5 size mtime) /etc/env.d/GNOME_SSH_ASKPASS*
 %dir %{_libexecdir}/ssh
 %attr(755,root,root) %{_libexecdir}/ssh/ssh-askpass
 %attr(755,root,root) %{_libexecdir}/ssh-askpass

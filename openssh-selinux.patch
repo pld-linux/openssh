@@ -10,15 +10,15 @@ diff -urN openssh-3.7.1p2.org/Makefile.in openssh-3.7.1p2/Makefile.in
  CPPFLAGS=-I. -I$(srcdir) @CPPFLAGS@ $(PATHS) @DEFS@
  LIBS=@LIBS@
  LIBPAM=@LIBPAM@
-@@ -53,7 +53,7 @@
- SED=@SED@
- ENT=@ENT@
- XAUTH_PATH=@XAUTH_PATH@
--LDFLAGS=-L. -Lopenbsd-compat/ @LDFLAGS@
-+LDFLAGS=-L. -Lopenbsd-compat/ @LDFLAGS@ -lselinux 
- EXEEXT=@EXEEXT@
+@@ -134,7 +134,7 @@
+ 	$(LD) -o $@ $(SSHOBJS) $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS)
  
- INSTALL_SSH_PRNG_CMDS=@INSTALL_SSH_PRNG_CMDS@
+ sshd$(EXEEXT): libssh.a	$(LIBCOMPAT) $(SSHDOBJS)
+-	$(LD) -o $@ $(SSHDOBJS) $(LDFLAGS) -lssh -lopenbsd-compat $(LIBWRAP) $(LIBPAM) $(LIBS)
++	$(LD) -o $@ $(SSHDOBJS) $(LDFLAGS) -lssh -lopenbsd-compat $(LIBWRAP) $(LIBPAM) $(LIBS) -lselinux
+ 
+ scp$(EXEEXT): $(LIBCOMPAT) libssh.a scp.o progressmeter.o
+ 	$(LD) -o $@ scp.o progressmeter.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS)
 diff -urN openssh-3.7.1p2.org/session.c openssh-3.7.1p2/session.c
 --- openssh-3.7.1p2.org/session.c	2003-12-26 20:14:53.000000000 +0100
 +++ openssh-3.7.1p2/session.c	2003-12-26 20:15:50.000000000 +0100

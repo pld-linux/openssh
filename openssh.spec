@@ -1,12 +1,11 @@
 #
 # Conditional build:
 # no_gnome - without gnome-askpass utility
-
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(pl):	Publicznie dostêpna implementacja bezpiecznego shella (SSH)
 Name:		openssh
 Version:	2.3.0p1
-Release:	3
+Release:	4
 License:	BSD
 Group:		Applications/Networking
 Group(de):	Applikationen/Netzwerkwesen
@@ -21,6 +20,7 @@ Source6:	passwd.pamd
 Patch0:		%{name}-libwrap.patch
 Patch1:		%{name}-LIBS.patch
 Patch2:		%{name}-no_libnsl.patch
+Patch3:		%{name}-securityfix.patch
 URL:		http://www.openssh.com/
 BuildRequires:	XFree86-devel
 BuildRequires:	autoconf
@@ -164,6 +164,7 @@ Ten pakiet zawiera ,,odpytywacz has³a'' dla GNOME.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 autoconf
@@ -211,9 +212,11 @@ rm -rf $RPM_BUILD_ROOT
 /sbin/chkconfig --add sshd
 if [ ! -f %{_sysconfdir}/ssh_host_key -o ! -s %{_sysconfdir}/ssh_host_key ]; then
 	%{_bindir}/ssh-keygen -b 1024 -f %{_sysconfdir}/ssh_host_key -N '' 1>&2
+	chmod 600 %{_sysconfdir}/ssh_host_key
 fi
 if [ ! -f %{_sysconfdir}/ssh_host_dsa_key -o ! -s %{_sysconfdir}/ssh_host_dsa_key ]; then
         %{_bindir}/ssh-keygen -d -f %{_sysconfdir}/ssh_host_dsa_key -N '' 1>&2
+	chmod 600 %{_sysconfdir}/ssh_host_dsa_key
 fi
 if [ -f /var/lock/subsys/sshd ]; then
 	/etc/rc.d/init.d/sshd restart 1>&2

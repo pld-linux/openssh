@@ -20,7 +20,7 @@ Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	3.8p1
-Release:	0.1
+Release:	0.2
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -399,13 +399,13 @@ GNOME.
 %patch0 -p1
 %patch2 -p1
 %patch3 -p1
-#%patch4 -p1
+%patch4 -p1
 %{?with_ldap:%patch5 -p1}
 #%{?with_kerberos5:%patch6 -p1}
 #%patch7 -p1
-#%patch8 -p1
-#%patch9 -p1
-#%patch10 -p1
+%patch8 -p1
+%patch9 -p1
+%patch10 -p1
 
 %build
 cp /usr/share/automake/config.sub .

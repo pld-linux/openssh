@@ -1,5 +1,5 @@
---- Makefile.in~	Thu Jan 27 04:15:48 2000
-+++ Makefile.in	Fri Feb  4 16:30:04 2000
+--- openssh-1.2.2p1/Makefile.in.wiget	Fri Mar  3 12:13:52 2000
++++ openssh-1.2.2p1/Makefile.in	Tue Mar  7 15:44:57 2000
 @@ -23,6 +23,7 @@
  CFLAGS=@CFLAGS@ $(PATHS) @DEFS@
  EXTRA_TARGETS=@GNOME_ASKPASS@
@@ -17,15 +17,15 @@
  
  scp: libssh.a scp.o
  	$(CC) -o $@ scp.o $(LDFLAGS) -lssh $(LIBS) 
---- configure.in~	Wed Jan 26 02:15:31 2000
-+++ configure.in	Fri Feb  4 16:31:04 2000
-@@ -679,7 +679,8 @@
- 	[
- 		if test "x$withval" != "$xno" ; then
- 			AC_DEFINE(LIBWRAP)
--			LIBS="$LIBS -lwrap"
-+			LIBWRAP="-lwrap"
-+			AC_SUBST(LIBWRAP)
- 		fi
- 	]
- )
+--- openssh-1.2.2p1/configure.in.wiget	Sun Mar  5 07:02:46 2000
++++ openssh-1.2.2p1/configure.in	Tue Mar  7 15:50:14 2000
+@@ -711,6 +711,9 @@
+ 				[
+ 					AC_MSG_RESULT(yes)
+ 					AC_DEFINE(LIBWRAP)
++					LIBWRAP="-lwrap"
++					AC_SUBST(LIBWRAP)
++					LIBS="$saved_LIBS"
+ 				],
+ 				[
+ 					AC_MSG_RESULT(no)

@@ -172,7 +172,7 @@ LDFLAGS="-s"; export LDFLAGS
 
 echo '#define LOGIN_PROGRAM           "/bin/login"' >>config.h
 
-make
+%{__make}
 cd contrib && gcc $RPM_OPT_FLAGS `gnome-config --cflags gnome gnomeui` \
 	gnome-ssh-askpass.c -o gnome-ssh-askpass \
 	`gnome-config --libs gnome gnomeui`

@@ -25,6 +25,7 @@ BuildRequires:	gtk+-devel
 BuildRequires:	openssl-devel >= 0.9.5a
 BuildRequires:	pam-devel
 BuildRequires:	zlib-devel
+BuildRequires:	libwrap-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Prereq:		openssl >= 0.9.5a
 Obsoletes:	ssh < %{version}, ssh > %{version}

@@ -2,9 +2,12 @@
 # Conditional build:
 # _without_gnome	- without gnome-askpass utility
 # _without_gtk		- without gtk (2.x)
-# _without_ldap		- without ldap support
+# _with_ldap		- with ldap support
 #
 # default to gtk2-based gnome-askpass
+
+%define		orig_ver	3.6.1p2
+
 %{!?_without_gtk:%define _without_gnome 1}
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(de):	OpenSSH - freie Implementation der Secure Shell (SSH)
@@ -17,12 +20,12 @@ Summary(pt_BR):	ImplementaГЦo livre do SSH
 Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
-Version:	3.6.1p2
+Version:	3.6.1p2%{?_with_ldap:ldap}
 Release:	0.4
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
-Source0:	ftp://ftp.ca.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
+Source0:	ftp://ftp.ca.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{orig_ver}.tar.gz
 Source1:	%{name}d.conf
 Source2:	%{name}.conf
 Source3:	%{name}d.init
@@ -44,7 +47,7 @@ BuildRequires:	automake
 %{!?_without_gtk:BuildRequires:	gtk+2-devel}
 BuildRequires:	libwrap-devel
 BuildRequires:	openssl-devel >= 0.9.7b
-%{!?_without_ldap:BuildRequires:	openldap-devel}
+%{?_with_ldap:BuildRequires:	openldap-devel}
 BuildRequires:	pam-devel
 BuildRequires:	%{__perl}
 %{!?_without_gtk:BuildRequires:	pkgconfig}
@@ -378,7 +381,7 @@ Ssh (Secure Shell) - це програма для "заходу" (login) до в╕ддалено╖
 GNOME.
 
 %prep
-%setup  -q
+%setup  -q -n %{name}-%{orig_ver}
 %patch0 -p1
 %patch2 -p1
 %patch3 -p1
@@ -398,8 +401,8 @@ GNOME.
 	--with-4in6 \
 	--disable-suid-ssh \
 	--with-tcp-wrappers \
-	%{!?_without_ldap:--with-libs="-lldap -llber"} \
-	%{!?_without_ldap:--with-cppflags="-DWITH_LDAP_PUBKEY"} \
+	%{?_with_ldap:--with-libs="-lldap -llber"} \
+	%{?_with_ldap:--with-cppflags="-DWITH_LDAP_PUBKEY"} \
 	--with-privsep-path=%{_privsepdir} \
 	--with-pid-dir=%{_localstatedir}/run \
 	--with-xauth=/usr/X11R6/bin/xauth

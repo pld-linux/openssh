@@ -18,7 +18,7 @@ Source3:	%{name}d.init
 Source4:	%{name}d.pamd
 Source5:	%{name}.sysconfig
 Source6:	passwd.pamd
-Patch0:		%{name}3-libwrap.patch
+Patch0:		%{name}-libwrap.patch
 Patch1:		%{name}-no_libnsl.patch
 Patch2:		%{name}-no-openssl-ver-check.patch
 Patch3:		%{name}-set_12.patch

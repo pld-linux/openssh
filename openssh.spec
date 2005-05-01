@@ -69,7 +69,7 @@ BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	pam-devel
 BuildRequires:	%{__perl}
 %{?with_gtk:BuildRequires:	pkgconfig}
-BuildRequires:	rpmbuild(macros) >= 1.159
+BuildRequires:	rpmbuild(macros) >= 1.202
 BuildRequires:	zlib-devel
 PreReq:		FHS >= 2.1-24
 PreReq:		openssl >= 0.9.7d
@@ -510,14 +510,7 @@ EOF
 rm -rf $RPM_BUILD_ROOT
 
 %pre server
-if [ -n "`/bin/id -u sshd 2>/dev/null`" ]; then
-	if [ "`/bin/id -u sshd`" != "40" ]; then
-		echo "Error: user sshd doesn't have uid=40. Correct this before installing ssh server." 1>&2
-		exit 1
-	fi
-else
-	/usr/sbin/useradd -u 40 -d %{_privsepdir} -s /bin/false -c "OpenSSH PrivSep User" -g nobody sshd 1>&2
-fi
+%useradd -P %{name}-server -u 40 -d %{_privsepdir} -s /bin/false -c "OpenSSH PrivSep User" -g nobody sshd
 
 %post server
 /sbin/chkconfig --add sshd

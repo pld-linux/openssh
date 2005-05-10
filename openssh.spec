@@ -555,10 +555,10 @@ fi
 %attr(755,root,root) %{_bindir}/ssh-agent
 %attr(755,root,root) %{_bindir}/ssh-add
 %attr(755,root,root) %{_bindir}/scp
-%config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/ssh_config
-%attr(644,root,root) %config(noreplace,missingok) %verify(not md5 size mtime) /etc/env.d/SSH_ASKPASS
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ssh_config
+%config(noreplace,missingok) %verify(not md5 mtime size) /etc/env.d/SSH_ASKPASS
 %if %{with sshagentsh}
-%config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/ssh-agent.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ssh-agent.conf
 %attr(755,root,root) /etc/profile.d/ssh-agent.sh
 %attr(755,root,root) /etc/X11/xinit/xinitrc.d/ssh-agent.sh
 %endif
@@ -587,17 +587,17 @@ fi
 %{_mandir}/man8/sftp-server.8*
 %{_mandir}/man8/ssh-keysign.8*
 %{_mandir}/man5/sshd_config.5*
-%attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/sshd_config
-%attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/pam.d/sshd
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/sshd_config
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/sshd
 %attr(640,root,root) %{_sysconfdir}/moduli
 %attr(754,root,root) /etc/rc.d/init.d/sshd
-%attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/sysconfig/sshd
-%attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/security/blacklist.sshd
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/sshd
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/security/blacklist.sshd
 
 %if %{with gnome} || %{with gtk}
 %files gnome-askpass
 %defattr(644,root,root,755)
-%attr(644,root,root) %config(noreplace,missingok) %verify(not md5 size mtime) /etc/env.d/GNOME_SSH_ASKPASS*
+%config(noreplace,missingok) %verify(not md5 mtime size) /etc/env.d/GNOME_SSH_ASKPASS*
 %dir %{_libexecdir}/ssh
 %attr(755,root,root) %{_libexecdir}/ssh/ssh-askpass
 %attr(755,root,root) %{_libexecdir}/ssh-askpass

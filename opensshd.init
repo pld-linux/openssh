@@ -15,8 +15,6 @@
 # Get network config
 . /etc/sysconfig/network
 
-SERVICE_LIMITS="-u unlimited -Sc 0"
-
 # Get service config
 [ -f /etc/sysconfig/sshd ] && . /etc/sysconfig/sshd
 

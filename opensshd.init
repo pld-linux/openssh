@@ -27,7 +27,7 @@ if is_yes "${NETWORKING}"; then
 else
 	exit 0
 fi
-			
+
 RETVAL=0
 # See how we were called.
 case "$1" in
@@ -58,9 +58,9 @@ case "$1" in
 	# Check if the service is already running?
 	if [ ! -f /var/lock/subsys/sshd ]; then
 		msg_starting OpenSSH
-		daemon /usr/sbin/sshd 
+		daemon /usr/sbin/sshd
 		RETVAL=$?
-		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/sshd		
+		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/sshd
 	else
 		msg_already_running OpenSSH
 	fi
@@ -72,7 +72,7 @@ case "$1" in
 		rm -f /var/run/sshd.pid /var/lock/subsys/sshd >/dev/null 2>&1
 	else
 		msg_not_running OpenSSH
-	fi	
+	fi
 	;;
   restart)
 	$0 stop

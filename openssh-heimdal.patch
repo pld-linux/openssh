@@ -9,7 +9,7 @@ diff -urN openssh-3.9p1.org/configure.ac openssh-3.9p1/configure.ac
 -					 K5LIBS="$K5LIBS -lcom_err -lasn1"
 +					 K5LIBS="-lkrb5"
 +					 K5LIBS="$K5LIBS -lasn1"
- 					 AC_CHECK_LIB(roken, net_write, 
+ 					 AC_CHECK_LIB(roken, net_write,
  					   [K5LIBS="$K5LIBS -lroken"])
  				       ],
  				       [ AC_MSG_RESULT(no)

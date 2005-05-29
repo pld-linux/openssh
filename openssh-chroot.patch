@@ -118,8 +118,8 @@
 --- openssh-3.7.1p2/sshd_config.0	2003-09-23 11:55:19.000000000 +0200
 +++ openssh-3.7.1p2.pius/sshd_config.0	2003-10-07 20:49:08.000000000 +0200
 @@ -349,6 +349,16 @@
-              CAL1, LOCAL2, LOCAL3, LOCAL4, LOCAL5, LOCAL6, LOCAL7.  The de-
-              fault is AUTH.
+              To disable TCP keepalive messages, the value should be set to
+              ``no''.
  
 +     UseChroot
 +             Specifies whether to use chroot-jail environment with ssh/sftp,
@@ -131,7 +131,7 @@
 +             For this to work properly you have to create special chroot-jail
 +             environment in a /path/to/chroot directory.
 +
-      UseDNS  Specifies whether sshd should lookup the remote host name and
+      UseDNS  Specifies whether sshd should look up the remote host name and
               check that the resolved host name for the remote IP address maps
               back to the very same IP address.  The default is ``yes''.
 --- openssh-3.8p1/sshd_config.5.orig	2004-02-18 04:31:24.000000000 +0100

@@ -23,7 +23,7 @@ Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	4.1p1
-Release:	3
+Release:	4
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -60,7 +60,7 @@ BuildRequires:	autoconf
 BuildRequires:	automake
 %{?with_gnome:BuildRequires:	gnome-libs-devel}
 %{?with_gtk:BuildRequires:	gtk+2-devel}
-%{?with_kerberos5:BuildRequires:	heimdal-devel}
+%{?with_kerberos5:BuildRequires:	heimdal-devel >= 0.7}
 %{?with_libedit:BuildRequires:	libedit-devel}
 %{?with_selinux:BuildRequires:	libselinux-devel}
 BuildRequires:	libwrap-devel

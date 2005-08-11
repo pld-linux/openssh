@@ -269,7 +269,7 @@ Summary(ru):	OpenSSH - сервер протокола Secure Shell (sshd)
 Summary(uk):	OpenSSH - сервер протоколу Secure Shell (sshd)
 Group:		Networking/Daemons
 PreReq:		%{name} = %{epoch}:%{version}-%{release}
-PreReq:		rc-scripts >= 0.3.1-15
+PreReq:		rc-scripts >= 0.4.0.18
 Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/useradd
 Requires(post,preun):	/sbin/chkconfig

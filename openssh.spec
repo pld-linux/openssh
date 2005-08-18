@@ -503,8 +503,8 @@ echo ".so ssh.1" > $RPM_BUILD_ROOT%{_mandir}/man1/slogin.1
 
 touch $RPM_BUILD_ROOT/etc/security/blacklist.sshd
 
-%ifarch amd64
-find $RPM_BUILD_ROOT%{_sysconfdir} -type f -print0 | xargs -0 perl -pi -e "s#/usr/lib#/usr/lib64#"
+%if "%{_lib}" != "lib"
+find $RPM_BUILD_ROOT%{_sysconfdir} -type f -print0 | xargs -0 perl -pi -e "s#/usr/lib#/usr/%{_lib}#"
 %endif
 
 cat << EOF >$RPM_BUILD_ROOT/etc/env.d/SSH_ASKPASS

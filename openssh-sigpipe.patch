@@ -43,9 +43,9 @@ diff -urN openssh-3.9p1.org/ssh.0 openssh-3.9p1/ssh.0
  .Op Fl c Ar cipher_spec
  .Op Fl D Ar port
 @@ -425,6 +425,10 @@
- .It Fl b Ar bind_address
- Specify the interface to transmit from on machines with multiple
- interfaces or aliased addresses.
+ on the local machine as the source address
+ of the connection.
+ Only useful on systems with more than one address.
 +.It Fl B
 +Enables processing of SIGPIPE. Useful when using ssh output as input for
 +another process, for example in a shell script. Be careful - it may break

@@ -28,6 +28,10 @@ else
 	exit 0
 fi
 
+checkconfig() {
+	/usr/sbin/sshd -t || exit 1
+}
+
 RETVAL=0
 # See how we were called.
 case "$1" in
@@ -48,6 +52,8 @@ case "$1" in
 		chmod 600 /etc/ssh/ssh_host_dsa_key
 		[ -x /sbin/restorecon ] && /sbin/restorecon /etc/ssh/ssh_host_dsa_key || :
 	fi
+
+	checkconfig
 
 	if [ ! -f /etc/ssh/ssh_host_key ]; then
 		msg_not_running OpenSSH
@@ -78,6 +84,7 @@ case "$1" in
 	fi
 	;;
   restart)
+	checkconfig
 	$0 stop
 	$0 start
 	exit $?

@@ -72,7 +72,7 @@ BuildRequires:	%{__perl}
 BuildRequires:	rpmbuild(macros) >= 1.202
 BuildRequires:	zlib-devel
 PreReq:		FHS >= 2.1-24
-PreReq:		openssl >= 0.9.7d
+Requires:	openssl >= 0.9.7h
 Requires:	pam >= 0.79.0
 Obsoletes:	ssh
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)

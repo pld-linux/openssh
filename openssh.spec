@@ -23,7 +23,7 @@ Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	4.2p1
-Release:	4
+Release:	5
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -71,8 +71,7 @@ BuildRequires:	%{__perl}
 %{?with_gtk:BuildRequires:	pkgconfig}
 BuildRequires:	rpmbuild(macros) >= 1.202
 BuildRequires:	zlib-devel
-PreReq:		FHS >= 2.1-24
-Requires:	openssl >= 0.9.7h
+Requires:	FHS >= 2.1-24
 Requires:	pam >= 0.79.0
 Obsoletes:	ssh
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -268,8 +267,8 @@ Summary(pt_BR):	Servidor OpenSSH para comunicaГУes encriptadas
 Summary(ru):	OpenSSH - сервер протокола Secure Shell (sshd)
 Summary(uk):	OpenSSH - сервер протоколу Secure Shell (sshd)
 Group:		Networking/Daemons
-PreReq:		%{name} = %{epoch}:%{version}-%{release}
-PreReq:		rc-scripts >= 0.4.0.18
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+Requires:	rc-scripts >= 0.4.0.18
 Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/useradd
 Requires(post,preun):	/sbin/chkconfig

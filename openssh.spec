@@ -8,7 +8,12 @@
 %bcond_without	kerberos5	# without kerberos5 support
 %bcond_without	selinux		# build without SELinux support
 %bcond_with	sshagentsh	# with system-wide script for starting ssh-agent
+%bcond_with	hpn		# with High Performance SSH/SCP - HPN-SSH (see patch comment)
+%bcond_with	hpn_none	# with hpn (above) and '-z' none cipher option
 #
+%if %{with hpn_none}
+%undefine       with_hpn
+%endif
 # gtk2-based gnome-askpass means no gnome1-based
 %{?with_gtk:%undefine with_gnome}
 Summary:	OpenSSH free Secure Shell (SSH) implementation
@@ -23,7 +28,7 @@ Summary(ru):	OpenSSH - ”◊œ¬œƒŒ¡— “≈¡Ã…⁄¡√…— –“œ‘œÀœÃ¡ Secure Shell (SSH)
 Summary(uk):	OpenSSH - ◊¶ÃÿŒ¡ “≈¡Ã¶⁄¡√¶— –“œ‘œÀœÃ’ Secure Shell (SSH)
 Name:		openssh
 Version:	4.2p1
-Release:	5
+Release:	5%{?with_hpn:hpn}%{?with_hpn_none:hpn_none}
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -55,6 +60,12 @@ Patch7:		%{name}-pam-conv.patch
 Patch8:		%{name}-chroot.patch
 Patch9:		%{name}-selinux.patch
 Patch10:	%{name}-selinux-pld.patch
+# High Performance SSH/SCP - HPN-SSH - http://www.psc.edu/networking/projects/hpn-ssh/ 
+# http://www.psc.edu/networking/projects/hpn-ssh/openssh-4.2p1-hpn11.diff
+Patch11:	%{name}-4.2p1-hpn11.patch
+# Adds HPN (see p11) and an undocumented -z none cipher flag
+# http://www.psc.edu/networking/projects/hpn-ssh/openssh-4.2p1-hpn11-none.diff
+Patch12:	%{name}-4.2p1-hpn11-none.patch
 URL:		http://www.openssh.com/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -94,6 +105,22 @@ all patented algorithms to seperate libraries (OpenSSL).
 This package includes the core files necessary for both the OpenSSH
 client and server. To make this package useful, you should also
 install openssh-clients, openssh-server, or both.
+%if %{with hpn} || %{with hpn_none}
+This release includes High Performance SSH/SCP patches from 
+http://www.psc.edu/networking/projects/hpn-ssh/ which are supposed 
+to increase throughput on fast connections with high RTT (20-150 msec).
+See the website for '-w' values for your connection and /proc/sys TCP
+values. BTW. in a LAN you have got generally RTT < 1 msec.
+%endif
+%if %{with hpn_none}
+It also includes an undocumented '-z' option which switches
+the cipher to none after authentication is completed. Data is 
+still secured from tampering and corruption in transit through 
+the use of the Message Authentication Code (MAC).
+This option will significantly reduce the number of cpu cycles used 
+by the SSH/SCP process. This may allow some users to see significant 
+improvement in (sniffable) data tranfer rates. 
+%endif
 
 %description -l de
 OpenSSH (Secure Shell) stellt den Zugang zu anderen Rechnern her. Es
@@ -142,6 +169,23 @@ pomiÍdzy dwoma hostami.
 Ten pakiet zawiera podstawowe pliki potrzebne zarÛwno po stronie
 klienta jak i serwera OpenSSH. Aby by≥ uøyteczny, trzeba zainstalowaÊ
 co najmniej jeden z pakietÛw: openssh-clients lub openssh-server.
+%if %{with hpn} || %{with hpn_none}
+Ta wersja zawiera ≥aty z projektu High Performance SSH/SCP 
+http://www.psc.edu/networking/projects/hpn-ssh/, ktÛre maj± na celu
+zwiÍkszenie przepustowo∂ci transmisji dla szybkich po≥±czeÒ 
+z duøym RTT (20-150 msec). Na stronie projektu znaleºÊ moøna 
+odpowednie dla danego po≥±czenia warto∂ci parametru '-w' oraz 
+opcje /proc/sys dla TCP. Nawiasem mÛwi±c w sieciach LAN RTT < 1 msec.  
+%endif
+%if %{with hpn_none}
+Obs≥ugiwana jest rÛwnieø nieudokumentowana opcja '-z' odpowiedzialna
+za wy≥±czenie szyfrowania danych po zakoÒczeniu procesu uwierzytelniania.
+Dane s± zabezpieczone przed modyfikacj± lub uszkodzeniem przez 
+stosowanie Message Authentication Code (MAC).
+Opcja ta znacznie redukuje liczbÍ cykli procesora zuøywanych przez 
+procesy SSH/SCP. W wybranych zastosowaniach moøe ona wp≥yn±Ê 
+na wyraºne przyspieszenie (pods≥uchiwalnej) transmisji danych. 
+%endif
 
 %description -l pt
 OpenSSH (Secure Shell) fornece acesso a um sistema remoto. Substitui o
@@ -415,6 +459,8 @@ GNOME.
 %patch8 -p1
 %{?with_selinux:%patch9 -p1}
 %{?with_selinux:%patch10 -p1}
+%{?with_hpn:%patch11 -p1}
+%{?with_hpn_none:%patch12 -p1}
 
 %build
 cp %{_datadir}/automake/config.sub .

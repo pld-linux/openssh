@@ -1,4 +1,7 @@
 #
+# todo:
+# - for modularized xorg use /usr/bin/xauth
+#
 # Conditional build:
 %bcond_without	chroot		# without chrooted user environment support
 %bcond_with	gnome		# with gnome-askpass (GNOME 1.x) utility

@@ -69,6 +69,7 @@ Patch11:	%{name}-4.2p1-hpn11.patch
 # Adds HPN (see p11) and an undocumented -z none cipher flag
 # http://www.psc.edu/networking/projects/hpn-ssh/openssh-4.2p1-hpn11-none.diff
 Patch12:	%{name}-4.2p1-hpn11-none.patch
+Patch13:	%{name}-include.patch
 URL:		http://www.openssh.com/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -464,6 +465,7 @@ GNOME.
 %{?with_selinux:%patch10 -p1}
 %{?with_hpn:%patch11 -p1}
 %{?with_hpn_none:%patch12 -p1}
+%patch13 -p1
 
 %build
 cp %{_datadir}/automake/config.sub .

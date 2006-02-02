@@ -1,0 +1,20 @@
+diff -urN openssh-3.9p1.org/configure.ac openssh-3.9p1/configure.ac
+--- openssh-3.9p1.org/configure.ac	2004-08-17 19:25:31.977492488 +0200
++++ openssh-3.9p1/configure.ac	2004-08-17 19:25:48.157032824 +0200
+@@ -2265,13 +2265,13 @@
+ 				       [ char *tmp = heimdal_version; ],
+ 				       [ AC_MSG_RESULT(yes)
+ 					 AC_DEFINE(HEIMDAL)
+-					 K5LIBS="-lkrb5 -ldes"
+-					 K5LIBS="$K5LIBS -lcom_err -lasn1"
++					 K5LIBS="-lkrb5"
++					 K5LIBS="$K5LIBS -lasn1"
+ 					 AC_CHECK_LIB(roken, net_write,
+ 					   [K5LIBS="$K5LIBS -lroken"])
+ 				       ],
+ 				       [ AC_MSG_RESULT(no)
+-					 K5LIBS="-lkrb5 -lk5crypto -lcom_err"
++					 K5LIBS="-lkrb5 -lk5crypto"
+ 				       ]
+ 			)
+ 			AC_SEARCH_LIBS(dn_expand, resolv)

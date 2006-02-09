@@ -1,7 +1,4 @@
 #
-# todo:
-# - for modularized xorg use /usr/bin/xauth
-#
 # Conditional build:
 %bcond_without	chroot		# without chrooted user environment support
 %bcond_with	gnome		# with gnome-askpass (GNOME 1.x) utility
@@ -31,8 +28,8 @@ Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	4.3p1
-Release:	2%{?with_hpn:hpn}%{?with_hpn_none:hpn_none}
-Epoch:		2
+Release:	3%{?with_hpn:hpn}%{?with_hpn_none:hpn_none}
+Epoch:		3
 License:	BSD
 Group:		Applications/Networking
 Source0:	ftp://ftp.ca.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
@@ -488,7 +485,7 @@ cp %{_datadir}/automake/config.sub .
 	%{?with_kerberos5:--with-kerberos5} \
 	--with-privsep-path=%{_privsepdir} \
 	--with-pid-dir=%{_localstatedir}/run \
-	--with-xauth=/usr/X11R6/bin/xauth
+	--with-xauth=/usr/bin/xauth
 
 echo '#define LOGIN_PROGRAM           "/bin/login"' >>config.h
 

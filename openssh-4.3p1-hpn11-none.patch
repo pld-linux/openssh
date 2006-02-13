@@ -1,0 +1,419 @@
+diff -r -u -p1 openssh-4.3p1/buffer.c none-openssh-4.3p1/buffer.c
+--- openssh-4.3p1/buffer.c	2005-03-14 07:22:26.000000000 -0500
++++ none-openssh-4.3p1/buffer.c	2006-02-01 11:08:29.000000000 -0500
+@@ -109,3 +109,3 @@ restart:
+ 	newlen = buffer->alloc + len + 32768;
+-	if (newlen > BUFFER_MAX_LEN)
++	if (newlen > BUFFER_MAX_HPN_LEN)
+ 		fatal("buffer_append_space: alloc %u not supported",
+diff -r -u -p1 openssh-4.3p1/buffer.h none-openssh-4.3p1/buffer.h
+--- openssh-4.3p1/buffer.h	2005-03-14 07:22:26.000000000 -0500
++++ none-openssh-4.3p1/buffer.h	2006-02-01 11:08:29.000000000 -0500
+@@ -27,2 +27,3 @@ typedef struct {
+ #define	BUFFER_MAX_LEN		0xa00000
++#define BUFFER_MAX_HPN_LEN	(2<<29)-1
+ 
+diff -r -u -p1 openssh-4.3p1/channels.c none-openssh-4.3p1/channels.c
+--- openssh-4.3p1/channels.c	2006-01-31 05:47:15.000000000 -0500
++++ none-openssh-4.3p1/channels.c	2006-02-01 11:08:29.000000000 -0500
+@@ -290,2 +290,3 @@ channel_new(char *ctype, int type, int r
+ 	c->local_maxpacket = maxpack;
++	c->dynamic_window = 0;
+ 	c->remote_id = -1;
+@@ -750,5 +751,5 @@ channel_pre_open(Channel *c, fd_set * re
+ 	u_int limit = compat20 ? c->remote_window : packet_get_maxsize();
+-
++	
+ 	/* check buffer limits */
+-	limit = MIN(limit, (BUFFER_MAX_LEN - BUFFER_MAX_CHUNK - CHAN_RBUF));
++	limit = MIN(limit, (BUFFER_MAX_HPN_LEN - BUFFER_MAX_CHUNK - CHAN_RBUF));
+ 
+@@ -1617,5 +1618,20 @@ channel_check_window(Channel *c)
+ 	    c->local_consumed > 0) {
++		u_int32_t tcpwinsz = 0;
++		socklen_t optsz = sizeof(tcpwinsz);
++		int ret = -1;
++		u_int32_t addition = 0;
++		if (c->dynamic_window) {
++			ret = getsockopt(packet_get_connection_in(), 
++				SOL_SOCKET, SO_RCVBUF, &tcpwinsz, &optsz);
++			if ((ret == 0) && tcpwinsz > BUFFER_MAX_HPN_LEN) 
++				tcpwinsz = BUFFER_MAX_HPN_LEN;
++		}
++		if (c->dynamic_window && (ret == 0) && 
++		    (tcpwinsz > c->local_window_max)) {
++			addition = tcpwinsz - c->local_window_max;
++			c->local_window_max += addition;
++		}
+ 		packet_start(SSH2_MSG_CHANNEL_WINDOW_ADJUST);
+ 		packet_put_int(c->remote_id);
+-		packet_put_int(c->local_consumed);
++		packet_put_int(c->local_consumed + addition);
+ 		packet_send();
+@@ -1624,3 +1640,3 @@ channel_check_window(Channel *c)
+ 		    c->local_consumed);
+-		c->local_window += c->local_consumed;
++		c->local_window += c->local_consumed + addition;
+ 		c->local_consumed = 0;
+diff -r -u -p1 openssh-4.3p1/channels.h none-openssh-4.3p1/channels.h
+--- openssh-4.3p1/channels.h	2005-12-31 00:22:32.000000000 -0500
++++ none-openssh-4.3p1/channels.h	2006-02-01 11:08:29.000000000 -0500
+@@ -102,2 +102,3 @@ struct Channel {
+ 	u_int	local_maxpacket;
++	int	dynamic_window;
+ 	int     extended_usage;
+@@ -126,7 +127,7 @@ struct Channel {
+ #define CHAN_SES_PACKET_DEFAULT	(32*1024)
+-#define CHAN_SES_WINDOW_DEFAULT	(4*CHAN_SES_PACKET_DEFAULT)
++#define CHAN_SES_WINDOW_DEFAULT	(0xa00000/2)
+ #define CHAN_TCP_PACKET_DEFAULT	(32*1024)
+-#define CHAN_TCP_WINDOW_DEFAULT	(4*CHAN_TCP_PACKET_DEFAULT)
++#define CHAN_TCP_WINDOW_DEFAULT	(0xa00000/2)
+ #define CHAN_X11_PACKET_DEFAULT	(16*1024)
+-#define CHAN_X11_WINDOW_DEFAULT	(4*CHAN_X11_PACKET_DEFAULT)
++#define CHAN_X11_WINDOW_DEFAULT	(0xa00000/2)
+ 
+diff -r -u -p1 openssh-4.3p1/cipher.c none-openssh-4.3p1/cipher.c
+--- openssh-4.3p1/cipher.c	2005-12-19 01:40:40.000000000 -0500
++++ none-openssh-4.3p1/cipher.c	2006-02-01 11:08:29.000000000 -0500
+@@ -153,3 +153,4 @@ ciphers_valid(const char *names)
+ 		c = cipher_by_name(p);
+-		if (c == NULL || c->number != SSH_CIPHER_SSH2) {
++		if (c == NULL || (c->number != SSH_CIPHER_SSH2 && 
++c->number != SSH_CIPHER_NONE)) {
+ 			debug("bad cipher %s [%s]", p, names);
+@@ -327,2 +328,3 @@ cipher_get_keyiv(CipherContext *cc, u_ch
+ 	switch (c->number) {
++	case SSH_CIPHER_NONE:
+ 	case SSH_CIPHER_SSH2:
+@@ -361,2 +363,3 @@ cipher_set_keyiv(CipherContext *cc, u_ch
+ 	switch (c->number) {
++	case SSH_CIPHER_NONE:
+ 	case SSH_CIPHER_SSH2:
+diff -r -u -p1 openssh-4.3p1/compat.c none-openssh-4.3p1/compat.c
+--- openssh-4.3p1/compat.c	2005-03-01 05:24:33.000000000 -0500
++++ none-openssh-4.3p1/compat.c	2006-02-01 11:08:29.000000000 -0500
+@@ -164,2 +164,10 @@ compat_datafellows(const char *version)
+ 			datafellows = check[i].bugs;
++			/* Check to see if the remote side is OpenSSH and not HPN */
++			if(strstr(version,"OpenSSH") != NULL)
++			{
++				if (strstr(version,"hpn") == NULL)
++				{
++					datafellows |= SSH_BUG_LARGEWINDOW;
++				}
++			}
+ 			return;
+diff -r -u -p1 openssh-4.3p1/compat.h none-openssh-4.3p1/compat.h
+--- openssh-4.3p1/compat.h	2005-03-01 05:24:33.000000000 -0500
++++ none-openssh-4.3p1/compat.h	2006-02-01 11:08:29.000000000 -0500
+@@ -58,2 +58,3 @@
+ #define SSH_OLD_FORWARD_ADDR	0x01000000
++#define SSH_BUG_LARGEWINDOW     0x02000000
+ 
+diff -r -u -p1 openssh-4.3p1/kex.c none-openssh-4.3p1/kex.c
+--- openssh-4.3p1/kex.c	2005-11-04 23:19:36.000000000 -0500
++++ none-openssh-4.3p1/kex.c	2006-02-01 11:08:29.000000000 -0500
+@@ -51,3 +51,3 @@ static void kex_choose_conf(Kex *);
+ /* put algorithm proposal into buffer */
+-static void
++void
+ kex_prop2buf(Buffer *b, char *proposal[PROPOSAL_MAX])
+diff -r -u -p1 openssh-4.3p1/kex.h none-openssh-4.3p1/kex.h
+--- openssh-4.3p1/kex.h	2005-11-04 23:19:36.000000000 -0500
++++ none-openssh-4.3p1/kex.h	2006-02-01 11:08:29.000000000 -0500
+@@ -125,2 +125,4 @@ struct Kex {
+ 
++void kex_prop2buf(Buffer *, char *proposal[PROPOSAL_MAX]);
++
+ Kex	*kex_setup(char *[PROPOSAL_MAX]);
+diff -r -u -p1 openssh-4.3p1/myproposal.h none-openssh-4.3p1/myproposal.h
+--- openssh-4.3p1/myproposal.h	2005-07-26 07:54:56.000000000 -0400
++++ none-openssh-4.3p1/myproposal.h	2006-02-01 11:08:29.000000000 -0500
+@@ -33,3 +33,3 @@
+ 	"aes192-cbc,aes256-cbc,rijndael-cbc@lysator.liu.se," \
+-	"aes128-ctr,aes192-ctr,aes256-ctr"
++	"aes128-ctr,aes192-ctr,aes256-ctr,none"
+ #define	KEX_DEFAULT_MAC \
+diff -r -u -p1 openssh-4.3p1/packet.c none-openssh-4.3p1/packet.c
+--- openssh-4.3p1/packet.c	2005-11-04 23:15:00.000000000 -0500
++++ none-openssh-4.3p1/packet.c	2006-02-01 11:08:29.000000000 -0500
+@@ -1548,2 +1548,9 @@ packet_send_ignore(int nbytes)
+ }
++int rekey_requested = 0;
++
++void
++packet_request_rekeying(void)
++{
++	rekey_requested = 1;
++}
+ 
+@@ -1555,2 +1562,7 @@ packet_need_rekeying(void)
+ 		return 0;
++	if (rekey_requested == 1)
++	{
++		rekey_requested = 0;
++		return 1;
++	}
+ 	return
+diff -r -u -p1 openssh-4.3p1/packet.h none-openssh-4.3p1/packet.h
+--- openssh-4.3p1/packet.h	2005-07-26 07:54:56.000000000 -0400
++++ none-openssh-4.3p1/packet.h	2006-02-01 11:08:29.000000000 -0500
+@@ -20,2 +20,5 @@
+ 
++void
++packet_request_rekeying(void);
++
+ void     packet_set_connection(int, int);
+diff -r -u -p1 openssh-4.3p1/readconf.c none-openssh-4.3p1/readconf.c
+--- openssh-4.3p1/readconf.c	2005-12-13 03:33:20.000000000 -0500
++++ none-openssh-4.3p1/readconf.c	2006-02-01 11:08:29.000000000 -0500
+@@ -1018,2 +1018,3 @@ initialize_options(Options * options)
+ 	options->server_alive_count_max = -1;
++	options->none_switch = -1;
+ 	options->num_send_env = 0;
+@@ -1147,2 +1148,4 @@ fill_default_options(Options * options)
+ 		options->server_alive_count_max = 3;
++	if (options->none_switch == -1)
++	        options->none_switch = 0;
+ 	if (options->control_master == -1)
+diff -r -u -p1 openssh-4.3p1/readconf.h none-openssh-4.3p1/readconf.h
+--- openssh-4.3p1/readconf.h	2005-12-13 03:29:02.000000000 -0500
++++ none-openssh-4.3p1/readconf.h	2006-02-01 11:08:29.000000000 -0500
+@@ -59,2 +59,3 @@ typedef struct {
+ 	int     tcp_keep_alive;	/* Set SO_KEEPALIVE. */
++        int     tcp_rcv_buf; /* user switch to set tcp recv buffer */
+ 	LogLevel log_level;	/* Level for logging. */
+@@ -104,2 +105,3 @@ typedef struct {
+ 	int	rekey_limit;
++	int	none_switch;
+ 	int	no_host_authentication_for_localhost;
+diff -r -u -p1 openssh-4.3p1/scp.c none-openssh-4.3p1/scp.c
+--- openssh-4.3p1/scp.c	2006-01-31 06:11:38.000000000 -0500
++++ none-openssh-4.3p1/scp.c	2006-02-01 12:20:31.000000000 -0500
+@@ -280,3 +280,3 @@ main(int argc, char **argv)
+ 	fflag = tflag = 0;
+-	while ((ch = getopt(argc, argv, "dfl:prtvBCc:i:P:q1246S:o:F:")) != -1)
++	while ((ch = getopt(argc, argv, "dfl:prtvBCc:i:P:q1246zS:o:F:R:")) != -1)
+ 		switch (ch) {
+@@ -288,2 +288,3 @@ main(int argc, char **argv)
+ 		case 'C':
++		case 'z':	
+ 			addargs(&args, "-%c", ch);
+@@ -341,2 +342,5 @@ main(int argc, char **argv)
+ 			break;
++		case 'R':
++		  addargs(&args, "-r%s", optarg);
++		  break;
+ 		default:
+@@ -555,3 +559,3 @@ source(int argc, char **argv)
+ 	int fd = -1, haderr, indx;
+-	char *last, *name, buf[2048];
++	char *last, *name, buf[16384];
+ 	int len;
+@@ -782,3 +786,3 @@ sink(int argc, char **argv)
+ 	int setimes, targisdir, wrerrno = 0;
+-	char ch, *cp, *np, *targ, *why, *vect[1], buf[2048];
++	char ch, *cp, *np, *targ, *why, *vect[1], buf[16384];
+ 	struct timeval tv[2];
+@@ -943,3 +947,3 @@ bad:			run_err("%s: %s", np, strerror(er
+ 		(void) atomicio(vwrite, remout, "", 1);
+-		if ((bp = allocbuf(&buffer, ofd, 4096)) == NULL) {
++		if ((bp = allocbuf(&buffer, ofd, sizeof(buf))) == NULL) {
+ 			(void) close(ofd);
+@@ -953,4 +957,4 @@ bad:			run_err("%s: %s", np, strerror(er
+ 			start_progress_meter(curfile, size, &statbytes);
+-		for (count = i = 0; i < size; i += 4096) {
+-			amt = 4096;
++		for (count = i = 0; i < size; i += sizeof(buf)) {
++			amt = sizeof(buf);
+ 			if (i + amt > size)
+@@ -971,3 +975,3 @@ bad:			run_err("%s: %s", np, strerror(er
+ 			if (limit_rate)
+-				bwlimit(4096);
++				bwlimit(sizeof(buf));
+ 
+@@ -1087,3 +1091,3 @@ usage(void)
+ 	    "usage: scp [-1246BCpqrv] [-c cipher] [-F ssh_config] [-i identity_file]\n"
+-	    "           [-l limit] [-o ssh_option] [-P port] [-S program]\n"
++	    "           [-l limit] [-o ssh_option] [-P port] [-R Receive buffer size (Kb)] [-S program]\n"
+ 	    "           [[user@]host1:]file1 [...] [[user@]host2:]file2\n");
+Only in none-openssh-4.3p1/: scp.c.rej
+diff -r -u -p1 openssh-4.3p1/serverloop.c none-openssh-4.3p1/serverloop.c
+--- openssh-4.3p1/serverloop.c	2005-12-31 00:33:37.000000000 -0500
++++ none-openssh-4.3p1/serverloop.c	2006-02-01 11:08:29.000000000 -0500
+@@ -977,2 +977,4 @@ server_request_session(void)
+ 	    0, "server-session", 1);
++	if (!(datafellows & SSH_BUG_LARGEWINDOW))
++		c->dynamic_window = 1;
+ 	if (session_open(the_authctxt, c->self) != 1) {
+diff -r -u -p1 openssh-4.3p1/sftp.c none-openssh-4.3p1/sftp.c
+--- openssh-4.3p1/sftp.c	2006-01-31 05:49:28.000000000 -0500
++++ none-openssh-4.3p1/sftp.c	2006-02-01 08:28:26.000000000 -0500
+@@ -1466,3 +1466,3 @@ main(int argc, char **argv)
+ 
+-	while ((ch = getopt(argc, argv, "1hvCo:s:S:b:B:F:P:R:")) != -1) {
++	while ((ch = getopt(argc, argv, "1hvCo:s:S:b:B:F:P:R:z")) != -1) {
+ 		switch (ch) {
+@@ -1521,2 +1521,5 @@ main(int argc, char **argv)
+ 		case 'h':
++                case 'z':       
++                        addargs(&args, "-%c", ch);
++                        break;
+ 		default:
+diff -r -u -p1 openssh-4.3p1/ssh.c none-openssh-4.3p1/ssh.c
+--- openssh-4.3p1/ssh.c	2005-12-31 00:33:37.000000000 -0500
++++ none-openssh-4.3p1/ssh.c	2006-02-01 08:30:30.000000000 -0500
+@@ -159,3 +159,3 @@ usage(void)
+ 	fprintf(stderr,
+-"usage: ssh [-1246AaCfgkMNnqsTtVvXxY] [-b bind_address] [-c cipher_spec]\n"
++"usage: ssh [-1246AaCfgkMNnqrsTtVvXxY] [-b bind_address] [-c cipher_spec]\n"
+ "           [-D [bind_address:]port] [-e escape_char] [-F configfile]\n"
+@@ -165,2 +165,3 @@ usage(void)
+ "           [-w tunnel:tunnel] [user@]hostname [command]\n"
++"           [-r Receive Buffer Size in K]\n"
+ 	);
+@@ -243,2 +244,4 @@ main(int ac, char **av)
+ 	host = NULL;
++	/* need to set options.tcp_rcv_buf to 0 */
++	options.tcp_rcv_buf = 0;
+ 
+@@ -246,3 +249,3 @@ again:
+ 	while ((opt = getopt(ac, av,
+-	    "1246ab:c:e:fgi:kl:m:no:p:qstvxACD:F:I:L:MNO:PR:S:TVw:XY")) != -1) {
++	    "1246ab:c:e:fgi:kl:m:no:p:qrstvxACD:F:I:L:MNO:PR:S:TVw:XYz")) != -1) {
+ 		switch (opt) {
+@@ -474,2 +477,3 @@ again:
+ 			no_tty_flag = 1;
++			options.none_switch = 0;
+ 			break;
+@@ -497,2 +501,13 @@ again:
+ 			break;
++		case 'r':
++		        options.tcp_rcv_buf = atoi(optarg) * 1024;
++		        break;
++		case 'z':
++			/* make sure we can't turn on the none_switch */
++			/* if they try to force a no tty flag on a tty session */
++			if (!no_tty_flag) {
++				options.none_switch = 1;
++			}
++			break;
++
+ 		default:
+@@ -1132,2 +1147,3 @@ ssh_session2_open(void)
+ 	if (tty_flag) {
++		window = 4*CHAN_SES_PACKET_DEFAULT;
+ 		window >>= 1;
+@@ -1139,3 +1155,5 @@ ssh_session2_open(void)
+ 	    "client-session", /*nonblock*/0);
+-
++	if (!tty_flag && (!(datafellows & SSH_BUG_LARGEWINDOW))) {
++		c->dynamic_window = 1;
++	}
+ 	debug3("ssh_session2_open: channel_new: %d", c->self);
+Only in none-openssh-4.3p1/: ssh.c.rej
+diff -r -u -p1 openssh-4.3p1/sshconnect.c none-openssh-4.3p1/sshconnect.c
+--- openssh-4.3p1/sshconnect.c	2005-12-13 03:29:03.000000000 -0500
++++ none-openssh-4.3p1/sshconnect.c	2006-02-01 11:08:29.000000000 -0500
+@@ -168,2 +168,25 @@ ssh_create_socket(int privileged, struct
+ 			debug("Allocated local port %d.", p);
++
++		
++		/* tuning needs to happen after the socket is */
++		/* created but before the connection happens */
++		/* so winscale is negotiated properly -cjr */
++		
++		/* Set tcp receive buffer if requested */
++		if (options.tcp_rcv_buf) 
++		  {
++		    if (setsockopt(sock, SOL_SOCKET, SO_RCVBUF, 
++				   (void *)&options.tcp_rcv_buf, 
++				   sizeof(options.tcp_rcv_buf)) >= 0)
++		      {             
++			debug("setsockopt SO_RCVBUF: %.100s", strerror(errno));
++		      } 
++		    else 
++		      {
++			/* coudln't set the socket size to use spec. */
++			/* should default to system param and continue */
++			/* warn the user though - cjr */
++			error("Couldn't set socket receive buffer as requested. Continuing anyway.");
++		      }
++		  }
+ 		return sock;
+@@ -173,4 +196,26 @@ ssh_create_socket(int privileged, struct
+ 		error("socket: %.100s", strerror(errno));
+-
+-	/* Bind the socket to an alternative local IP address */
++	
++	/* tuning needs to happen after the socket is */
++	/* created but before the connection happens */
++	/* so winscale is negotiated properly -cjr */
++	
++	/* Set tcp receive buffer if requested */
++	if (options.tcp_rcv_buf) 
++	  {
++	    if (setsockopt(sock, SOL_SOCKET, SO_RCVBUF, 
++			   (void *)&options.tcp_rcv_buf, 
++			   sizeof(options.tcp_rcv_buf)) >= 0)
++	      {             
++		debug("setsockopt SO_RCVBUF: %.100s", strerror(errno));
++	      }
++	    else 
++	      {
++		/* coudln't set the socket size to use spec. */
++		/* should default to system param and continue */
++		/* warn the user though - cjr */
++		error("Couldn't set socket receive buffer as requested. Continuing anyway.");
++	      }
++	  }
++	
++       	/* Bind the socket to an alternative local IP address */
+ 	if (options.bind_address == NULL)
+@@ -481,3 +526,3 @@ ssh_exchange_identification(void)
+ 	    compat20 ? PROTOCOL_MINOR_2 : minor1,
+-	    SSH_VERSION);
++	    SSH_RELEASE);
+ 	if (atomicio(vwrite, connection_out, buf, strlen(buf)) != strlen(buf))
+diff -r -u -p1 openssh-4.3p1/sshconnect2.c none-openssh-4.3p1/sshconnect2.c
+--- openssh-4.3p1/sshconnect2.c	2005-11-04 23:07:33.000000000 -0500
++++ none-openssh-4.3p1/sshconnect2.c	2006-02-01 11:08:29.000000000 -0500
+@@ -60,2 +60,8 @@ extern char *server_version_string;
+ extern Options options;
++extern Kex *xxx_kex;
++
++/* tty_flag is set in ssh.c. use this in ssh_userauth2 */
++/* if it is set then prevent the switch to the null cipher */
++
++extern int tty_flag;
+ 
+@@ -311,3 +317,11 @@ ssh_userauth2(const char *local_user, co
+ 	dispatch_range(SSH2_MSG_USERAUTH_MIN, SSH2_MSG_USERAUTH_MAX, NULL);
+-
++	if ((options.none_switch == 1) && !tty_flag) /* no null on tty sessions */
++	{
++		debug("Requesting none rekeying...");
++		myproposal[PROPOSAL_ENC_ALGS_STOC] = "none";
++		myproposal[PROPOSAL_ENC_ALGS_CTOS] = "none";
++		kex_prop2buf(&xxx_kex->my,myproposal);
++		packet_request_rekeying();
++		fprintf(stderr, "WARNING: ENABLED NULL CIPHER\n");
++	}
+ 	debug("Authentication succeeded (%s).", authctxt.method->name);
+diff -r -u -p1 openssh-4.3p1/sshd.c none-openssh-4.3p1/sshd.c
+--- openssh-4.3p1/sshd.c	2005-12-23 22:59:12.000000000 -0500
++++ none-openssh-4.3p1/sshd.c	2006-02-01 11:08:30.000000000 -0500
+@@ -379,3 +379,3 @@ sshd_exchange_identification(int sock_in
+ 	}
+-	snprintf(buf, sizeof buf, "SSH-%d.%d-%.100s\n", major, minor, SSH_VERSION);
++	snprintf(buf, sizeof buf, "SSH-%d.%d-%.100s\n", major, minor, SSH_RELEASE);
+ 	server_version_string = xstrdup(buf);
+diff -r -u -p1 openssh-4.3p1/version.h none-openssh-4.3p1/version.h
+--- openssh-4.3p1/version.h	2006-02-01 06:27:31.000000000 -0500
++++ none-openssh-4.3p1/version.h	2006-02-01 11:08:30.000000000 -0500
+@@ -5,2 +5,3 @@
+ #define SSH_PORTABLE	"p1"
+-#define SSH_RELEASE	SSH_VERSION SSH_PORTABLE
++#define SSH_HPN		"-hpn"
++#define SSH_RELEASE	SSH_VERSION SSH_PORTABLE SSH_HPN

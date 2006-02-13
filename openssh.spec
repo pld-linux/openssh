@@ -40,7 +40,7 @@ Source3:	%{name}d.init
 Source4:	%{name}d.pamd
 Source5:	%{name}.sysconfig
 Source6:	passwd.pamd
-Source7:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/openssh-non-english-man-pages.tar.bz2
+Source7:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 # Source7-md5:	66943d481cc422512b537bcc2c7400d1
 Source9:	http://www.taiyo.co.jp/~gotoh/ssh/connect.c
 # NoSource9-md5:	e1c3cbed88f08ea778d90813d48cd428
@@ -60,7 +60,7 @@ Patch7:		%{name}-pam-conv.patch
 Patch8:		%{name}-chroot.patch
 Patch9:		%{name}-selinux.patch
 Patch10:	%{name}-selinux-pld.patch
-# High Performance SSH/SCP - HPN-SSH - http://www.psc.edu/networking/projects/hpn-ssh/ 
+# High Performance SSH/SCP - HPN-SSH - http://www.psc.edu/networking/projects/hpn-ssh/
 # http://www.psc.edu/networking/projects/hpn-ssh/openssh-4.2p1-hpn11.diff
 Patch11:	%{name}-4.2p1-hpn11.patch
 # Adds HPN (see p11) and an undocumented -z none cipher flag
@@ -68,6 +68,7 @@ Patch11:	%{name}-4.2p1-hpn11.patch
 Patch12:	%{name}-4.2p1-hpn11-none.patch
 Patch13:	%{name}-include.patch
 URL:		http://www.openssh.com/
+BuildRequires:	%{__perl}
 BuildRequires:	autoconf
 BuildRequires:	automake
 %{?with_gnome:BuildRequires:	gnome-libs-devel}
@@ -79,7 +80,6 @@ BuildRequires:	libwrap-devel
 %{?with_ldap:BuildRequires:	openldap-devel}
 BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	pam-devel
-BuildRequires:	%{__perl}
 %{?with_gtk:BuildRequires:	pkgconfig}
 BuildRequires:	rpmbuild(macros) >= 1.202
 BuildRequires:	zlib-devel
@@ -107,20 +107,20 @@ This package includes the core files necessary for both the OpenSSH
 client and server. To make this package useful, you should also
 install openssh-clients, openssh-server, or both.
 %if %{with hpn} || %{with hpn_none}
-This release includes High Performance SSH/SCP patches from 
-http://www.psc.edu/networking/projects/hpn-ssh/ which are supposed 
+This release includes High Performance SSH/SCP patches from
+http://www.psc.edu/networking/projects/hpn-ssh/ which are supposed
 to increase throughput on fast connections with high RTT (20-150 msec).
 See the website for '-w' values for your connection and /proc/sys TCP
 values. BTW. in a LAN you have got generally RTT < 1 msec.
 %endif
 %if %{with hpn_none}
 It also includes an undocumented '-z' option which switches
-the cipher to none after authentication is completed. Data is 
-still secured from tampering and corruption in transit through 
+the cipher to none after authentication is completed. Data is
+still secured from tampering and corruption in transit through
 the use of the Message Authentication Code (MAC).
-This option will significantly reduce the number of cpu cycles used 
-by the SSH/SCP process. This may allow some users to see significant 
-improvement in (sniffable) data tranfer rates. 
+This option will significantly reduce the number of cpu cycles used
+by the SSH/SCP process. This may allow some users to see significant
+improvement in (sniffable) data tranfer rates.
 %endif
 
 %description -l de
@@ -171,21 +171,21 @@ Ten pakiet zawiera podstawowe pliki potrzebne zarówno po stronie
 klienta jak i serwera OpenSSH. Aby by³ u¿yteczny, trzeba zainstalowaæ
 co najmniej jeden z pakietów: openssh-clients lub openssh-server.
 %if %{with hpn} || %{with hpn_none}
-Ta wersja zawiera ³aty z projektu High Performance SSH/SCP 
+Ta wersja zawiera ³aty z projektu High Performance SSH/SCP
 http://www.psc.edu/networking/projects/hpn-ssh/, które maj± na celu
-zwiêkszenie przepustowo¶ci transmisji dla szybkich po³±czeñ 
-z du¿ym RTT (20-150 msec). Na stronie projektu znale¼æ mo¿na 
-odpowednie dla danego po³±czenia warto¶ci parametru '-w' oraz 
-opcje /proc/sys dla TCP. Nawiasem mówi±c w sieciach LAN RTT < 1 msec.  
+zwiêkszenie przepustowo¶ci transmisji dla szybkich po³±czeñ
+z du¿ym RTT (20-150 msec). Na stronie projektu znale¼æ mo¿na
+odpowednie dla danego po³±czenia warto¶ci parametru '-w' oraz
+opcje /proc/sys dla TCP. Nawiasem mówi±c w sieciach LAN RTT < 1 msec.
 %endif
 %if %{with hpn_none}
 Obs³ugiwana jest równie¿ nieudokumentowana opcja '-z' odpowiedzialna
 za wy³±czenie szyfrowania danych po zakoñczeniu procesu uwierzytelniania.
-Dane s± zabezpieczone przed modyfikacj± lub uszkodzeniem przez 
+Dane s± zabezpieczone przed modyfikacj± lub uszkodzeniem przez
 stosowanie Message Authentication Code (MAC).
-Opcja ta znacznie redukuje liczbê cykli procesora zu¿ywanych przez 
-procesy SSH/SCP. W wybranych zastosowaniach mo¿e ona wp³yn±æ 
-na wyra¼ne przyspieszenie (pods³uchiwalnej) transmisji danych. 
+Opcja ta znacznie redukuje liczbê cykli procesora zu¿ywanych przez
+procesy SSH/SCP. W wybranych zastosowaniach mo¿e ona wp³yn±æ
+na wyra¼ne przyspieszenie (pods³uchiwalnej) transmisji danych.
 %endif
 
 %description -l pt
@@ -312,19 +312,19 @@ Summary(pt_BR):	Servidor OpenSSH para comunicações encriptadas
 Summary(ru):	OpenSSH - ÓÅÒ×ÅÒ ÐÒÏÔÏËÏÌÁ Secure Shell (sshd)
 Summary(uk):	OpenSSH - ÓÅÒ×ÅÒ ÐÒÏÔÏËÏÌÕ Secure Shell (sshd)
 Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
-Requires:	rc-scripts >= 0.4.0.18
-Requires(pre):	/bin/id
-Requires(pre):	/usr/sbin/useradd
-Requires(post,preun):	/sbin/chkconfig
 Requires(post):	chkconfig >= 0.9
 Requires(post):	grep
+Requires(post,preun):	/sbin/chkconfig
 Requires(postun):	/usr/sbin/userdel
+Requires(pre):	/bin/id
+Requires(pre):	/usr/sbin/useradd
+Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	/bin/login
-Requires:	util-linux
 Requires:	pam >= 0.77.3
-Provides:	user(sshd)
+Requires:	rc-scripts >= 0.4.0.18
+Requires:	util-linux
 Provides:	ssh-server
+Provides:	user(sshd)
 
 %description server
 Ssh (Secure Shell) a program for logging into a remote machine and for
@@ -401,9 +401,9 @@ Summary(ru):	OpenSSH - ÄÉÁÌÏÇ ××ÏÄÁ ËÌÀÞÅ×ÏÊ ÆÒÁÚÙ (passphrase) ÄÌÑ GNOME
 Summary(uk):	OpenSSH - Ä¦ÁÌÏÇ ××ÏÄÕ ËÌÀÞÏ×Ï§ ÆÒÁÚÉ (passphrase) ÄÌÑ GNOME
 Group:		Applications/Networking
 Requires:	%{name} = %{epoch}:%{version}-%{release}
-Obsoletes:	ssh-extras
-Obsoletes:	ssh-askpass
 Obsoletes:	openssh-askpass
+Obsoletes:	ssh-askpass
+Obsoletes:	ssh-extras
 
 %description gnome-askpass
 Ssh (Secure Shell) a program for logging into a remote machine and for
@@ -522,9 +522,9 @@ install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
 install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/ssh_config
 install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/sshd_config
 %if %{with sshagentsh}
-install %{SOURCE11} $RPM_BUILD_ROOT/etc/profile.d/
+install %{SOURCE11} $RPM_BUILD_ROOT/etc/profile.d
 ln -sf	/etc/profile.d/ssh-agent.sh $RPM_BUILD_ROOT/etc/X11/xinit/xinitrc.d/ssh-agent.sh
-install %{SOURCE12} $RPM_BUILD_ROOT/etc/ssh/
+install %{SOURCE12} $RPM_BUILD_ROOT%{_sysconfdir}
 %endif
 
 bzip2 -dc %{SOURCE7} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}

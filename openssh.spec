@@ -60,12 +60,13 @@ Patch7:		%{name}-pam-conv.patch
 Patch8:		%{name}-chroot.patch
 Patch9:		%{name}-selinux.patch
 Patch10:	%{name}-selinux-pld.patch
+# HPN patches rediffed due sigpipe patch.
 # High Performance SSH/SCP - HPN-SSH - http://www.psc.edu/networking/projects/hpn-ssh/
 # http://www.psc.edu/networking/projects/hpn-ssh/openssh-4.2p1-hpn11.diff
-Patch11:	%{name}-4.2p1-hpn11.patch
+Patch11:	%{name}-4.3p1-hpn11.patch
 # Adds HPN (see p11) and an undocumented -z none cipher flag
 # http://www.psc.edu/networking/projects/hpn-ssh/openssh-4.2p1-hpn11-none.diff
-Patch12:	%{name}-4.2p1-hpn11-none.patch
+Patch12:	%{name}-4.3p1-hpn11-none.patch
 Patch13:	%{name}-include.patch
 URL:		http://www.openssh.com/
 BuildRequires:	%{__perl}

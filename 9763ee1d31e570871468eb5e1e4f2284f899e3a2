@@ -1,0 +1,5 @@
+- updated to 4.3p1
+  [fixes CVE-2006-0225]
+- updated sigpipe and linux-ipv6 patches for 4.3p1
+- updated lpk patch to 0.3.6
+- release 2 (1 will be for Ra)

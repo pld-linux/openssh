@@ -1,0 +1,1 @@
+- switch to new conditional builds macros (bcond_on_ -> _with_/bcond_off_ -> _without_); no release changes only simple s/// perfored

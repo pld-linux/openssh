@@ -264,25 +264,33 @@ diff -r -u -p1 openssh-4.3p1/sftp.c none-openssh-4.3p1/sftp.c
 diff -r -u -p1 openssh-4.3p1/ssh.c none-openssh-4.3p1/ssh.c
 --- openssh-4.3p1/ssh.c	2005-12-31 00:33:37.000000000 -0500
 +++ none-openssh-4.3p1/ssh.c	2006-02-01 08:30:30.000000000 -0500
-@@ -159,3 +159,3 @@ usage(void)
+@@ -160,7 +160,7 @@
+ usage(void)
+ {
  	fprintf(stderr,
--"usage: ssh [-1246AaCfgkMNnqsTtVvXxY] [-b bind_address] [-c cipher_spec]\n"
-+"usage: ssh [-1246AaCfgkMNnqrsTtVvXxY] [-b bind_address] [-c cipher_spec]\n"
+-"usage: ssh [-1246AaBCfgkMNnqsTtVvXxY] [-b bind_address] [-c cipher_spec]\n"
++"usage: ssh [-1246AaBCfgkMNnqRrsTtVvXxY] [-b bind_address] [-c cipher_spec]\n"
  "           [-D [bind_address:]port] [-e escape_char] [-F configfile]\n"
+ "           [-i identity_file] [-L [bind_address:]port:host:hostport]\n"
+ "           [-l login_name] [-m mac_spec] [-O ctl_cmd] [-o option] [-p port]\n"
 @@ -165,2 +165,3 @@ usage(void)
  "           [-w tunnel:tunnel] [user@]hostname [command]\n"
 +"           [-r Receive Buffer Size in K]\n"
  	);
-@@ -243,2 +244,4 @@ main(int ac, char **av)
+@@ -246,9 +246,12 @@
+ 	/* Parse command-line arguments. */
  	host = NULL;
+ 
 +	/* need to set options.tcp_rcv_buf to 0 */
 +	options.tcp_rcv_buf = 0;
- 
-@@ -246,3 +249,3 @@ again:
++
+ again:
  	while ((opt = getopt(ac, av,
--	    "1246ab:c:e:fgi:kl:m:no:p:qstvxACD:F:I:L:MNO:PR:S:TVw:XY")) != -1) {
-+	    "1246ab:c:e:fgi:kl:m:no:p:qrstvxACD:F:I:L:MNO:PR:S:TVw:XYz")) != -1) {
+-	    "1246ab:c:e:fgi:kl:m:no:p:qstvxABCD:F:I:L:MNO:PR:S:TVw:XY")) != -1) {
++	    "1246ab:c:e:fgi:kl:m:no:p:qr:stvxABCD:F:I:L:MNO:PR:S:TVw:XY")) != -1) {
  		switch (opt) {
+ 		case '1':
+ 			options.protocol = SSH_PROTO_1;
 @@ -474,2 +477,3 @@ again:
  			no_tty_flag = 1;
 +			options.none_switch = 0;

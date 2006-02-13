@@ -1,0 +1,2 @@
+- umask in %post
+- build gtk2-based gnome-askpass by default

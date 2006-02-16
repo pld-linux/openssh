@@ -28,7 +28,7 @@ Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	4.3p1
-Release:	3%{?with_hpn:hpn}%{?with_hpn_none:hpn_none}
+Release:	4%{?with_hpn:hpn}%{?with_hpn_none:hpn_none}
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -486,7 +486,9 @@ cp %{_datadir}/automake/config.sub .
 	%{?with_kerberos5:--with-kerberos5} \
 	--with-privsep-path=%{_privsepdir} \
 	--with-pid-dir=%{_localstatedir}/run \
-	--with-xauth=/usr/bin/xauth
+	--with-xauth=/usr/bin/xauth \
+	--enable-utmpx \
+	--enable-wtmpx
 
 echo '#define LOGIN_PROGRAM           "/bin/login"' >>config.h
 

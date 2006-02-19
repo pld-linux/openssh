@@ -1,7 +1,0 @@
-# Customized setings for ssh
-
-# Leave -u (max user processes) as ulimited to avoid nasty suprise
-SERVICE_LIMITS="-u unlimited -Sc 0"
-
-# Define nice level for ssh 
-SERVICE_RUN_NICE_LEVEL="+0"

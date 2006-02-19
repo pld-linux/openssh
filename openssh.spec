@@ -27,13 +27,13 @@ Summary(pt_BR):	ImplementaГЦo livre do SSH
 Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
-Version:	4.3p1
-Release:	4%{?with_hpn:hpn}%{?with_hpn_none:hpn_none}
+Version:	4.3p2
+Release:	1%{?with_hpn:hpn}%{?with_hpn_none:hpn_none}
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
 Source0:	ftp://ftp.ca.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
-# Source0-md5:	eaeb880b1b6c63b9a4d7c5b1e74727c4
+# Source0-md5:	7e9880ac20a9b9db0d3fea30a9ff3d46
 Source1:	%{name}d.conf
 Source2:	%{name}.conf
 Source3:	%{name}d.init

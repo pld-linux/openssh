@@ -27,13 +27,13 @@ Summary(pt_BR):	ImplementaГЦo livre do SSH
 Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
-Version:	4.3p1
-Release:	3%{?with_hpn:hpn}%{?with_hpn_none:hpn_none}
+Version:	4.3p2
+Release:	2%{?with_hpn:hpn}%{?with_hpn_none:hpn_none}
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
 Source0:	ftp://ftp.ca.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
-# Source0-md5:	eaeb880b1b6c63b9a4d7c5b1e74727c4
+# Source0-md5:	7e9880ac20a9b9db0d3fea30a9ff3d46
 Source1:	%{name}d.conf
 Source2:	%{name}.conf
 Source3:	%{name}d.init
@@ -60,12 +60,13 @@ Patch7:		%{name}-pam-conv.patch
 Patch8:		%{name}-chroot.patch
 Patch9:		%{name}-selinux.patch
 Patch10:	%{name}-selinux-pld.patch
+# HPN patches rediffed due sigpipe patch.
 # High Performance SSH/SCP - HPN-SSH - http://www.psc.edu/networking/projects/hpn-ssh/
 # http://www.psc.edu/networking/projects/hpn-ssh/openssh-4.2p1-hpn11.diff
-Patch11:	%{name}-4.2p1-hpn11.patch
+Patch11:	%{name}-4.3p1-hpn11.patch
 # Adds HPN (see p11) and an undocumented -z none cipher flag
 # http://www.psc.edu/networking/projects/hpn-ssh/openssh-4.2p1-hpn11-none.diff
-Patch12:	%{name}-4.2p1-hpn11-none.patch
+Patch12:	%{name}-4.3p1-hpn11-none.patch
 Patch13:	%{name}-include.patch
 URL:		http://www.openssh.com/
 BuildRequires:	%{__perl}
@@ -485,7 +486,9 @@ cp %{_datadir}/automake/config.sub .
 	%{?with_kerberos5:--with-kerberos5} \
 	--with-privsep-path=%{_privsepdir} \
 	--with-pid-dir=%{_localstatedir}/run \
-	--with-xauth=/usr/bin/xauth
+	--with-xauth=/usr/X11R6/bin/xauth \
+	--enable-utmpx \
+	--enable-wtmpx
 
 echo '#define LOGIN_PROGRAM           "/bin/login"' >>config.h
 

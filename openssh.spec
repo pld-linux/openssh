@@ -82,7 +82,7 @@ BuildRequires:	libwrap-devel
 BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	pam-devel
 %{?with_gtk:BuildRequires:	pkgconfig}
-BuildRequires:	rpmbuild(macros) >= 1.202
+BuildRequires:	rpmbuild(macros) >= 1.268
 BuildRequires:	zlib-devel
 Requires:	FHS >= 2.1-24
 Requires:	pam >= 0.79.0
@@ -569,11 +569,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %post server
 /sbin/chkconfig --add sshd
-if [ -f /var/lock/subsys/sshd ]; then
-	/etc/rc.d/init.d/sshd restart 1>&2
-else
-	echo "Run \"/etc/rc.d/init.d/sshd start\" to start openssh daemon."
-fi
+%service sshd restart "openssh daemon"
 if ! grep -qs ssh /etc/security/passwd.conf ; then
 	umask 022
 	echo "ssh" >> /etc/security/passwd.conf
@@ -581,9 +577,7 @@ fi
 
 %preun server
 if [ "$1" = "0" ]; then
-	if [ -f /var/lock/subsys/sshd ]; then
-		/etc/rc.d/init.d/sshd stop 1>&2
-	fi
+	%service sshd stop
 	/sbin/chkconfig --del sshd
 fi
 

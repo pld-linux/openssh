@@ -16,6 +16,7 @@
 %endif
 # gtk2-based gnome-askpass means no gnome1-based
 %{?with_gtk:%undefine with_gnome}
+%define		_rel 3
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(de):	OpenSSH - freie Implementation der Secure Shell (SSH)
 Summary(es):	Implementación libre de SSH
@@ -27,13 +28,13 @@ Summary(pt_BR):	Implementação livre do SSH
 Summary(ru):	OpenSSH - Ó×ÏÂÏÄÎÁÑ ÒÅÁÌÉÚÁÃÉÑ ÐÒÏÔÏËÏÌÁ Secure Shell (SSH)
 Summary(uk):	OpenSSH - ×¦ÌØÎÁ ÒÅÁÌ¦ÚÁÃ¦Ñ ÐÒÏÔÏËÏÌÕ Secure Shell (SSH)
 Name:		openssh
-Version:	4.3p1
-Release:	3%{?with_hpn:hpn}%{?with_hpn_none:hpn_none}
+Version:	4.3p2
+Release:	%{_rel}%{?with_hpn:hpn}%{?with_hpn_none:hpn_none}
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
 Source0:	ftp://ftp.ca.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
-# Source0-md5:	eaeb880b1b6c63b9a4d7c5b1e74727c4
+# Source0-md5:	7e9880ac20a9b9db0d3fea30a9ff3d46
 Source1:	%{name}d.conf
 Source2:	%{name}.conf
 Source3:	%{name}d.init
@@ -60,12 +61,13 @@ Patch7:		%{name}-pam-conv.patch
 Patch8:		%{name}-chroot.patch
 Patch9:		%{name}-selinux.patch
 Patch10:	%{name}-selinux-pld.patch
+# HPN patches rediffed due sigpipe patch.
 # High Performance SSH/SCP - HPN-SSH - http://www.psc.edu/networking/projects/hpn-ssh/
 # http://www.psc.edu/networking/projects/hpn-ssh/openssh-4.2p1-hpn11.diff
-Patch11:	%{name}-4.2p1-hpn11.patch
+Patch11:	%{name}-4.3p1-hpn11.patch
 # Adds HPN (see p11) and an undocumented -z none cipher flag
 # http://www.psc.edu/networking/projects/hpn-ssh/openssh-4.2p1-hpn11-none.diff
-Patch12:	%{name}-4.2p1-hpn11-none.patch
+Patch12:	%{name}-4.3p1-hpn11-none.patch
 Patch13:	%{name}-include.patch
 URL:		http://www.openssh.com/
 BuildRequires:	%{__perl}
@@ -81,7 +83,7 @@ BuildRequires:	libwrap-devel
 BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	pam-devel
 %{?with_gtk:BuildRequires:	pkgconfig}
-BuildRequires:	rpmbuild(macros) >= 1.202
+BuildRequires:	rpmbuild(macros) >= 1.268
 BuildRequires:	zlib-devel
 Requires:	FHS >= 2.1-24
 Requires:	pam >= 0.79.0
@@ -485,7 +487,9 @@ cp %{_datadir}/automake/config.sub .
 	%{?with_kerberos5:--with-kerberos5} \
 	--with-privsep-path=%{_privsepdir} \
 	--with-pid-dir=%{_localstatedir}/run \
-	--with-xauth=/usr/bin/xauth
+	--with-xauth=/usr/X11R6/bin/xauth \
+	--enable-utmpx \
+	--enable-wtmpx
 
 echo '#define LOGIN_PROGRAM           "/bin/login"' >>config.h
 
@@ -566,11 +570,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %post server
 /sbin/chkconfig --add sshd
-if [ -f /var/lock/subsys/sshd ]; then
-	/etc/rc.d/init.d/sshd restart 1>&2
-else
-	echo "Run \"/etc/rc.d/init.d/sshd start\" to start openssh daemon."
-fi
+%service sshd restart "openssh daemon"
 if ! grep -qs ssh /etc/security/passwd.conf ; then
 	umask 022
 	echo "ssh" >> /etc/security/passwd.conf
@@ -578,9 +578,7 @@ fi
 
 %preun server
 if [ "$1" = "0" ]; then
-	if [ -f /var/lock/subsys/sshd ]; then
-		/etc/rc.d/init.d/sshd stop 1>&2
-	fi
+	%service sshd stop
 	/sbin/chkconfig --del sshd
 fi
 

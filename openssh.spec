@@ -569,7 +569,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %post server
 /sbin/chkconfig --add sshd
-%service sshd restart "openssh daemon"
+%service sshd reload "openssh daemon"
 if ! grep -qs ssh /etc/security/passwd.conf ; then
 	umask 022
 	echo "ssh" >> /etc/security/passwd.conf

@@ -54,7 +54,7 @@ Patch2:		%{name}-linux-ipv6.patch
 Patch3:		%{name}-pam_misc.patch
 Patch4:		%{name}-sigpipe.patch
 # http://www.opendarwin.org/projects/openssh-lpk/
-Patch5:		%{name}-lpk-4.1p1-0.3.6.patch
+Patch5:		%{name}-lpk-4.3p1-0.3.7.patch
 Patch6:		%{name}-heimdal.patch
 Patch7:		%{name}-pam-conv.patch
 # http://chrootssh.sourceforge.net/download/osshChroot-3.7.1p2.diff

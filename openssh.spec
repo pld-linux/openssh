@@ -43,7 +43,7 @@ Source6:	passwd.pamd
 Source7:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 # Source7-md5:	66943d481cc422512b537bcc2c7400d1
 Source9:	http://www.taiyo.co.jp/~gotoh/ssh/connect.c
-# Source9-md5:	cb1760ee520cbfffb83b1560b3609167
+# Source9-md5:	b856937f1cdfca7a3ccfb2fac36ef726
 Source10:	http://www.taiyo.co.jp/~gotoh/ssh/connect.html
 # Source10-md5:	bb972b3a9d435c62023b355960d78f78
 Source11:	ssh-agent.sh

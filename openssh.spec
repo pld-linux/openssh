@@ -12,7 +12,7 @@
 %bcond_with	hpn_none	# with hpn (above) and '-z' none cipher option
 #
 %if %{with hpn_none}
-%undefine       with_hpn
+%undefine	with_hpn
 %endif
 # gtk2-based gnome-askpass means no gnome1-based
 %{?with_gtk:%undefine with_gnome}
@@ -519,7 +519,7 @@ install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{pam.d,rc.d/init.d,sysconfig,secu
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-install connect    $RPM_BUILD_ROOT%{_bindir}
+install connect $RPM_BUILD_ROOT%{_bindir}
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/pam.d/sshd
 install %{SOURCE6} $RPM_BUILD_ROOT/etc/pam.d/passwdssh
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/sysconfig/sshd

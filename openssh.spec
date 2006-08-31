@@ -16,6 +16,7 @@
 %endif
 # gtk2-based gnome-askpass means no gnome1-based
 %{?with_gtk:%undefine with_gnome}
+%define		_rel	4
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(de):	OpenSSH - freie Implementation der Secure Shell (SSH)
 Summary(es):	ImplementaciСn libre de SSH
@@ -28,7 +29,7 @@ Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	4.3p2
-Release:	3%{?with_hpn:hpn}%{?with_hpn_none:hpn_none}
+Release:	%{_rel}%{?with_hpn:hpn}%{?with_hpn_none:hpn_none}
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -565,6 +566,18 @@ EOF
 
 %clean
 rm -rf $RPM_BUILD_ROOT
+
+%post clients
+%env_update
+
+%postun clients
+%env_update
+
+%post gnome-askpass
+%env_update
+
+%postun gnome-askpass
+%env_update
 
 %pre server
 %useradd -P %{name}-server -u 40 -d %{_privsepdir} -s /bin/false -c "OpenSSH PrivSep User" -g nobody sshd

@@ -12,11 +12,11 @@
 %bcond_with	hpn_none	# with hpn (above) and '-z' none cipher option
 #
 %if %{with hpn_none}
-%undefine       with_hpn
+%undefine	with_hpn
 %endif
 # gtk2-based gnome-askpass means no gnome1-based
 %{?with_gtk:%undefine with_gnome}
-%define		_rel 3
+%define		_rel	4
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(de):	OpenSSH - freie Implementation der Secure Shell (SSH)
 Summary(es):	Implementación libre de SSH
@@ -44,12 +44,13 @@ Source6:	passwd.pamd
 Source7:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 # Source7-md5:	66943d481cc422512b537bcc2c7400d1
 Source9:	http://www.taiyo.co.jp/~gotoh/ssh/connect.c
-# NoSource9-md5:	e1c3cbed88f08ea778d90813d48cd428
+# Source9-md5:	b856937f1cdfca7a3ccfb2fac36ef726
 Source10:	http://www.taiyo.co.jp/~gotoh/ssh/connect.html
-# NoSource10-md5:	ec74f3e3b2ea3a7dc84c7988235b6fcf
+# Source10-md5:	bb972b3a9d435c62023b355960d78f78
 Source11:	ssh-agent.sh
 Source12:	ssh-agent.conf
 Patch0:		%{name}-no_libnsl.patch
+Patch1:		%{name}-ac_fix.patch
 Patch2:		%{name}-linux-ipv6.patch
 Patch3:		%{name}-pam_misc.patch
 Patch4:		%{name}-sigpipe.patch
@@ -453,6 +454,7 @@ GNOME.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
@@ -518,7 +520,7 @@ install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{pam.d,rc.d/init.d,sysconfig,secu
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-install connect    $RPM_BUILD_ROOT%{_bindir}
+install connect $RPM_BUILD_ROOT%{_bindir}
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/pam.d/sshd
 install %{SOURCE6} $RPM_BUILD_ROOT/etc/pam.d/passwdssh
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/sysconfig/sshd
@@ -565,12 +567,24 @@ EOF
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%post clients
+%env_update
+
+%postun clients
+%env_update
+
+%post gnome-askpass
+%env_update
+
+%postun gnome-askpass
+%env_update
+
 %pre server
 %useradd -P %{name}-server -u 40 -d %{_privsepdir} -s /bin/false -c "OpenSSH PrivSep User" -g nobody sshd
 
 %post server
 /sbin/chkconfig --add sshd
-%service sshd restart "openssh daemon"
+%service sshd reload "openssh daemon"
 if ! grep -qs ssh /etc/security/passwd.conf ; then
 	umask 022
 	echo "ssh" >> /etc/security/passwd.conf

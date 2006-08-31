@@ -114,7 +114,7 @@ case "$1" in
 		killproc sshd -HUP
 		RETVAL=$?
 	else
-		msg_not_running OpenSSH
+		msg_not_running OpenSSH >&2
 		exit 7
 	fi
 	;;

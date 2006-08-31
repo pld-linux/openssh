@@ -16,7 +16,7 @@
 %endif
 # gtk2-based gnome-askpass means no gnome1-based
 %{?with_gtk:%undefine with_gnome}
-%define		_rel	4
+%define		_rel	5
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(de):	OpenSSH - freie Implementation der Secure Shell (SSH)
 Summary(es):	Implementación libre de SSH
@@ -84,7 +84,7 @@ BuildRequires:	libwrap-devel
 BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	pam-devel
 %{?with_gtk:BuildRequires:	pkgconfig}
-BuildRequires:	rpmbuild(macros) >= 1.268
+BuildRequires:	rpmbuild(macros) >= 1.318
 BuildRequires:	zlib-devel
 Requires:	FHS >= 2.1-24
 Requires:	pam >= 0.79.0

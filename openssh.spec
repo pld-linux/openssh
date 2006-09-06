@@ -255,6 +255,8 @@ Summary(ru):	OpenSSH - клиенты протокола Secure Shell
 Summary(uk):	OpenSSH - кл╕╓нти протоколу Secure Shell
 Group:		Applications/Networking
 Requires:	%{name} = %{epoch}:%{version}-%{release}
+Requires(post):	env-update
+Requires(postun):	env-update
 %{?with_sshagentsh:Requires:	xinitrc}
 Provides:	ssh-clients
 Obsoletes:	ssh-clients

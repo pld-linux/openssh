@@ -16,7 +16,7 @@
 %endif
 # gtk2-based gnome-askpass means no gnome1-based
 %{?with_gtk:%undefine with_gnome}
-%define		_rel	4
+%define		_rel	7
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(de):	OpenSSH - freie Implementation der Secure Shell (SSH)
 Summary(es):	Implementación libre de SSH
@@ -70,6 +70,7 @@ Patch11:	%{name}-4.3p1-hpn11.patch
 # http://www.psc.edu/networking/projects/hpn-ssh/openssh-4.2p1-hpn11-none.diff
 Patch12:	%{name}-4.3p1-hpn11-none.patch
 Patch13:	%{name}-include.patch
+Patch14:	%{name}-identical-simple-dos-2.patch
 URL:		http://www.openssh.com/
 BuildRequires:	%{__perl}
 BuildRequires:	autoconf
@@ -467,6 +468,7 @@ GNOME.
 %{?with_hpn:%patch11 -p1}
 %{?with_hpn_none:%patch12 -p1}
 %patch13 -p1
+%patch14 -p3
 
 %build
 cp %{_datadir}/automake/config.sub .
@@ -489,11 +491,11 @@ cp %{_datadir}/automake/config.sub .
 	%{?with_kerberos5:--with-kerberos5} \
 	--with-privsep-path=%{_privsepdir} \
 	--with-pid-dir=%{_localstatedir}/run \
-	--with-xauth=/usr/bin/xauth \
+	--with-xauth=/usr/X11R6/bin/xauth \
 	--enable-utmpx \
 	--enable-wtmpx
 
-echo '#define LOGIN_PROGRAM           "/bin/login"' >>config.h
+echo '#define LOGIN_PROGRAM		   "/bin/login"' >>config.h
 
 %{__make}
 
@@ -557,10 +559,10 @@ echo ".so ssh.1" > $RPM_BUILD_ROOT%{_mandir}/man1/slogin.1
 touch $RPM_BUILD_ROOT/etc/security/blacklist.sshd
 
 %if "%{_lib}" != "lib"
-find $RPM_BUILD_ROOT%{_sysconfdir} -type f -print0 | xargs -0 perl -pi -e "s#/usr/lib#/usr/%{_lib}#"
+find $RPM_BUILD_ROOT%{_sysconfdir} -type f -print0 | xargs -0 sed -i -e 's#%{_prefix}/lib#%{_libdir}#'
 %endif
 
-cat << EOF >$RPM_BUILD_ROOT/etc/env.d/SSH_ASKPASS
+cat << 'EOF' > $RPM_BUILD_ROOT/etc/env.d/SSH_ASKPASS
 #SSH_ASKPASS="%{_libexecdir}/ssh-askpass"
 EOF
 

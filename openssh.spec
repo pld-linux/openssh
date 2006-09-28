@@ -16,7 +16,7 @@
 %endif
 # gtk2-based gnome-askpass means no gnome1-based
 %{?with_gtk:%undefine with_gnome}
-%define		_rel	7
+%define		_rel	0.1
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(de):	OpenSSH - freie Implementation der Secure Shell (SSH)
 Summary(es):	ImplementaciСn libre de SSH
@@ -28,13 +28,13 @@ Summary(pt_BR):	ImplementaГЦo livre do SSH
 Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
-Version:	4.3p2
+Version:	4.4p1
 Release:	%{_rel}%{?with_hpn:hpn}%{?with_hpn_none:hpn_none}
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
 Source0:	ftp://ftp.ca.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
-# Source0-md5:	7e9880ac20a9b9db0d3fea30a9ff3d46
+# Source0-md5:	793a709a8de695c22f523024d7e9bf07
 Source1:	%{name}d.conf
 Source2:	%{name}.conf
 Source3:	%{name}d.init
@@ -70,7 +70,6 @@ Patch11:	%{name}-4.3p1-hpn11.patch
 # http://www.psc.edu/networking/projects/hpn-ssh/openssh-4.2p1-hpn11-none.diff
 Patch12:	%{name}-4.3p1-hpn11-none.patch
 Patch13:	%{name}-include.patch
-Patch14:	%{name}-identical-simple-dos-2.patch
 URL:		http://www.openssh.com/
 BuildRequires:	%{__perl}
 BuildRequires:	autoconf
@@ -455,20 +454,19 @@ GNOME.
 %prep
 %setup -q
 %patch0 -p1
-%patch1 -p1
+#%patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
 %{?with_ldap:%patch5 -p1}
 %{?with_kerberos5:%patch6 -p1}
 #%patch7 -p1
-%patch8 -p1
-%{?with_selinux:%patch9 -p1}
-%{?with_selinux:%patch10 -p1}
+#%patch8 -p1 ? MERGED IN?
+#%{?with_selinux:%patch9 -p1} ? MERGED IN?
+#%{?with_selinux:%patch10 -p1} ? NEEDS MERGE?
 %{?with_hpn:%patch11 -p1}
 %{?with_hpn_none:%patch12 -p1}
 %patch13 -p1
-%patch14 -p3
 
 %build
 cp %{_datadir}/automake/config.sub .

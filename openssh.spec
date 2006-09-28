@@ -50,7 +50,6 @@ Source10:	http://www.taiyo.co.jp/~gotoh/ssh/connect.html
 Source11:	ssh-agent.sh
 Source12:	ssh-agent.conf
 Patch0:		%{name}-no_libnsl.patch
-Patch1:		%{name}-ac_fix.patch
 Patch2:		%{name}-linux-ipv6.patch
 Patch3:		%{name}-pam_misc.patch
 Patch4:		%{name}-sigpipe.patch
@@ -454,7 +453,6 @@ GNOME.
 %prep
 %setup -q
 %patch0 -p1
-#%patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1

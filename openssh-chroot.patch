@@ -1,6 +1,6 @@
---- openssh-3.7.1p2/servconf.c	2003-09-23 11:24:21.000000000 +0200
-+++ openssh-3.7.1p2.pius/servconf.c	2003-10-07 20:49:08.000000000 +0200
-@@ -41,7 +41,9 @@
+--- openssh-4.4p1/servconf.c.orig	2006-08-18 16:23:15.000000000 +0200
++++ openssh-4.4p1/servconf.c	2006-10-05 10:11:17.065971000 +0200
+@@ -56,7 +56,9 @@
  
  	/* Portable-specific options */
  	options->use_pam = -1;
@@ -11,7 +11,7 @@
  	/* Standard Options */
  	options->num_ports = 0;
  	options->ports_from_cmdline = 0;
-@@ -112,6 +114,9 @@
+@@ -131,6 +133,9 @@
  	if (options->use_pam == -1)
  		options->use_pam = 0;
  
@@ -21,7 +21,7 @@
  	/* Standard Options */
  	if (options->protocol == SSH_PROTO_UNKNOWN)
  		options->protocol = SSH_PROTO_1|SSH_PROTO_2;
-@@ -245,6 +250,7 @@
+@@ -270,6 +275,7 @@
  	sBadOption,		/* == unknown option */
  	/* Portable-specific options */
  	sUsePAM,
@@ -29,19 +29,19 @@
  	/* Standard Options */
  	sPort, sHostKeyFile, sServerKeyBits, sLoginGraceTime, sKeyRegenerationTime,
  	sPermitRootLogin, sLogFacility, sLogLevel,
-@@ -278,6 +284,11 @@
+@@ -312,6 +318,11 @@
  #else
- 	{ "usepam", sUnsupported },
+ 	{ "usepam", sUnsupported, SSHCFG_GLOBAL },
  #endif
 +#ifdef CHROOT
-+	{ "usechroot", sUseChroot },
++	{ "usechroot", sUseChroot, SSHCFG_GLOBAL },
 +#else
-+	{ "usechroot", sUnsupported },
++	{ "usechroot", sUnsupported, SSHCFG_GLOBAL },
 +#endif /* CHROOT */
- 	{ "pamauthenticationviakbdint", sDeprecated },
+ 	{ "pamauthenticationviakbdint", sDeprecated, SSHCFG_GLOBAL },
  	/* Standard Options */
- 	{ "port", sPort },
-@@ -437,6 +448,10 @@
+ 	{ "port", sPort, SSHCFG_GLOBAL },
+@@ -662,6 +673,10 @@
  		intptr = &options->use_pam;
  		goto parse_flag;
  
@@ -115,9 +115,9 @@
  #AllowTcpForwarding yes
  #GatewayPorts no
  #X11Forwarding no
---- openssh-3.7.1p2/sshd_config.0	2003-09-23 11:55:19.000000000 +0200
-+++ openssh-3.7.1p2.pius/sshd_config.0	2003-10-07 20:49:08.000000000 +0200
-@@ -349,6 +349,16 @@
+--- openssh-4.4p1/sshd_config.0.orig	2006-09-26 13:03:48.000000000 +0200
++++ openssh-4.4p1/sshd_config.0	2006-10-05 10:11:41.615971000 +0200
+@@ -451,6 +451,16 @@
               To disable TCP keepalive messages, the value should be set to
               ``no''.
  
@@ -131,7 +131,7 @@
 +             For this to work properly you have to create special chroot-jail
 +             environment in a /path/to/chroot directory.
 +
-      UseDNS  Specifies whether sshd should look up the remote host name and
+      UseDNS  Specifies whether sshd(8) should look up the remote host name and
               check that the resolved host name for the remote IP address maps
               back to the very same IP address.  The default is ``yes''.
 --- openssh-3.8p1/sshd_config.5.orig	2004-02-18 04:31:24.000000000 +0100

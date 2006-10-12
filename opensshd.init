@@ -32,10 +32,7 @@ checkconfig() {
 	/usr/sbin/sshd -t || exit 1
 }
 
-RETVAL=0
-# See how we were called.
-case "$1" in
-  start)
+start() {
 	# generate new keys with empty passwords if they do not exist
 	if [ ! -f /etc/ssh/ssh_host_key -o ! -s /etc/ssh/ssh_host_key ]; then
 		/usr/bin/ssh-keygen -t rsa1 -f /etc/ssh/ssh_host_key -N '' 1>&2
@@ -70,8 +67,9 @@ case "$1" in
 	else
 		msg_already_running OpenSSH
 	fi
-	;;
-  stop)
+}
+
+stop() {
 	if [ -f /var/lock/subsys/sshd ]; then
 		msg_stopping OpenSSH
 		# we use start-stop-daemon to stop sshd, as it is unacceptable for such
@@ -82,12 +80,21 @@ case "$1" in
 	else
 		msg_not_running OpenSSH
 	fi
+}
+
+RETVAL=0
+# See how we were called.
+case "$1" in
+  start)
+  	start
+	;;
+  stop)
+  	stop
 	;;
   restart)
 	checkconfig
-	$0 stop
-	$0 start
-	exit $?
+	stop
+	start
 	;;
   status)
 	status sshd

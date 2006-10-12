@@ -16,7 +16,7 @@
 %endif
 # gtk2-based gnome-askpass means no gnome1-based
 %{?with_gtk:%undefine with_gnome}
-%define		_rel	7
+%define		_rel	1
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(de):	OpenSSH - freie Implementation der Secure Shell (SSH)
 Summary(es):	Implementación libre de SSH
@@ -28,13 +28,13 @@ Summary(pt_BR):	Implementação livre do SSH
 Summary(ru):	OpenSSH - Ó×ÏÂÏÄÎÁÑ ÒÅÁÌÉÚÁÃÉÑ ÐÒÏÔÏËÏÌÁ Secure Shell (SSH)
 Summary(uk):	OpenSSH - ×¦ÌØÎÁ ÒÅÁÌ¦ÚÁÃ¦Ñ ÐÒÏÔÏËÏÌÕ Secure Shell (SSH)
 Name:		openssh
-Version:	4.3p2
+Version:	4.4p1
 Release:	%{_rel}%{?with_hpn:hpn}%{?with_hpn_none:hpn_none}
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
 Source0:	ftp://ftp.ca.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
-# Source0-md5:	7e9880ac20a9b9db0d3fea30a9ff3d46
+# Source0-md5:	793a709a8de695c22f523024d7e9bf07
 Source1:	%{name}d.conf
 Source2:	%{name}.conf
 Source3:	%{name}d.init
@@ -50,7 +50,6 @@ Source10:	http://www.taiyo.co.jp/~gotoh/ssh/connect.html
 Source11:	ssh-agent.sh
 Source12:	ssh-agent.conf
 Patch0:		%{name}-no_libnsl.patch
-Patch1:		%{name}-ac_fix.patch
 Patch2:		%{name}-linux-ipv6.patch
 Patch3:		%{name}-pam_misc.patch
 Patch4:		%{name}-sigpipe.patch
@@ -61,16 +60,14 @@ Patch7:		%{name}-pam-conv.patch
 # http://chrootssh.sourceforge.net/download/osshChroot-3.7.1p2.diff
 Patch8:		%{name}-chroot.patch
 Patch9:		%{name}-selinux.patch
-Patch10:	%{name}-selinux-pld.patch
 # HPN patches rediffed due sigpipe patch.
 # High Performance SSH/SCP - HPN-SSH - http://www.psc.edu/networking/projects/hpn-ssh/
 # http://www.psc.edu/networking/projects/hpn-ssh/openssh-4.2p1-hpn11.diff
-Patch11:	%{name}-4.3p1-hpn11.patch
+Patch10:	%{name}-4.3p1-hpn11.patch
 # Adds HPN (see p11) and an undocumented -z none cipher flag
 # http://www.psc.edu/networking/projects/hpn-ssh/openssh-4.2p1-hpn11-none.diff
-Patch12:	%{name}-4.3p1-hpn11-none.patch
-Patch13:	%{name}-include.patch
-Patch14:	%{name}-identical-simple-dos-2.patch
+Patch11:	%{name}-4.3p1-hpn11-none.patch
+Patch12:	%{name}-include.patch
 URL:		http://www.openssh.com/
 BuildRequires:	%{__perl}
 BuildRequires:	autoconf
@@ -455,7 +452,6 @@ GNOME.
 %prep
 %setup -q
 %patch0 -p1
-%patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
@@ -463,15 +459,16 @@ GNOME.
 %{?with_kerberos5:%patch6 -p1}
 #%patch7 -p1
 %patch8 -p1
-%{?with_selinux:%patch9 -p1}
-%{?with_selinux:%patch10 -p1}
-%{?with_hpn:%patch11 -p1}
-%{?with_hpn_none:%patch12 -p1}
-%patch13 -p1
-%patch14 -p3
+%patch9 -p1
+%{?with_hpn:%patch10 -p1}
+%{?with_hpn_none:%patch11 -p1}
+%patch12 -p1
+
+cp -a %{SOURCE9} .
+cp -a %{SOURCE10} .
 
 %build
-cp %{_datadir}/automake/config.sub .
+cp /usr/share/automake/config.sub .
 %{__aclocal}
 %{__autoconf}
 %{?with_chroot:CPPFLAGS="-DCHROOT"}
@@ -498,9 +495,6 @@ cp %{_datadir}/automake/config.sub .
 echo '#define LOGIN_PROGRAM		   "/bin/login"' >>config.h
 
 %{__make}
-
-cp -f %{SOURCE9} .
-cp -f %{SOURCE10} .
 %{__cc} %{rpmcflags} %{rpmldflags} connect.c -o connect
 
 cd contrib

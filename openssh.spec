@@ -16,7 +16,7 @@
 %endif
 # gtk2-based gnome-askpass means no gnome1-based
 %{?with_gtk:%undefine with_gnome}
-%define		_rel	0.1
+%define		_rel	2
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(de):	OpenSSH - freie Implementation der Secure Shell (SSH)
 Summary(es):	Implementación libre de SSH
@@ -84,7 +84,7 @@ BuildRequires:	pam-devel
 %{?with_gtk:BuildRequires:	pkgconfig}
 BuildRequires:	rpmbuild(macros) >= 1.318
 BuildRequires:	zlib-devel
-Requires:	FHS >= 2.1-24
+Requires:	filesystem >= 2.0-1
 Requires:	pam >= 0.79.0
 Obsoletes:	ssh
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -464,6 +464,9 @@ GNOME.
 %{?with_hpn_none:%patch11 -p1}
 %patch12 -p1
 
+cp -a %{SOURCE9} .
+cp -a %{SOURCE10} .
+
 %build
 cp /usr/share/automake/config.sub .
 %{__aclocal}
@@ -485,16 +488,13 @@ cp /usr/share/automake/config.sub .
 	%{?with_kerberos5:--with-kerberos5} \
 	--with-privsep-path=%{_privsepdir} \
 	--with-pid-dir=%{_localstatedir}/run \
-	--with-xauth=/usr/bin/xauth \
+	--with-xauth=/usr/X11R6/bin/xauth \
 	--enable-utmpx \
 	--enable-wtmpx
 
 echo '#define LOGIN_PROGRAM		   "/bin/login"' >>config.h
 
 %{__make}
-
-cp -f %{SOURCE9} .
-cp -f %{SOURCE10} .
 %{__cc} %{rpmcflags} %{rpmldflags} connect.c -o connect
 
 cd contrib

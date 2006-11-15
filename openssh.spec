@@ -16,7 +16,7 @@
 %endif
 # gtk2-based gnome-askpass means no gnome1-based
 %{?with_gtk:%undefine with_gnome}
-%define		_rel	0.1
+%define		_rel	3
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(de):	OpenSSH - freie Implementation der Secure Shell (SSH)
 Summary(es):	Implementación libre de SSH
@@ -28,13 +28,13 @@ Summary(pt_BR):	Implementação livre do SSH
 Summary(ru):	OpenSSH - Ó×ÏÂÏÄÎÁÑ ÒÅÁÌÉÚÁÃÉÑ ÐÒÏÔÏËÏÌÁ Secure Shell (SSH)
 Summary(uk):	OpenSSH - ×¦ÌØÎÁ ÒÅÁÌ¦ÚÁÃ¦Ñ ÐÒÏÔÏËÏÌÕ Secure Shell (SSH)
 Name:		openssh
-Version:	4.4p1
+Version:	4.5p1
 Release:	%{_rel}%{?with_hpn:hpn}%{?with_hpn_none:hpn_none}
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
 Source0:	ftp://ftp.ca.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
-# Source0-md5:	793a709a8de695c22f523024d7e9bf07
+# Source0-md5:	6468c339886f78e8a149b88f695839dd
 Source1:	%{name}d.conf
 Source2:	%{name}.conf
 Source3:	%{name}d.init
@@ -43,10 +43,6 @@ Source5:	%{name}.sysconfig
 Source6:	passwd.pamd
 Source7:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 # Source7-md5:	66943d481cc422512b537bcc2c7400d1
-Source9:	http://www.taiyo.co.jp/~gotoh/ssh/connect.c
-# Source9-md5:	b856937f1cdfca7a3ccfb2fac36ef726
-Source10:	http://www.taiyo.co.jp/~gotoh/ssh/connect.html
-# Source10-md5:	bb972b3a9d435c62023b355960d78f78
 Source11:	ssh-agent.sh
 Source12:	ssh-agent.conf
 Patch0:		%{name}-no_libnsl.patch
@@ -84,7 +80,7 @@ BuildRequires:	pam-devel
 %{?with_gtk:BuildRequires:	pkgconfig}
 BuildRequires:	rpmbuild(macros) >= 1.318
 BuildRequires:	zlib-devel
-Requires:	FHS >= 2.1-24
+Requires:	filesystem >= 2.0-1
 Requires:	pam >= 0.79.0
 Obsoletes:	ssh
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -485,17 +481,13 @@ cp /usr/share/automake/config.sub .
 	%{?with_kerberos5:--with-kerberos5} \
 	--with-privsep-path=%{_privsepdir} \
 	--with-pid-dir=%{_localstatedir}/run \
-	--with-xauth=/usr/bin/xauth \
+	--with-xauth=/usr/X11R6/bin/xauth \
 	--enable-utmpx \
 	--enable-wtmpx
 
 echo '#define LOGIN_PROGRAM		   "/bin/login"' >>config.h
 
 %{__make}
-
-cp -f %{SOURCE9} .
-cp -f %{SOURCE10} .
-%{__cc} %{rpmcflags} %{rpmldflags} connect.c -o connect
 
 cd contrib
 %if %{with gnome}
@@ -516,7 +508,6 @@ install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{pam.d,rc.d/init.d,sysconfig,secu
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-install connect $RPM_BUILD_ROOT%{_bindir}
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/pam.d/sshd
 install %{SOURCE6} $RPM_BUILD_ROOT/etc/pam.d/passwdssh
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/sysconfig/sshd
@@ -607,8 +598,6 @@ fi
 
 %files clients
 %defattr(644,root,root,755)
-%doc connect.html
-%attr(755,root,root) %{_bindir}/connect
 %attr(755,root,root) %{_bindir}/ssh
 %attr(755,root,root) %{_bindir}/slogin
 %attr(755,root,root) %{_bindir}/sftp

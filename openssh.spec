@@ -28,7 +28,7 @@ Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	4.5p1
-Release:	1%{?with_hpn:hpn}%{?with_hpn_none:hpn_none}
+Release:	2%{?with_hpn:hpn}%{?with_hpn_none:hpn_none}
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -42,10 +42,6 @@ Source5:	%{name}.sysconfig
 Source6:	passwd.pamd
 Source7:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 # Source7-md5:	66943d481cc422512b537bcc2c7400d1
-Source9:	http://www.taiyo.co.jp/~gotoh/ssh/connect.c
-# Source9-md5:	b856937f1cdfca7a3ccfb2fac36ef726
-Source10:	http://www.taiyo.co.jp/~gotoh/ssh/connect.html
-# Source10-md5:	bb972b3a9d435c62023b355960d78f78
 Source11:	ssh-agent.sh
 Source12:	ssh-agent.conf
 Patch0:		%{name}-no_libnsl.patch
@@ -463,9 +459,6 @@ GNOME.
 %{?with_hpn_none:%patch11 -p1}
 %patch12 -p1
 
-cp -a %{SOURCE9} .
-cp -a %{SOURCE10} .
-
 %build
 cp /usr/share/automake/config.sub .
 %{__aclocal}
@@ -494,7 +487,6 @@ cp /usr/share/automake/config.sub .
 echo '#define LOGIN_PROGRAM		   "/bin/login"' >>config.h
 
 %{__make}
-%{__cc} %{rpmcflags} %{rpmldflags} connect.c -o connect
 
 cd contrib
 %if %{with gnome}
@@ -515,7 +507,6 @@ install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{pam.d,rc.d/init.d,sysconfig,secu
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-install connect $RPM_BUILD_ROOT%{_bindir}
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/pam.d/sshd
 install %{SOURCE6} $RPM_BUILD_ROOT/etc/pam.d/passwdssh
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/sysconfig/sshd
@@ -606,8 +597,6 @@ fi
 
 %files clients
 %defattr(644,root,root,755)
-%doc connect.html
-%attr(755,root,root) %{_bindir}/connect
 %attr(755,root,root) %{_bindir}/ssh
 %attr(755,root,root) %{_bindir}/slogin
 %attr(755,root,root) %{_bindir}/sftp

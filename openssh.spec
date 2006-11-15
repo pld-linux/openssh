@@ -16,7 +16,7 @@
 %endif
 # gtk2-based gnome-askpass means no gnome1-based
 %{?with_gtk:%undefine with_gnome}
-%define		_rel	2
+%define		_rel	1
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(de):	OpenSSH - freie Implementation der Secure Shell (SSH)
 Summary(es):	ImplementaciСn libre de SSH
@@ -28,13 +28,13 @@ Summary(pt_BR):	ImplementaГЦo livre do SSH
 Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
-Version:	4.4p1
+Version:	4.5p1
 Release:	%{_rel}%{?with_hpn:hpn}%{?with_hpn_none:hpn_none}
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
 Source0:	ftp://ftp.ca.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
-# Source0-md5:	793a709a8de695c22f523024d7e9bf07
+# Source0-md5:	6468c339886f78e8a149b88f695839dd
 Source1:	%{name}d.conf
 Source2:	%{name}.conf
 Source3:	%{name}d.init
@@ -44,9 +44,9 @@ Source6:	passwd.pamd
 Source7:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 # Source7-md5:	66943d481cc422512b537bcc2c7400d1
 Source9:	http://www.taiyo.co.jp/~gotoh/ssh/connect.c
-# Source9-md5:	b856937f1cdfca7a3ccfb2fac36ef726
+# Source9-md5:	e1c3cbed88f08ea778d90813d48cd428
 Source10:	http://www.taiyo.co.jp/~gotoh/ssh/connect.html
-# Source10-md5:	bb972b3a9d435c62023b355960d78f78
+# Source10-md5:	ec74f3e3b2ea3a7dc84c7988235b6fcf
 Source11:	ssh-agent.sh
 Source12:	ssh-agent.conf
 Patch0:		%{name}-no_libnsl.patch

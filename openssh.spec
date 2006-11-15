@@ -16,7 +16,7 @@
 %endif
 # gtk2-based gnome-askpass means no gnome1-based
 %{?with_gtk:%undefine with_gnome}
-%define		_rel	1
+%define		_rel	2
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(de):	OpenSSH - freie Implementation der Secure Shell (SSH)
 Summary(es):	Implementación libre de SSH
@@ -44,9 +44,9 @@ Source6:	passwd.pamd
 Source7:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 # Source7-md5:	66943d481cc422512b537bcc2c7400d1
 Source9:	http://www.taiyo.co.jp/~gotoh/ssh/connect.c
-# Source9-md5:	e1c3cbed88f08ea778d90813d48cd428
+# Source9-md5:	b856937f1cdfca7a3ccfb2fac36ef726
 Source10:	http://www.taiyo.co.jp/~gotoh/ssh/connect.html
-# Source10-md5:	ec74f3e3b2ea3a7dc84c7988235b6fcf
+# Source10-md5:	bb972b3a9d435c62023b355960d78f78
 Source11:	ssh-agent.sh
 Source12:	ssh-agent.conf
 Patch0:		%{name}-no_libnsl.patch

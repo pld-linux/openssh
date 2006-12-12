@@ -117,6 +117,7 @@ case "$1" in
 	;;
   reload|force-reload)
 	if [ -f /var/lock/subsys/sshd ]; then
+		checkconfig
 		msg_reloading OpenSSH
 		killproc sshd -HUP
 		RETVAL=$?

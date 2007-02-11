@@ -28,7 +28,7 @@ Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	4.5p1
-Release:	2%{?with_hpn:hpn}%{?with_hpn_none:hpn_none}
+Release:	3%{?with_hpn:hpn}%{?with_hpn_none:hpn_none}
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -80,7 +80,7 @@ BuildRequires:	pam-devel
 BuildRequires:	rpmbuild(macros) >= 1.318
 BuildRequires:	zlib-devel
 Requires:	filesystem >= 3.0-11
-Requires:	pam >= 0.79.0
+Requires:	pam >= 0.99.7.1
 Obsoletes:	ssh
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -316,7 +316,7 @@ Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/useradd
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	/bin/login
-Requires:	pam >= 0.77.3
+Requires:	pam >= 0.99.7.1
 Requires:	rc-scripts >= 0.4.0.18
 Requires:	util-linux
 Provides:	ssh-server

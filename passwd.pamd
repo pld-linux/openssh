@@ -6,4 +6,4 @@ account		required	pam_unix.so
 # password      [success=1 ignore=reset abort=die default=bad] pam_pwgen.so upper=1 digit=1
 password	required	pam_cracklib.so difok=2 minlen=8 dcredit=2 ocredit=2 retry=3
 password	required	pam_unix.so md5 shadow use_authtok
-password	required	pam_make.so /var/db
+password	required	pam_exec.so failok seteuid /usr/bin/make -C /var/db

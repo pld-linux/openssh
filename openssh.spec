@@ -17,15 +17,15 @@
 # gtk2-based gnome-askpass means no gnome1-based
 %{?with_gtk:%undefine with_gnome}
 Summary:	OpenSSH free Secure Shell (SSH) implementation
-Summary(de.UTF-8):   OpenSSH - freie Implementation der Secure Shell (SSH)
-Summary(es.UTF-8):   Implementación libre de SSH
-Summary(fr.UTF-8):   Implémentation libre du shell sécurisé OpenSSH (SSH)
-Summary(it.UTF-8):   Implementazione gratuita OpenSSH della Secure Shell
-Summary(pl.UTF-8):   Publicznie dostępna implementacja bezpiecznego shella (SSH)
-Summary(pt.UTF-8):   Implementação livre OpenSSH do protocolo 'Secure Shell' (SSH)
-Summary(pt_BR.UTF-8):   Implementação livre do SSH
-Summary(ru.UTF-8):   OpenSSH - свободная реализация протокола Secure Shell (SSH)
-Summary(uk.UTF-8):   OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
+Summary(de.UTF-8):	OpenSSH - freie Implementation der Secure Shell (SSH)
+Summary(es.UTF-8):	Implementación libre de SSH
+Summary(fr.UTF-8):	Implémentation libre du shell sécurisé OpenSSH (SSH)
+Summary(it.UTF-8):	Implementazione gratuita OpenSSH della Secure Shell
+Summary(pl.UTF-8):	Publicznie dostępna implementacja bezpiecznego shella (SSH)
+Summary(pt.UTF-8):	Implementação livre OpenSSH do protocolo 'Secure Shell' (SSH)
+Summary(pt_BR.UTF-8):	Implementação livre do SSH
+Summary(ru.UTF-8):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
+Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	4.5p1
 Release:	3%{?with_hpn:hpn}%{?with_hpn_none:hpn_none}
@@ -241,11 +241,11 @@ openssh-server, чи обидва пакети.
 
 %package clients
 Summary:	OpenSSH Secure Shell protocol clients
-Summary(es.UTF-8):   Clientes de OpenSSH
-Summary(pl.UTF-8):   Klienci protokołu Secure Shell
-Summary(pt_BR.UTF-8):   Clientes do OpenSSH
-Summary(ru.UTF-8):   OpenSSH - клиенты протокола Secure Shell
-Summary(uk.UTF-8):   OpenSSH - клієнти протоколу Secure Shell
+Summary(es.UTF-8):	Clientes de OpenSSH
+Summary(pl.UTF-8):	Klienci protokołu Secure Shell
+Summary(pt_BR.UTF-8):	Clientes do OpenSSH
+Summary(ru.UTF-8):	OpenSSH - клиенты протокола Secure Shell
+Summary(uk.UTF-8):	OpenSSH - клієнти протоколу Secure Shell
 Group:		Applications/Networking
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 %{?with_sshagentsh:Requires:	xinitrc}
@@ -298,15 +298,15 @@ Ssh (Secure Shell) - це програма для "заходу" (login) до в
 
 %package server
 Summary:	OpenSSH Secure Shell protocol server (sshd)
-Summary(de.UTF-8):   OpenSSH Secure Shell Protocol-Server (sshd)
-Summary(es.UTF-8):   Servidor OpenSSH para comunicaciones codificadas
-Summary(fr.UTF-8):   Serveur de protocole du shell sécurisé OpenSSH (sshd)
-Summary(it.UTF-8):   Server OpenSSH per il protocollo Secure Shell (sshd)
-Summary(pl.UTF-8):   Serwer protokołu Secure Shell (sshd)
-Summary(pt.UTF-8):   Servidor do protocolo 'Secure Shell' OpenSSH (sshd)
-Summary(pt_BR.UTF-8):   Servidor OpenSSH para comunicações encriptadas
-Summary(ru.UTF-8):   OpenSSH - сервер протокола Secure Shell (sshd)
-Summary(uk.UTF-8):   OpenSSH - сервер протоколу Secure Shell (sshd)
+Summary(de.UTF-8):	OpenSSH Secure Shell Protocol-Server (sshd)
+Summary(es.UTF-8):	Servidor OpenSSH para comunicaciones codificadas
+Summary(fr.UTF-8):	Serveur de protocole du shell sécurisé OpenSSH (sshd)
+Summary(it.UTF-8):	Server OpenSSH per il protocollo Secure Shell (sshd)
+Summary(pl.UTF-8):	Serwer protokołu Secure Shell (sshd)
+Summary(pt.UTF-8):	Servidor do protocolo 'Secure Shell' OpenSSH (sshd)
+Summary(pt_BR.UTF-8):	Servidor OpenSSH para comunicações encriptadas
+Summary(ru.UTF-8):	OpenSSH - сервер протокола Secure Shell (sshd)
+Summary(uk.UTF-8):	OpenSSH - сервер протоколу Secure Shell (sshd)
 Group:		Networking/Daemons
 Requires(post):	chkconfig >= 0.9
 Requires(post):	grep
@@ -386,15 +386,15 @@ Ssh (Secure Shell) - це програма для "заходу" (login) до в
 
 %package gnome-askpass
 Summary:	OpenSSH GNOME passphrase dialog
-Summary(de.UTF-8):   OpenSSH GNOME Passwort-Dialog
-Summary(es.UTF-8):   Diálogo para introducción de passphrase para GNOME
-Summary(fr.UTF-8):   Dialogue pass-phrase GNOME d'OpenSSH
-Summary(it.UTF-8):   Finestra di dialogo GNOME per la frase segreta di OpenSSH
-Summary(pl.UTF-8):   Odpytywacz hasła OpenSSH dla GNOME
-Summary(pt.UTF-8):   Diálogo de pedido de senha para GNOME do OpenSSH
-Summary(pt_BR.UTF-8):   Diálogo para entrada de passphrase para GNOME
-Summary(ru.UTF-8):   OpenSSH - диалог ввода ключевой фразы (passphrase) для GNOME
-Summary(uk.UTF-8):   OpenSSH - діалог вводу ключової фрази (passphrase) для GNOME
+Summary(de.UTF-8):	OpenSSH GNOME Passwort-Dialog
+Summary(es.UTF-8):	Diálogo para introducción de passphrase para GNOME
+Summary(fr.UTF-8):	Dialogue pass-phrase GNOME d'OpenSSH
+Summary(it.UTF-8):	Finestra di dialogo GNOME per la frase segreta di OpenSSH
+Summary(pl.UTF-8):	Odpytywacz hasła OpenSSH dla GNOME
+Summary(pt.UTF-8):	Diálogo de pedido de senha para GNOME do OpenSSH
+Summary(pt_BR.UTF-8):	Diálogo para entrada de passphrase para GNOME
+Summary(ru.UTF-8):	OpenSSH - диалог ввода ключевой фразы (passphrase) для GNOME
+Summary(uk.UTF-8):	OpenSSH - діалог вводу ключової фрази (passphrase) для GNOME
 Group:		Applications/Networking
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Obsoletes:	openssh-askpass

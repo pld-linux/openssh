@@ -16,6 +16,7 @@
 %endif
 # gtk2-based gnome-askpass means no gnome1-based
 %{?with_gtk:%undefine with_gnome}
+%define		_rel	1
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(de):	OpenSSH - freie Implementation der Secure Shell (SSH)
 Summary(es):	Implementación libre de SSH
@@ -27,13 +28,13 @@ Summary(pt_BR):	Implementação livre do SSH
 Summary(ru):	OpenSSH - Ó×ÏÂÏÄÎÁÑ ÒÅÁÌÉÚÁÃÉÑ ÐÒÏÔÏËÏÌÁ Secure Shell (SSH)
 Summary(uk):	OpenSSH - ×¦ÌØÎÁ ÒÅÁÌ¦ÚÁÃ¦Ñ ÐÒÏÔÏËÏÌÕ Secure Shell (SSH)
 Name:		openssh
-Version:	4.5p1
-Release:	2%{?with_hpn:hpn}%{?with_hpn_none:hpn_none}
+Version:	4.6p1
+Release:	%{_rel}%{?with_hpn:hpn}%{?with_hpn_none:hpn_none}
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
 Source0:	ftp://ftp.ca.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
-# Source0-md5:	6468c339886f78e8a149b88f695839dd
+# Source0-md5:	6a7fa99f44d9e1b5b04d15256e1405bb
 Source1:	%{name}d.conf
 Source2:	%{name}.conf
 Source3:	%{name}d.init
@@ -79,7 +80,7 @@ BuildRequires:	pam-devel
 %{?with_gtk:BuildRequires:	pkgconfig}
 BuildRequires:	rpmbuild(macros) >= 1.318
 BuildRequires:	zlib-devel
-Requires:	filesystem >= 3.0-11
+Requires:	filesystem >= 2.0-1
 Requires:	pam >= 0.79.0
 Obsoletes:	ssh
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -480,7 +481,7 @@ cp /usr/share/automake/config.sub .
 	%{?with_kerberos5:--with-kerberos5} \
 	--with-privsep-path=%{_privsepdir} \
 	--with-pid-dir=%{_localstatedir}/run \
-	--with-xauth=/usr/bin/xauth \
+	--with-xauth=/usr/X11R6/bin/xauth \
 	--enable-utmpx \
 	--enable-wtmpx
 

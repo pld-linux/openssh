@@ -7,7 +7,6 @@
 %bcond_without	libedit		# without libedit (editline/history support in sftp client)
 %bcond_without	kerberos5	# without kerberos5 support
 %bcond_without	selinux		# build without SELinux support
-%bcond_with	sshagentsh	# with system-wide script for starting ssh-agent
 %bcond_with	hpn		# with High Performance SSH/SCP - HPN-SSH (see patch comment)
 %bcond_with	hpn_none	# with hpn (above) and '-z' none cipher option
 #
@@ -28,7 +27,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	4.6p1
-Release:	1%{?with_hpn:hpn}%{?with_hpn_none:hpn_none}
+Release:	2%{?with_hpn:hpn}%{?with_hpn_none:hpn_none}
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -248,7 +247,6 @@ Summary(ru.UTF-8):	OpenSSH - клиенты протокола Secure Shell
 Summary(uk.UTF-8):	OpenSSH - клієнти протоколу Secure Shell
 Group:		Applications/Networking
 Requires:	%{name} = %{epoch}:%{version}-%{release}
-%{?with_sshagentsh:Requires:	xinitrc}
 Provides:	ssh-clients
 Obsoletes:	ssh-clients
 
@@ -295,6 +293,29 @@ Ssh (Secure Shell) - це програма для "заходу" (login) до в
 
 Цей пакет містить програми-клієнти, необхідні для встановлення
 зашифрованих з'єднань з серверами SSH.
+
+%package clients-agent-profile_d
+Summary:	OpenSSH Secure Shell agent init script
+Summary(pl.UTF-8):	Skrypt
+Summary(pt_BR.UTF-8):	Clientes do OpenSSH
+Summary(ru.UTF-8):	OpenSSH - клиенты протокола Secure Shell
+Summary(uk.UTF-8):	OpenSSH - клієнти протоколу Secure Shell
+Group:		Applications/Networking
+Requires:	%{name}-clients = %{epoch}:%{version}-%{release}
+
+%description clients-agent-profile_d
+profile.d scripts for starting SSH agent.
+
+%package clients-agent-xinitrc
+Summary:	OpenSSH Secure Shell agent init script
+Summary(pl.UTF-8):	Skrypt inicjujący agenta ssh przez xinitrc
+Group:		Applications/Networking
+Requires:	%{name}-clients-agent-profile_d = %{epoch}:%{version}-%{release}
+Requires:	xinitrc
+
+%description clients-agent-xinitrc
+xinitrc scripts for starting SSH agent.
+
 
 %package server
 Summary:	OpenSSH Secure Shell protocol server (sshd)
@@ -502,7 +523,7 @@ cd contrib
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{pam.d,rc.d/init.d,sysconfig,security,env.d}} \
 	$RPM_BUILD_ROOT%{_libexecdir}/ssh
-%{?with_sshagentsh:install -d $RPM_BUILD_ROOT/etc/{profile.d,X11/xinit/xinitrc.d}}
+install -d $RPM_BUILD_ROOT/etc/{profile.d,X11/xinit/xinitrc.d}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
@@ -513,11 +534,9 @@ install %{SOURCE5} $RPM_BUILD_ROOT/etc/sysconfig/sshd
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
 install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/ssh_config
 install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/sshd_config
-%if %{with sshagentsh}
 install %{SOURCE11} $RPM_BUILD_ROOT/etc/profile.d
 ln -sf	/etc/profile.d/ssh-agent.sh $RPM_BUILD_ROOT/etc/X11/xinit/xinitrc.d/ssh-agent.sh
 install %{SOURCE12} $RPM_BUILD_ROOT%{_sysconfdir}
-%endif
 
 bzip2 -dc %{SOURCE7} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
 
@@ -605,11 +624,6 @@ fi
 %attr(755,root,root) %{_bindir}/scp
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ssh_config
 %config(noreplace,missingok) %verify(not md5 mtime size) /etc/env.d/SSH_ASKPASS
-%if %{with sshagentsh}
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ssh-agent.conf
-%attr(755,root,root) /etc/profile.d/ssh-agent.sh
-%attr(755,root,root) /etc/X11/xinit/xinitrc.d/ssh-agent.sh
-%endif
 %{_mandir}/man1/scp.1*
 %{_mandir}/man1/ssh.1*
 %{_mandir}/man1/slogin.1*
@@ -625,6 +639,15 @@ fi
 # for host-based auth (suid required for accessing private host key)
 #%attr(4755,root,root) %{_libexecdir}/ssh-keysign
 #%{_mandir}/man8/ssh-keysign.8*
+
+%files clients-agent-profile_d
+%defattr(644,root,root,755)
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ssh-agent.conf
+%attr(755,root,root) /etc/profile.d/ssh-agent.sh
+
+%files clients-agent-xinitrc
+%defattr(644,root,root,755)
+%attr(755,root,root) /etc/X11/xinit/xinitrc.d/ssh-agent.sh
 
 %files server
 %defattr(644,root,root,755)

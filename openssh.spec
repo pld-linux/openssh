@@ -34,7 +34,7 @@ Epoch:		2
 License:	BSD
 Group:		Applications/Networking
 Source0:	ftp://ftp.ca.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
-# Source0-md5:	6468c339886f78e8a149b88f695839dd
+# Source0-md5:	6a7fa99f44d9e1b5b04d15256e1405bb
 Source1:	%{name}d.conf
 Source2:	%{name}.conf
 Source3:	%{name}d.init

@@ -27,7 +27,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	4.6p1
-Release:	2%{?with_hpn:hpn}%{?with_hpn_none:hpn_none}
+Release:	3%{?with_hpn:hpn}%{?with_hpn_none:hpn_none}
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -49,7 +49,6 @@ Patch3:		%{name}-pam_misc.patch
 Patch4:		%{name}-sigpipe.patch
 # http://www.opendarwin.org/projects/openssh-lpk/
 Patch5:		%{name}-lpk-4.3p1-0.3.7.patch
-Patch6:		%{name}-heimdal.patch
 Patch7:		%{name}-pam-conv.patch
 # http://chrootssh.sourceforge.net/download/osshChroot-3.7.1p2.diff
 Patch8:		%{name}-chroot.patch
@@ -68,7 +67,7 @@ BuildRequires:	autoconf
 BuildRequires:	automake
 %{?with_gnome:BuildRequires:	gnome-libs-devel}
 %{?with_gtk:BuildRequires:	gtk+2-devel}
-%{?with_kerberos5:BuildRequires:	heimdal-devel >= 0.7}
+%{?with_kerberos5:BuildRequires:	krb5-devel}
 %{?with_libedit:BuildRequires:	libedit-devel}
 %{?with_selinux:BuildRequires:	libselinux-devel}
 BuildRequires:	libwrap-devel
@@ -474,7 +473,6 @@ GNOME.
 %patch3 -p1
 %patch4 -p1
 %{?with_ldap:%patch5 -p1}
-%{?with_kerberos5:%patch6 -p1}
 #%patch7 -p1
 %patch8 -p1
 %patch9 -p1

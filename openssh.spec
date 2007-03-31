@@ -296,15 +296,15 @@ Ssh (Secure Shell) - це програма для "заходу" (login) до в
 
 %package clients-agent-profile_d
 Summary:	OpenSSH Secure Shell agent init script
-Summary(pl.UTF-8):	Skrypt
-Summary(pt_BR.UTF-8):	Clientes do OpenSSH
-Summary(ru.UTF-8):	OpenSSH - клиенты протокола Secure Shell
-Summary(uk.UTF-8):	OpenSSH - клієнти протоколу Secure Shell
+Summary(pl.UTF-8):	Skrypt startowy agenta OpenSSH
 Group:		Applications/Networking
 Requires:	%{name}-clients = %{epoch}:%{version}-%{release}
 
 %description clients-agent-profile_d
 profile.d scripts for starting SSH agent.
+
+%description clients-agent-profile_d -l pl.UTF-8
+Skrypty profile.d do uruchamiania agenta SSH.
 
 %package clients-agent-xinitrc
 Summary:	OpenSSH Secure Shell agent init script
@@ -316,6 +316,8 @@ Requires:	xinitrc
 %description clients-agent-xinitrc
 xinitrc scripts for starting SSH agent.
 
+%description clients-agent-xinitrc -l pl.UTF-8
+Skrypty xinitrc do uruchamiania agenta SSH.
 
 %package server
 Summary:	OpenSSH Secure Shell protocol server (sshd)

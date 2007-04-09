@@ -31,7 +31,7 @@ Release:	3%{?with_hpn:hpn}%{?with_hpn_none:hpn_none}
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
-Source0:	ftp://ftp.ca.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
+Source0:	ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
 # Source0-md5:	6a7fa99f44d9e1b5b04d15256e1405bb
 Source1:	%{name}d.conf
 Source2:	%{name}.conf

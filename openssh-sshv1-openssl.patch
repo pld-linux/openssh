@@ -1,0 +1,26 @@
+--- openssh-4.6p1/cipher-3des1.c.orig	2006-09-01 07:38:36.000000000 +0200
++++ openssh-4.6p1/cipher-3des1.c	2007-04-10 20:51:52.274701619 +0200
+@@ -35,9 +35,7 @@
+ #include "xmalloc.h"
+ #include "log.h"
+ 
+-#if OPENSSL_VERSION_NUMBER < 0x00906000L
+-#define SSH_OLD_EVP
+-#endif
++#include "openbsd-compat/openssl-compat.h"
+ 
+ /*
+  * This is used by SSH1:
+--- openssh-4.6p1/cipher-bf1.c.orig	2006-09-01 07:38:36.000000000 +0200
++++ openssh-4.6p1/cipher-bf1.c	2007-04-10 20:52:16.380075306 +0200
+@@ -35,9 +35,7 @@
+ #include "xmalloc.h"
+ #include "log.h"
+ 
+-#if OPENSSL_VERSION_NUMBER < 0x00906000L
+-#define SSH_OLD_EVP
+-#endif
++#include "openbsd-compat/openssl-compat.h"
+ 
+ /*
+  * SSH1 uses a variation on Blowfish, all bytes must be swapped before

@@ -27,22 +27,19 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	4.6p1
-Release:	4%{?with_hpn:hpn}%{?with_hpn_none:hpn_none}
+Release:	5%{?with_hpn:hpn}%{?with_hpn_none:hpn_none}
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
 Source0:	ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
 # Source0-md5:	6a7fa99f44d9e1b5b04d15256e1405bb
-Source1:	%{name}d.conf
-Source2:	%{name}.conf
-Source3:	%{name}d.init
-Source4:	%{name}d.pamd
-Source5:	%{name}.sysconfig
-Source6:	passwd.pamd
-Source7:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
-# Source7-md5:	66943d481cc422512b537bcc2c7400d1
-Source11:	ssh-agent.sh
-Source12:	ssh-agent.conf
+Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
+# Source1-md5:	66943d481cc422512b537bcc2c7400d1
+Source2:	%{name}d.init
+Source3:	%{name}d.pamd
+Source4:	%{name}.sysconfig
+Source5:	ssh-agent.sh
+Source6:	ssh-agent.conf
 Patch0:		%{name}-no_libnsl.patch
 Patch1:		%{name}-sshv1-openssl.patch
 Patch2:		%{name}-linux-ipv6.patch
@@ -50,6 +47,7 @@ Patch3:		%{name}-pam_misc.patch
 Patch4:		%{name}-sigpipe.patch
 # http://www.opendarwin.org/projects/openssh-lpk/
 Patch5:		%{name}-lpk-4.3p1-0.3.7.patch
+Patch6:		%{name}-config.patch
 Patch7:		%{name}-pam-conv.patch
 # http://chrootssh.sourceforge.net/download/osshChroot-3.7.1p2.diff
 Patch8:		%{name}-chroot.patch
@@ -475,6 +473,7 @@ GNOME.
 %patch3 -p1
 %patch4 -p1
 %{?with_ldap:%patch5 -p1}
+%patch6 -p1
 #%patch7 -p1
 %patch8 -p1
 %patch9 -p1
@@ -530,17 +529,14 @@ install -d $RPM_BUILD_ROOT/etc/{profile.d,X11/xinit/xinitrc.d}
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-install %{SOURCE4} $RPM_BUILD_ROOT/etc/pam.d/sshd
-install %{SOURCE6} $RPM_BUILD_ROOT/etc/pam.d/passwdssh
-install %{SOURCE5} $RPM_BUILD_ROOT/etc/sysconfig/sshd
-install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
-install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/ssh_config
-install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/sshd_config
-install %{SOURCE11} $RPM_BUILD_ROOT/etc/profile.d
-ln -sf	/etc/profile.d/ssh-agent.sh $RPM_BUILD_ROOT/etc/X11/xinit/xinitrc.d/ssh-agent.sh
-install %{SOURCE12} $RPM_BUILD_ROOT%{_sysconfdir}
+bzip2 -dc %{SOURCE1} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
 
-bzip2 -dc %{SOURCE7} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
+install %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
+install %{SOURCE3} $RPM_BUILD_ROOT/etc/pam.d/sshd
+install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/sshd
+install %{SOURCE5} $RPM_BUILD_ROOT/etc/profile.d
+ln -sf	/etc/profile.d/ssh-agent.sh $RPM_BUILD_ROOT/etc/X11/xinit/xinitrc.d/ssh-agent.sh
+install %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}
 
 %if %{with gnome}
 install contrib/gnome-ssh-askpass1 $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass

@@ -247,8 +247,8 @@ Summary(pt_BR.UTF-8):	Clientes do OpenSSH
 Summary(ru.UTF-8):	OpenSSH - клиенты протокола Secure Shell
 Summary(uk.UTF-8):	OpenSSH - клієнти протоколу Secure Shell
 Group:		Applications/Networking
-Requires:	%{name} = %{epoch}:%{version}-%{release}
 Provides:	ssh-clients
+Requires:	%{name} = %{epoch}:%{version}-%{release}
 Obsoletes:	ssh-clients
 
 %description clients
@@ -332,6 +332,8 @@ Summary(pt_BR.UTF-8):	Servidor OpenSSH para comunicações encriptadas
 Summary(ru.UTF-8):	OpenSSH - сервер протокола Secure Shell (sshd)
 Summary(uk.UTF-8):	OpenSSH - сервер протоколу Secure Shell (sshd)
 Group:		Networking/Daemons
+Provides:	ssh-server
+Provides:	user(sshd)
 Requires(post):	chkconfig >= 0.9
 Requires(post):	grep
 Requires(post,preun):	/sbin/chkconfig
@@ -343,8 +345,6 @@ Requires:	/bin/login
 Requires:	pam >= 0.99.7.1
 Requires:	rc-scripts >= 0.4.0.18
 Requires:	util-linux
-Provides:	ssh-server
-Provides:	user(sshd)
 
 %description server
 Ssh (Secure Shell) a program for logging into a remote machine and for
@@ -569,6 +569,9 @@ find $RPM_BUILD_ROOT%{_sysconfdir} -type f -print0 | xargs -0 sed -i -e 's#%{_pr
 cat << 'EOF' > $RPM_BUILD_ROOT/etc/env.d/SSH_ASKPASS
 #SSH_ASKPASS="%{_libexecdir}/ssh-askpass"
 EOF
+
+rm -f $RPM_BUILD_ROOT%{_datadir}/Ssh.bin # ???
+rm -f $RPM_BUILD_ROOT%{_mandir}/README.openssh-non-english-man-pages
 
 %clean
 rm -rf $RPM_BUILD_ROOT

@@ -7,7 +7,6 @@
 %bcond_without	libedit		# without libedit (editline/history support in sftp client)
 %bcond_without	kerberos5	# without kerberos5 support
 %bcond_without	selinux		# build without SELinux support
-%bcond_with	sshagentsh	# with system-wide script for starting ssh-agent
 %bcond_with	hpn		# with High Performance SSH/SCP - HPN-SSH (see patch comment)
 %bcond_with	hpn_none	# with hpn (above) and '-z' none cipher option
 #
@@ -16,41 +15,42 @@
 %endif
 # gtk2-based gnome-askpass means no gnome1-based
 %{?with_gtk:%undefine with_gnome}
+#
+%define		_rel	5
+#
 Summary:	OpenSSH free Secure Shell (SSH) implementation
-Summary(de):	OpenSSH - freie Implementation der Secure Shell (SSH)
-Summary(es):	ImplementaciСn libre de SSH
-Summary(fr):	ImplИmentation libre du shell sИcurisИ OpenSSH (SSH)
-Summary(it):	Implementazione gratuita OpenSSH della Secure Shell
-Summary(pl):	Publicznie dostЙpna implementacja bezpiecznego shella (SSH)
-Summary(pt):	ImplementaГЦo livre OpenSSH do protocolo 'Secure Shell' (SSH)
-Summary(pt_BR):	ImplementaГЦo livre do SSH
-Summary(ru):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
-Summary(uk):	OpenSSH - в╕льна реал╕зац╕я протоколу Secure Shell (SSH)
+Summary(de.UTF-8):	OpenSSH - freie Implementation der Secure Shell (SSH)
+Summary(es.UTF-8):	ImplementaciцЁn libre de SSH
+Summary(fr.UTF-8):	Implц╘mentation libre du shell sц╘curisц╘ OpenSSH (SSH)
+Summary(it.UTF-8):	Implementazione gratuita OpenSSH della Secure Shell
+Summary(pl.UTF-8):	Publicznie dostд≥pna implementacja bezpiecznego shella (SSH)
+Summary(pt.UTF-8):	Implementaц╖цёo livre OpenSSH do protocolo 'Secure Shell' (SSH)
+Summary(pt_BR.UTF-8):	Implementaц╖цёo livre do SSH
+Summary(ru.UTF-8):	OpenSSH - я│п╡п╬п╠п╬п╢п╫п╟я▐ я─п╣п╟п╩п╦п╥п╟я├п╦я▐ п©я─п╬я┌п╬п╨п╬п╩п╟ Secure Shell (SSH)
+Summary(uk.UTF-8):	OpenSSH - п╡я√п╩я▄п╫п╟ я─п╣п╟п╩я√п╥п╟я├я√я▐ п©я─п╬я┌п╬п╨п╬п╩я┐ Secure Shell (SSH)
 Name:		openssh
-Version:	4.5p1
-Release:	2%{?with_hpn:hpn}%{?with_hpn_none:hpn_none}
+Version:	4.6p1
+Release:	%{_rel}%{?with_hpn:hpn}%{?with_hpn_none:hpn_none}
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
-Source0:	ftp://ftp.ca.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
-# Source0-md5:	6468c339886f78e8a149b88f695839dd
-Source1:	%{name}d.conf
-Source2:	%{name}.conf
-Source3:	%{name}d.init
-Source4:	%{name}d.pamd
-Source5:	%{name}.sysconfig
-Source6:	passwd.pamd
-Source7:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
-# Source7-md5:	66943d481cc422512b537bcc2c7400d1
-Source11:	ssh-agent.sh
-Source12:	ssh-agent.conf
+Source0:	ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
+# Source0-md5:	6a7fa99f44d9e1b5b04d15256e1405bb
+Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
+# Source1-md5:	66943d481cc422512b537bcc2c7400d1
+Source2:	%{name}d.init
+Source3:	%{name}d.pamd
+Source4:	%{name}.sysconfig
+Source5:	ssh-agent.sh
+Source6:	ssh-agent.conf
 Patch0:		%{name}-no_libnsl.patch
+Patch1:		%{name}-heimdal.patch
 Patch2:		%{name}-linux-ipv6.patch
 Patch3:		%{name}-pam_misc.patch
 Patch4:		%{name}-sigpipe.patch
 # http://www.opendarwin.org/projects/openssh-lpk/
 Patch5:		%{name}-lpk-4.3p1-0.3.7.patch
-Patch6:		%{name}-heimdal.patch
+Patch6:		%{name}-config.patch
 Patch7:		%{name}-pam-conv.patch
 # http://chrootssh.sourceforge.net/download/osshChroot-3.7.1p2.diff
 Patch8:		%{name}-chroot.patch
@@ -79,7 +79,7 @@ BuildRequires:	pam-devel
 %{?with_gtk:BuildRequires:	pkgconfig}
 BuildRequires:	rpmbuild(macros) >= 1.318
 BuildRequires:	zlib-devel
-Requires:	filesystem >= 3.0-11
+Requires:	filesystem >= 2.0-1
 Requires:	pam >= 0.79.0
 Obsoletes:	ssh
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -119,137 +119,136 @@ by the SSH/SCP process. This may allow some users to see significant
 improvement in (sniffable) data tranfer rates.
 %endif
 
-%description -l de
+%description -l de.UTF-8
 OpenSSH (Secure Shell) stellt den Zugang zu anderen Rechnern her. Es
 ersetzt telnet, rlogin, rexec und rsh und stellt eine sichere,
-verschlЭsselte Verbindung zwischen zwei nicht vertrauenswЭrdigen Hosts
-Эber eine unsicheres Netzwerk her. X11 Verbindungen und beliebige
-andere TCP/IP Ports kЖnnen ebenso Эber den sicheren Channel
+verschlц╪sselte Verbindung zwischen zwei nicht vertrauenswц╪rdigen Hosts
+ц╪ber eine unsicheres Netzwerk her. X11 Verbindungen und beliebige
+andere TCP/IP Ports kц╤nnen ebenso ц╪ber den sicheren Channel
 weitergeleitet werden.
 
-%description -l es
-SSH es un programa para accesar y ejecutar Сrdenes en computadores
-remotos. Sustituye rlogin y rsh, y suministra un canal de comunicaciСn
+%description -l es.UTF-8
+SSH es un programa para accesar y ejecutar цЁrdenes en computadores
+remotos. Sustituye rlogin y rsh, y suministra un canal de comunicaciцЁn
 seguro entre dos servidores en una red insegura. Conexiones X11 y
-puertas TCP/IP arbitrАrias tambiИn pueden ser usadas por el canal
+puertas TCP/IP arbitrц║rias tambiц╘n pueden ser usadas por el canal
 seguro.
 
 OpenSSH es el resultado del trabajo del equipo de OpenBSD para
-continuar la Зltima versiСn gratuita de SSH, actualizАndolo en
-tИrminos de seguridad y recursos,asМ tambiИn eliminando todos los
-algoritmos patentados y colocАndolos en bibliotecas separadas
+continuar la ц╨ltima versiцЁn gratuita de SSH, actualizц║ndolo en
+tц╘rminos de seguridad y recursos,asц╜ tambiц╘n eliminando todos los
+algoritmos patentados y colocц║ndolos en bibliotecas separadas
 (OpenSSL).
 
 Este paquete contiene "port" para Linux de OpenSSH. Se debe instalar
-tambiИn el paquete openssh-clients u openssh-server o ambos.
+tambiц╘n el paquete openssh-clients u openssh-server o ambos.
 
-%description -l fr
-OpenSSH (Secure Shell) fournit un accХs Ю un systХme distant. Il
+%description -l fr.UTF-8
+OpenSSH (Secure Shell) fournit un accц╗s ц═ un systц╗me distant. Il
 remplace telnet, rlogin, rexec et rsh, tout en assurant des
-communications cryptИes securisИes entre deux hТtes non fiabilisИs sur
-un rИseau non sИcurisИ. Des connexions X11 et des ports TCP/IP
-arbitraires peuvent Иgalement Йtre transmis sur le canal sИcurisИ.
+communications cryptц╘es securisц╘es entre deux hц╢tes non fiabilisц╘s sur
+un rц╘seau non sц╘curisц╘. Des connexions X11 et des ports TCP/IP
+arbitraires peuvent ц╘galement ц╙tre transmis sur le canal sц╘curisц╘.
 
-%description -l it
+%description -l it.UTF-8
 OpenSSH (Secure Shell) fornisce l'accesso ad un sistema remoto.
 Sostituisce telnet, rlogin, rexec, e rsh, e fornisce comunicazioni
 sicure e crittate tra due host non fidati su una rete non sicura. Le
 connessioni X11 ad una porta TCP/IP arbitraria possono essere
 inoltrate attraverso un canale sicuro.
 
-%description -l pl
-Ssh (Secure Shell) to program sЁu©╠cy do logowania siЙ na zdaln╠
-maszynЙ i uruchamiania na niej aplikacji. W zamierzeniu openssh ma
-zast╠piФ rlogin, rsh i dostarczyФ bezpieczne, szyfrowane poЁ╠czenie
-pomiЙdzy dwoma hostami.
+%description -l pl.UTF-8
+Ssh (Secure Shell) to program sе┌uе╪д┘cy do logowania siд≥ na zdalnд┘
+maszynд≥ i uruchamiania na niej aplikacji. W zamierzeniu openssh ma
+zastд┘piд┤ rlogin, rsh i dostarczyд┤ bezpieczne, szyfrowane poе┌д┘czenie
+pomiд≥dzy dwoma hostami.
 
-Ten pakiet zawiera podstawowe pliki potrzebne zarСwno po stronie
-klienta jak i serwera OpenSSH. Aby byЁ u©yteczny, trzeba zainstalowaФ
-co najmniej jeden z pakietСw: openssh-clients lub openssh-server.
+Ten pakiet zawiera podstawowe pliki potrzebne zarцЁwno po stronie
+klienta jak i serwera OpenSSH. Aby byе┌ uе╪yteczny, trzeba zainstalowaд┤
+co najmniej jeden z pakietцЁw: openssh-clients lub openssh-server.
 %if %{with hpn} || %{with hpn_none}
-Ta wersja zawiera Ёaty z projektu High Performance SSH/SCP
-http://www.psc.edu/networking/projects/hpn-ssh/, ktСre maj╠ na celu
-zwiЙkszenie przepustowo╤ci transmisji dla szybkich poЁ╠czeЯ
-z du©ym RTT (20-150 msec). Na stronie projektu znale╪Ф mo©na
-odpowednie dla danego poЁ╠czenia warto╤ci parametru '-w' oraz
-opcje /proc/sys dla TCP. Nawiasem mСwi╠c w sieciach LAN RTT < 1 msec.
+Ta wersja zawiera е┌aty z projektu High Performance SSH/SCP
+http://www.psc.edu/networking/projects/hpn-ssh/, ktцЁre majд┘ na celu
+zwiд≥kszenie przepustowoе⌡ci transmisji dla szybkich poе┌д┘czeе└
+z duе╪ym RTT (20-150 msec). Na stronie projektu znaleе╨д┤ moе╪na
+odpowednie dla danego poе┌д┘czenia wartoе⌡ci parametru '-w' oraz
+opcje /proc/sys dla TCP. Nawiasem mцЁwiд┘c w sieciach LAN RTT < 1 msec.
 %endif
 %if %{with hpn_none}
-ObsЁugiwana jest rСwnie© nieudokumentowana opcja '-z' odpowiedzialna
-za wyЁ╠czenie szyfrowania danych po zakoЯczeniu procesu uwierzytelniania.
-Dane s╠ zabezpieczone przed modyfikacj╠ lub uszkodzeniem przez
+Obsе┌ugiwana jest rцЁwnieе╪ nieudokumentowana opcja '-z' odpowiedzialna
+za wyе┌д┘czenie szyfrowania danych po zakoе└czeniu procesu uwierzytelniania.
+Dane sд┘ zabezpieczone przed modyfikacjд┘ lub uszkodzeniem przez
 stosowanie Message Authentication Code (MAC).
-Opcja ta znacznie redukuje liczbЙ cykli procesora zu©ywanych przez
-procesy SSH/SCP. W wybranych zastosowaniach mo©e ona wpЁyn╠Ф
-na wyra╪ne przyspieszenie (podsЁuchiwalnej) transmisji danych.
+Opcja ta znacznie redukuje liczbд≥ cykli procesora zuе╪ywanych przez
+procesy SSH/SCP. W wybranych zastosowaniach moе╪e ona wpе┌ynд┘д┤
+na wyraе╨ne przyspieszenie (podsе┌uchiwalnej) transmisji danych.
 %endif
 
-%description -l pt
+%description -l pt.UTF-8
 OpenSSH (Secure Shell) fornece acesso a um sistema remoto. Substitui o
-telnet, rlogin, rexec, e o rsh e fornece comunicaГУes seguras e
-cifradas entre duas mАquinas sem confianГa mЗtua sobre uma rede
-insegura. LigaГУes X11 e portos TCP/IP arbitrАrios tambИm poder ser
+telnet, rlogin, rexec, e o rsh e fornece comunicaц╖ц╣es seguras e
+cifradas entre duas mц║quinas sem confianц╖a mц╨tua sobre uma rede
+insegura. Ligaц╖ц╣es X11 e portos TCP/IP arbitrц║rios tambц╘m poder ser
 reenviados pelo canal seguro.
 
-%description -l pt_BR
-SSH И um programa para acessar e executar comandos em mАquinas
-remotas. Ele substitui rlogin e rsh, e provem um canal de comunicaГЦo
-seguro entre dois hosts em uma rede insegura. ConexУes X11 e portas
-TCP/IP arbitrАrias tambИm podem ser usadas pelo canal seguro.
+%description -l pt_BR.UTF-8
+SSH ц╘ um programa para acessar e executar comandos em mц║quinas
+remotas. Ele substitui rlogin e rsh, e provem um canal de comunicaц╖цёo
+seguro entre dois hosts em uma rede insegura. Conexц╣es X11 e portas
+TCP/IP arbitrц║rias tambц╘m podem ser usadas pelo canal seguro.
 
-OpenSSH И o resultado do trabalho da equipe do OpenBSD em continuar a
-Зltima versЦo gratuita do SSH, atualizando-o em termos de seguranГa e
+OpenSSH ц╘ o resultado do trabalho da equipe do OpenBSD em continuar a
+ц╨ltima versцёo gratuita do SSH, atualizando-o em termos de seguranц╖a e
 recursos, assim como removendo todos os algoritmos patenteados e
 colocando-os em bibliotecas separadas (OpenSSL).
 
-Esse pacote contИm o "port" pra Linux do OpenSSH. VocЙ deve instalar
-tambИm ou o pacote openssh-clients, ou o openssh-server, ou ambos.
+Esse pacote contц╘m o "port" pra Linux do OpenSSH. Vocц╙ deve instalar
+tambц╘m ou o pacote openssh-clients, ou o openssh-server, ou ambos.
 
-%description -l ru
-Ssh (Secure Shell) - это программа для "захода" (login) на удаленную
-машину и для выполнения команд на удаленной машине. Она предназначена
-для замены rlogin и rsh и обеспечивает безопасную шифрованную
-коммуникацию между двумя хостами в сети, являющейся небезопасной.
-Соединения X11 и любые порты TCP/IP могут также быть проведены через
-безопасный канал.
+%description -l ru.UTF-8
+Ssh (Secure Shell) - я█я┌п╬ п©я─п╬пЁя─п╟п╪п╪п╟ п╢п╩я▐ "п╥п╟я┘п╬п╢п╟" (login) п╫п╟ я┐п╢п╟п╩п╣п╫п╫я┐я▌
+п╪п╟я┬п╦п╫я┐ п╦ п╢п╩я▐ п╡я▀п©п╬п╩п╫п╣п╫п╦я▐ п╨п╬п╪п╟п╫п╢ п╫п╟ я┐п╢п╟п╩п╣п╫п╫п╬п╧ п╪п╟я┬п╦п╫п╣. п·п╫п╟ п©я─п╣п╢п╫п╟п╥п╫п╟я┤п╣п╫п╟
+п╢п╩я▐ п╥п╟п╪п╣п╫я▀ rlogin п╦ rsh п╦ п╬п╠п╣я│п©п╣я┤п╦п╡п╟п╣я┌ п╠п╣п╥п╬п©п╟я│п╫я┐я▌ я┬п╦я└я─п╬п╡п╟п╫п╫я┐я▌
+п╨п╬п╪п╪я┐п╫п╦п╨п╟я├п╦я▌ п╪п╣п╤п╢я┐ п╢п╡я┐п╪я▐ я┘п╬я│я┌п╟п╪п╦ п╡ я│п╣я┌п╦, я▐п╡п╩я▐я▌я┴п╣п╧я│я▐ п╫п╣п╠п╣п╥п╬п©п╟я│п╫п╬п╧.
+п║п╬п╣п╢п╦п╫п╣п╫п╦я▐ X11 п╦ п╩я▌п╠я▀п╣ п©п╬я─я┌я▀ TCP/IP п╪п╬пЁя┐я┌ я┌п╟п╨п╤п╣ п╠я▀я┌я▄ п©я─п╬п╡п╣п╢п╣п╫я▀ я┤п╣я─п╣п╥
+п╠п╣п╥п╬п©п╟я│п╫я▀п╧ п╨п╟п╫п╟п╩.
 
-OpenSSH - это переделка командой разработчиков OpenBSD последней
-свободной версии SSH, доведенная до современного состояния в терминах
-уровня безопасности и поддерживаемых возможностей. Все патентованные
-алгоритмы вынесены в отдельные библиотеки (OpenSSL).
+OpenSSH - я█я┌п╬ п©п╣я─п╣п╢п╣п╩п╨п╟ п╨п╬п╪п╟п╫п╢п╬п╧ я─п╟п╥я─п╟п╠п╬я┌я┤п╦п╨п╬п╡ OpenBSD п©п╬я│п╩п╣п╢п╫п╣п╧
+я│п╡п╬п╠п╬п╢п╫п╬п╧ п╡п╣я─я│п╦п╦ SSH, п╢п╬п╡п╣п╢п╣п╫п╫п╟я▐ п╢п╬ я│п╬п╡я─п╣п╪п╣п╫п╫п╬пЁп╬ я│п╬я│я┌п╬я▐п╫п╦я▐ п╡ я┌п╣я─п╪п╦п╫п╟я┘
+я┐я─п╬п╡п╫я▐ п╠п╣п╥п╬п©п╟я│п╫п╬я│я┌п╦ п╦ п©п╬п╢п╢п╣я─п╤п╦п╡п╟п╣п╪я▀я┘ п╡п╬п╥п╪п╬п╤п╫п╬я│я┌п╣п╧. п▓я│п╣ п©п╟я┌п╣п╫я┌п╬п╡п╟п╫п╫я▀п╣
+п╟п╩пЁп╬я─п╦я┌п╪я▀ п╡я▀п╫п╣я│п╣п╫я▀ п╡ п╬я┌п╢п╣п╩я▄п╫я▀п╣ п╠п╦п╠п╩п╦п╬я┌п╣п╨п╦ (OpenSSL).
 
-Этот пакет содержит файлы, необходимые как для клиента, так и для
-сервера OpenSSH. Вам нужно будет установить еще openssh-clients,
-openssh-server, или оба пакета.
+п╜я┌п╬я┌ п©п╟п╨п╣я┌ я│п╬п╢п╣я─п╤п╦я┌ я└п╟п╧п╩я▀, п╫п╣п╬п╠я┘п╬п╢п╦п╪я▀п╣ п╨п╟п╨ п╢п╩я▐ п╨п╩п╦п╣п╫я┌п╟, я┌п╟п╨ п╦ п╢п╩я▐
+я│п╣я─п╡п╣я─п╟ OpenSSH. п▓п╟п╪ п╫я┐п╤п╫п╬ п╠я┐п╢п╣я┌ я┐я│я┌п╟п╫п╬п╡п╦я┌я▄ п╣я┴п╣ openssh-clients,
+openssh-server, п╦п╩п╦ п╬п╠п╟ п©п╟п╨п╣я┌п╟.
 
-%description -l uk
-Ssh (Secure Shell) - це програма для "заходу" (login) до в╕ддалено╖
-машини та для виконання команд на в╕ддален╕й машин╕. Вона призначена
-для зам╕ни rlogin та rsh ╕ забезпечу╓ безпечну шифровану комун╕кац╕ю
-м╕ж двома хостами в мереж╕, яка не ╓ безпечною. З'╓днання X11 та
-дов╕льн╕ порти TCP/IP можуть також бути проведен╕ через безпечний
-канал.
+%description -l uk.UTF-8
+Ssh (Secure Shell) - я├п╣ п©я─п╬пЁя─п╟п╪п╟ п╢п╩я▐ "п╥п╟я┘п╬п╢я┐" (login) п╢п╬ п╡я√п╢п╢п╟п╩п╣п╫п╬я≈
+п╪п╟я┬п╦п╫п╦ я┌п╟ п╢п╩я▐ п╡п╦п╨п╬п╫п╟п╫п╫я▐ п╨п╬п╪п╟п╫п╢ п╫п╟ п╡я√п╢п╢п╟п╩п╣п╫я√п╧ п╪п╟я┬п╦п╫я√. п▓п╬п╫п╟ п©я─п╦п╥п╫п╟я┤п╣п╫п╟
+п╢п╩я▐ п╥п╟п╪я√п╫п╦ rlogin я┌п╟ rsh я√ п╥п╟п╠п╣п╥п©п╣я┤я┐я■ п╠п╣п╥п©п╣я┤п╫я┐ я┬п╦я└я─п╬п╡п╟п╫я┐ п╨п╬п╪я┐п╫я√п╨п╟я├я√я▌
+п╪я√п╤ п╢п╡п╬п╪п╟ я┘п╬я│я┌п╟п╪п╦ п╡ п╪п╣я─п╣п╤я√, я▐п╨п╟ п╫п╣ я■ п╠п╣п╥п©п╣я┤п╫п╬я▌. п≈'я■п╢п╫п╟п╫п╫я▐ X11 я┌п╟
+п╢п╬п╡я√п╩я▄п╫я√ п©п╬я─я┌п╦ TCP/IP п╪п╬п╤я┐я┌я▄ я┌п╟п╨п╬п╤ п╠я┐я┌п╦ п©я─п╬п╡п╣п╢п╣п╫я√ я┤п╣я─п╣п╥ п╠п╣п╥п©п╣я┤п╫п╦п╧
+п╨п╟п╫п╟п╩.
 
-OpenSSH - це переробка командою розробник╕в OpenBSD останньо╖ в╕льно╖
-верс╕╖ SSH, доведена до сучасного стану в терм╕нах р╕вня безпеки та
-п╕дтримуваних можливостей. Вс╕ патентован╕ алгоритми винесен╕ до
-окремих б╕бл╕отек (OpenSSL).
+OpenSSH - я├п╣ п©п╣я─п╣я─п╬п╠п╨п╟ п╨п╬п╪п╟п╫п╢п╬я▌ я─п╬п╥я─п╬п╠п╫п╦п╨я√п╡ OpenBSD п╬я│я┌п╟п╫п╫я▄п╬я≈ п╡я√п╩я▄п╫п╬я≈
+п╡п╣я─я│я√я≈ SSH, п╢п╬п╡п╣п╢п╣п╫п╟ п╢п╬ я│я┐я┤п╟я│п╫п╬пЁп╬ я│я┌п╟п╫я┐ п╡ я┌п╣я─п╪я√п╫п╟я┘ я─я√п╡п╫я▐ п╠п╣п╥п©п╣п╨п╦ я┌п╟
+п©я√п╢я┌я─п╦п╪я┐п╡п╟п╫п╦я┘ п╪п╬п╤п╩п╦п╡п╬я│я┌п╣п╧. п▓я│я√ п©п╟я┌п╣п╫я┌п╬п╡п╟п╫я√ п╟п╩пЁп╬я─п╦я┌п╪п╦ п╡п╦п╫п╣я│п╣п╫я√ п╢п╬
+п╬п╨я─п╣п╪п╦я┘ п╠я√п╠п╩я√п╬я┌п╣п╨ (OpenSSL).
 
-Цей пакет м╕стить файли, необх╕дн╕ як для кл╕╓нта, так ╕ для сервера
-OpenSSH. Вам потр╕бно буде ще встановити openssh-clients,
-openssh-server, чи обидва пакети.
+п╕п╣п╧ п©п╟п╨п╣я┌ п╪я√я│я┌п╦я┌я▄ я└п╟п╧п╩п╦, п╫п╣п╬п╠я┘я√п╢п╫я√ я▐п╨ п╢п╩я▐ п╨п╩я√я■п╫я┌п╟, я┌п╟п╨ я√ п╢п╩я▐ я│п╣я─п╡п╣я─п╟
+OpenSSH. п▓п╟п╪ п©п╬я┌я─я√п╠п╫п╬ п╠я┐п╢п╣ я┴п╣ п╡я│я┌п╟п╫п╬п╡п╦я┌п╦ openssh-clients,
+openssh-server, я┤п╦ п╬п╠п╦п╢п╡п╟ п©п╟п╨п╣я┌п╦.
 
 %package clients
 Summary:	OpenSSH Secure Shell protocol clients
-Summary(es):	Clientes de OpenSSH
-Summary(pl):	Klienci protokoЁu Secure Shell
-Summary(pt_BR):	Clientes do OpenSSH
-Summary(ru):	OpenSSH - клиенты протокола Secure Shell
-Summary(uk):	OpenSSH - кл╕╓нти протоколу Secure Shell
+Summary(es.UTF-8):	Clientes de OpenSSH
+Summary(pl.UTF-8):	Klienci protokoе┌u Secure Shell
+Summary(pt_BR.UTF-8):	Clientes do OpenSSH
+Summary(ru.UTF-8):	OpenSSH - п╨п╩п╦п╣п╫я┌я▀ п©я─п╬я┌п╬п╨п╬п╩п╟ Secure Shell
+Summary(uk.UTF-8):	OpenSSH - п╨п╩я√я■п╫я┌п╦ п©я─п╬я┌п╬п╨п╬п╩я┐ Secure Shell
 Group:		Applications/Networking
-Requires:	%{name} = %{epoch}:%{version}-%{release}
-%{?with_sshagentsh:Requires:	xinitrc}
 Provides:	ssh-clients
+Requires:	%{name} = %{epoch}:%{version}-%{release}
 Obsoletes:	ssh-clients
 
 %description clients
@@ -266,48 +265,75 @@ all patented algorithms to seperate libraries (OpenSSL).
 This package includes the clients necessary to make encrypted
 connections to SSH servers.
 
-%description clients -l es
+%description clients -l es.UTF-8
 Este paquete incluye los clientes que se necesitan para hacer
 conexiones codificadas con servidores SSH.
 
-%description clients -l pl
-Ssh (Secure Shell) to program sЁu©╠cy do logowania siЙ na zdaln╠
-maszynЙ i uruchamiania na niej aplikacji. W zamierzeniu openssh ma
-zast╠piФ rlogin, rsh i dostarczyФ bezpieczne, szyfrowane poЁ╠czenie
-pomiЙdzy dwoma hostami.
+%description clients -l pl.UTF-8
+Ssh (Secure Shell) to program sе┌uе╪д┘cy do logowania siд≥ na zdalnд┘
+maszynд≥ i uruchamiania na niej aplikacji. W zamierzeniu openssh ma
+zastд┘piд┤ rlogin, rsh i dostarczyд┤ bezpieczne, szyfrowane poе┌д┘czenie
+pomiд≥dzy dwoma hostami.
 
-Ten pakiet zawiera klientСw sЁu©╠cych do Ё╠czenia siЙ z serwerami SSH.
+Ten pakiet zawiera klientцЁw sе┌uе╪д┘cych do е┌д┘czenia siд≥ z serwerami SSH.
 
-%description clients -l pt_BR
-Esse pacote inclui os clientes necessАrios para fazer conexУes
+%description clients -l pt_BR.UTF-8
+Esse pacote inclui os clientes necessц║rios para fazer conexц╣es
 encriptadas com servidores SSH.
 
-%description clients -l ru
-Ssh (Secure Shell) - это программа для "захода" (login) на удаленную
-машину и для выполнения команд на удаленной машине.
+%description clients -l ru.UTF-8
+Ssh (Secure Shell) - я█я┌п╬ п©я─п╬пЁя─п╟п╪п╪п╟ п╢п╩я▐ "п╥п╟я┘п╬п╢п╟" (login) п╫п╟ я┐п╢п╟п╩п╣п╫п╫я┐я▌
+п╪п╟я┬п╦п╫я┐ п╦ п╢п╩я▐ п╡я▀п©п╬п╩п╫п╣п╫п╦я▐ п╨п╬п╪п╟п╫п╢ п╫п╟ я┐п╢п╟п╩п╣п╫п╫п╬п╧ п╪п╟я┬п╦п╫п╣.
 
-Этот пакет содержит программы-клиенты, необходимые для установления
-зашифрованных соединений с серверами SSH.
+п╜я┌п╬я┌ п©п╟п╨п╣я┌ я│п╬п╢п╣я─п╤п╦я┌ п©я─п╬пЁя─п╟п╪п╪я▀-п╨п╩п╦п╣п╫я┌я▀, п╫п╣п╬п╠я┘п╬п╢п╦п╪я▀п╣ п╢п╩я▐ я┐я│я┌п╟п╫п╬п╡п╩п╣п╫п╦я▐
+п╥п╟я┬п╦я└я─п╬п╡п╟п╫п╫я▀я┘ я│п╬п╣п╢п╦п╫п╣п╫п╦п╧ я│ я│п╣я─п╡п╣я─п╟п╪п╦ SSH.
 
-%description clients -l uk
-Ssh (Secure Shell) - це програма для "заходу" (login) до в╕ддалено╖
-машини та для виконання команд на в╕ддален╕й машин╕.
+%description clients -l uk.UTF-8
+Ssh (Secure Shell) - я├п╣ п©я─п╬пЁя─п╟п╪п╟ п╢п╩я▐ "п╥п╟я┘п╬п╢я┐" (login) п╢п╬ п╡я√п╢п╢п╟п╩п╣п╫п╬я≈
+п╪п╟я┬п╦п╫п╦ я┌п╟ п╢п╩я▐ п╡п╦п╨п╬п╫п╟п╫п╫я▐ п╨п╬п╪п╟п╫п╢ п╫п╟ п╡я√п╢п╢п╟п╩п╣п╫я√п╧ п╪п╟я┬п╦п╫я√.
 
-Цей пакет м╕стить програми-кл╕╓нти, необх╕дн╕ для встановлення
-зашифрованих з'╓днань з серверами SSH.
+п╕п╣п╧ п©п╟п╨п╣я┌ п╪я√я│я┌п╦я┌я▄ п©я─п╬пЁя─п╟п╪п╦-п╨п╩я√я■п╫я┌п╦, п╫п╣п╬п╠я┘я√п╢п╫я√ п╢п╩я▐ п╡я│я┌п╟п╫п╬п╡п╩п╣п╫п╫я▐
+п╥п╟я┬п╦я└я─п╬п╡п╟п╫п╦я┘ п╥'я■п╢п╫п╟п╫я▄ п╥ я│п╣я─п╡п╣я─п╟п╪п╦ SSH.
+
+%package clients-agent-profile_d
+Summary:	OpenSSH Secure Shell agent init script
+Summary(pl.UTF-8):	Skrypt startowy agenta OpenSSH
+Group:		Applications/Networking
+Requires:	%{name}-clients = %{epoch}:%{version}-%{release}
+
+%description clients-agent-profile_d
+profile.d scripts for starting SSH agent.
+
+%description clients-agent-profile_d -l pl.UTF-8
+Skrypty profile.d do uruchamiania agenta SSH.
+
+%package clients-agent-xinitrc
+Summary:	OpenSSH Secure Shell agent init script
+Summary(pl.UTF-8):	Skrypt inicjujд┘cy agenta ssh przez xinitrc
+Group:		Applications/Networking
+Requires:	%{name}-clients-agent-profile_d = %{epoch}:%{version}-%{release}
+Requires:	xinitrc
+
+%description clients-agent-xinitrc
+xinitrc scripts for starting SSH agent.
+
+%description clients-agent-xinitrc -l pl.UTF-8
+Skrypty xinitrc do uruchamiania agenta SSH.
 
 %package server
 Summary:	OpenSSH Secure Shell protocol server (sshd)
-Summary(de):	OpenSSH Secure Shell Protocol-Server (sshd)
-Summary(es):	Servidor OpenSSH para comunicaciones codificadas
-Summary(fr):	Serveur de protocole du shell sИcurisИ OpenSSH (sshd)
-Summary(it):	Server OpenSSH per il protocollo Secure Shell (sshd)
-Summary(pl):	Serwer protokoЁu Secure Shell (sshd)
-Summary(pt):	Servidor do protocolo 'Secure Shell' OpenSSH (sshd)
-Summary(pt_BR):	Servidor OpenSSH para comunicaГУes encriptadas
-Summary(ru):	OpenSSH - сервер протокола Secure Shell (sshd)
-Summary(uk):	OpenSSH - сервер протоколу Secure Shell (sshd)
+Summary(de.UTF-8):	OpenSSH Secure Shell Protocol-Server (sshd)
+Summary(es.UTF-8):	Servidor OpenSSH para comunicaciones codificadas
+Summary(fr.UTF-8):	Serveur de protocole du shell sц╘curisц╘ OpenSSH (sshd)
+Summary(it.UTF-8):	Server OpenSSH per il protocollo Secure Shell (sshd)
+Summary(pl.UTF-8):	Serwer protokoе┌u Secure Shell (sshd)
+Summary(pt.UTF-8):	Servidor do protocolo 'Secure Shell' OpenSSH (sshd)
+Summary(pt_BR.UTF-8):	Servidor OpenSSH para comunicaц╖ц╣es encriptadas
+Summary(ru.UTF-8):	OpenSSH - я│п╣я─п╡п╣я─ п©я─п╬я┌п╬п╨п╬п╩п╟ Secure Shell (sshd)
+Summary(uk.UTF-8):	OpenSSH - я│п╣я─п╡п╣я─ п©я─п╬я┌п╬п╨п╬п╩я┐ Secure Shell (sshd)
 Group:		Networking/Daemons
+Provides:	ssh-server
+Provides:	user(sshd)
 Requires(post):	chkconfig >= 0.9
 Requires(post):	grep
 Requires(post,preun):	/sbin/chkconfig
@@ -319,8 +345,6 @@ Requires:	/bin/login
 Requires:	pam >= 0.77.3
 Requires:	rc-scripts >= 0.4.0.18
 Requires:	util-linux
-Provides:	ssh-server
-Provides:	user(sshd)
 
 %description server
 Ssh (Secure Shell) a program for logging into a remote machine and for
@@ -337,64 +361,64 @@ This package contains the secure shell daemon. The sshd is the server
 part of the secure shell protocol and allows ssh clients to connect to
 your host.
 
-%description server -l de
+%description server -l de.UTF-8
 Dieses Paket installiert den sshd, den Server-Teil der OpenSSH.
 
-%description server -l es
+%description server -l es.UTF-8
 Este paquete contiene el servidor SSH. sshd es la parte servidor del
 protocolo secure shell y permite que clientes ssh se conecten a su
 servidor.
 
-%description server -l fr
+%description server -l fr.UTF-8
 Ce paquetage installe le 'sshd', partie serveur de OpenSSH.
 
-%description server -l it
+%description server -l it.UTF-8
 Questo pacchetto installa sshd, il server di OpenSSH.
 
-%description server -l pl
-Ssh (Secure Shell) to program sЁu©╠cy do logowania siЙ na zdaln╠
-maszynЙ i uruchamiania na niej aplikacji. W zamierzeniu openssh ma
-zast╠piФ rlogin, rsh i dostarczyФ bezpieczne, szyfrowane poЁ╠czenie
-pomiЙdzy dwoma hostami.
+%description server -l pl.UTF-8
+Ssh (Secure Shell) to program sе┌uе╪д┘cy do logowania siд≥ na zdalnд┘
+maszynд≥ i uruchamiania na niej aplikacji. W zamierzeniu openssh ma
+zastд┘piд┤ rlogin, rsh i dostarczyд┤ bezpieczne, szyfrowane poе┌д┘czenie
+pomiд≥dzy dwoma hostami.
 
-Ten pakiet zawiera serwer sshd (do ktСrego mog╠ Ё╠czyФ siЙ klienci
+Ten pakiet zawiera serwer sshd (do ktцЁrego mogд┘ е┌д┘czyд┤ siд≥ klienci
 ssh).
 
-%description server -l pt
+%description server -l pt.UTF-8
 Este pacote intala o sshd, o servidor do OpenSSH.
 
-%description server -l pt_BR
-Esse pacote contИm o servidor SSH. O sshd И a parte servidor do
+%description server -l pt_BR.UTF-8
+Esse pacote contц╘m o servidor SSH. O sshd ц╘ a parte servidor do
 protocolo secure shell e permite que clientes ssh se conectem ao seu
 host.
 
-%description server -l ru
-Ssh (Secure Shell) - это программа для "захода" (login) на удаленную
-машину и для выполнения команд на удаленной машине.
+%description server -l ru.UTF-8
+Ssh (Secure Shell) - я█я┌п╬ п©я─п╬пЁя─п╟п╪п╪п╟ п╢п╩я▐ "п╥п╟я┘п╬п╢п╟" (login) п╫п╟ я┐п╢п╟п╩п╣п╫п╫я┐я▌
+п╪п╟я┬п╦п╫я┐ п╦ п╢п╩я▐ п╡я▀п©п╬п╩п╫п╣п╫п╦я▐ п╨п╬п╪п╟п╫п╢ п╫п╟ я┐п╢п╟п╩п╣п╫п╫п╬п╧ п╪п╟я┬п╦п╫п╣.
 
-Этот пакет содержит sshd - "демон" Secure Shell. sshd - это серверная
-часть протокола Secure Shell, позволяющая клиентам ssh соединяться с
-вашим хостом.
+п╜я┌п╬я┌ п©п╟п╨п╣я┌ я│п╬п╢п╣я─п╤п╦я┌ sshd - "п╢п╣п╪п╬п╫" Secure Shell. sshd - я█я┌п╬ я│п╣я─п╡п╣я─п╫п╟я▐
+я┤п╟я│я┌я▄ п©я─п╬я┌п╬п╨п╬п╩п╟ Secure Shell, п©п╬п╥п╡п╬п╩я▐я▌я┴п╟я▐ п╨п╩п╦п╣п╫я┌п╟п╪ ssh я│п╬п╣п╢п╦п╫я▐я┌я▄я│я▐ я│
+п╡п╟я┬п╦п╪ я┘п╬я│я┌п╬п╪.
 
-%description server -l uk
-Ssh (Secure Shell) - це програма для "заходу" (login) до в╕ддалено╖
-машини та для виконання команд на в╕ддален╕й машин╕.
+%description server -l uk.UTF-8
+Ssh (Secure Shell) - я├п╣ п©я─п╬пЁя─п╟п╪п╟ п╢п╩я▐ "п╥п╟я┘п╬п╢я┐" (login) п╢п╬ п╡я√п╢п╢п╟п╩п╣п╫п╬я≈
+п╪п╟я┬п╦п╫п╦ я┌п╟ п╢п╩я▐ п╡п╦п╨п╬п╫п╟п╫п╫я▐ п╨п╬п╪п╟п╫п╢ п╫п╟ п╡я√п╢п╢п╟п╩п╣п╫я√п╧ п╪п╟я┬п╦п╫я√.
 
-Цей пакет м╕стить sshd - "демон" Secure Shell. sshd - це серверна
-частина протоколу Secure Shell, яка дозволя╓ кл╕╓нтам ssh зв'язуватись
-з вашим хостом.
+п╕п╣п╧ п©п╟п╨п╣я┌ п╪я√я│я┌п╦я┌я▄ sshd - "п╢п╣п╪п╬п╫" Secure Shell. sshd - я├п╣ я│п╣я─п╡п╣я─п╫п╟
+я┤п╟я│я┌п╦п╫п╟ п©я─п╬я┌п╬п╨п╬п╩я┐ Secure Shell, я▐п╨п╟ п╢п╬п╥п╡п╬п╩я▐я■ п╨п╩я√я■п╫я┌п╟п╪ ssh п╥п╡'я▐п╥я┐п╡п╟я┌п╦я│я▄
+п╥ п╡п╟я┬п╦п╪ я┘п╬я│я┌п╬п╪.
 
 %package gnome-askpass
 Summary:	OpenSSH GNOME passphrase dialog
-Summary(de):	OpenSSH GNOME Passwort-Dialog
-Summary(es):	DiАlogo para introducciСn de passphrase para GNOME
-Summary(fr):	Dialogue pass-phrase GNOME d'OpenSSH
-Summary(it):	Finestra di dialogo GNOME per la frase segreta di OpenSSH
-Summary(pl):	Odpytywacz hasЁa OpenSSH dla GNOME
-Summary(pt):	DiАlogo de pedido de senha para GNOME do OpenSSH
-Summary(pt_BR):	DiАlogo para entrada de passphrase para GNOME
-Summary(ru):	OpenSSH - диалог ввода ключевой фразы (passphrase) для GNOME
-Summary(uk):	OpenSSH - д╕алог вводу ключово╖ фрази (passphrase) для GNOME
+Summary(de.UTF-8):	OpenSSH GNOME Passwort-Dialog
+Summary(es.UTF-8):	Diц║logo para introducciцЁn de passphrase para GNOME
+Summary(fr.UTF-8):	Dialogue pass-phrase GNOME d'OpenSSH
+Summary(it.UTF-8):	Finestra di dialogo GNOME per la frase segreta di OpenSSH
+Summary(pl.UTF-8):	Odpytywacz hasе┌a OpenSSH dla GNOME
+Summary(pt.UTF-8):	Diц║logo de pedido de senha para GNOME do OpenSSH
+Summary(pt_BR.UTF-8):	Diц║logo para entrada de passphrase para GNOME
+Summary(ru.UTF-8):	OpenSSH - п╢п╦п╟п╩п╬пЁ п╡п╡п╬п╢п╟ п╨п╩я▌я┤п╣п╡п╬п╧ я└я─п╟п╥я▀ (passphrase) п╢п╩я▐ GNOME
+Summary(uk.UTF-8):	OpenSSH - п╢я√п╟п╩п╬пЁ п╡п╡п╬п╢я┐ п╨п╩я▌я┤п╬п╡п╬я≈ я└я─п╟п╥п╦ (passphrase) п╢п╩я▐ GNOME
 Group:		Applications/Networking
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Obsoletes:	openssh-askpass
@@ -414,44 +438,45 @@ all patented algorithms to seperate libraries (OpenSSL).
 
 This package contains the GNOME passphrase dialog.
 
-%description gnome-askpass -l es
-Este paquete contiene un programa que abre una caja de diАlogo para
+%description gnome-askpass -l es.UTF-8
+Este paquete contiene un programa que abre una caja de diц║logo para
 entrada de passphrase en GNOME.
 
-%description gnome-askpass -l pl
-Ssh (Secure Shell) to program sЁu©╠cy do logowania siЙ na zdaln╠
-maszynЙ i uruchamiania na niej aplikacji. W zamierzeniu openssh ma
-zast╠piФ rlogin, rsh i dostarczyФ bezpieczne, szyfrowane poЁ╠czenie
-pomiЙdzy dwoma hostami.
+%description gnome-askpass -l pl.UTF-8
+Ssh (Secure Shell) to program sе┌uе╪д┘cy do logowania siд≥ na zdalnд┘
+maszynд≥ i uruchamiania na niej aplikacji. W zamierzeniu openssh ma
+zastд┘piд┤ rlogin, rsh i dostarczyд┤ bezpieczne, szyfrowane poе┌д┘czenie
+pomiд≥dzy dwoma hostami.
 
-Ten pakiet zawiera ,,odpytywacz hasЁa'' dla GNOME.
+Ten pakiet zawiera ,,odpytywacz hasе┌a'' dla GNOME.
 
-%description gnome-askpass -l pt_BR
-Esse pacote contИm um programa que abre uma caixa de diАlogo para
+%description gnome-askpass -l pt_BR.UTF-8
+Esse pacote contц╘m um programa que abre uma caixa de diц║logo para
 entrada de passphrase no GNOME.
 
-%description gnome-askpass -l ru
-Ssh (Secure Shell) - это программа для "захода" (login) на удаленную
-машину и для выполнения команд на удаленной машине.
+%description gnome-askpass -l ru.UTF-8
+Ssh (Secure Shell) - я█я┌п╬ п©я─п╬пЁя─п╟п╪п╪п╟ п╢п╩я▐ "п╥п╟я┘п╬п╢п╟" (login) п╫п╟ я┐п╢п╟п╩п╣п╫п╫я┐я▌
+п╪п╟я┬п╦п╫я┐ п╦ п╢п╩я▐ п╡я▀п©п╬п╩п╫п╣п╫п╦я▐ п╨п╬п╪п╟п╫п╢ п╫п╟ я┐п╢п╟п╩п╣п╫п╫п╬п╧ п╪п╟я┬п╦п╫п╣.
 
-Этот пакет содержит диалог ввода ключевой фразы для использования под
+п╜я┌п╬я┌ п©п╟п╨п╣я┌ я│п╬п╢п╣я─п╤п╦я┌ п╢п╦п╟п╩п╬пЁ п╡п╡п╬п╢п╟ п╨п╩я▌я┤п╣п╡п╬п╧ я└я─п╟п╥я▀ п╢п╩я▐ п╦я│п©п╬п╩я▄п╥п╬п╡п╟п╫п╦я▐ п©п╬п╢
 GNOME.
 
-%description gnome-askpass -l uk
-Ssh (Secure Shell) - це програма для "заходу" (login) до в╕ддалено╖
-машини та для виконання команд на в╕ддален╕й машин╕.
+%description gnome-askpass -l uk.UTF-8
+Ssh (Secure Shell) - я├п╣ п©я─п╬пЁя─п╟п╪п╟ п╢п╩я▐ "п╥п╟я┘п╬п╢я┐" (login) п╢п╬ п╡я√п╢п╢п╟п╩п╣п╫п╬я≈
+п╪п╟я┬п╦п╫п╦ я┌п╟ п╢п╩я▐ п╡п╦п╨п╬п╫п╟п╫п╫я▐ п╨п╬п╪п╟п╫п╢ п╫п╟ п╡я√п╢п╢п╟п╩п╣п╫я√п╧ п╪п╟я┬п╦п╫я√.
 
-Цей пакет м╕стить д╕алог вводу ключово╖ фрази для використання п╕д
+п╕п╣п╧ п©п╟п╨п╣я┌ п╪я√я│я┌п╦я┌я▄ п╢я√п╟п╩п╬пЁ п╡п╡п╬п╢я┐ п╨п╩я▌я┤п╬п╡п╬я≈ я└я─п╟п╥п╦ п╢п╩я▐ п╡п╦п╨п╬я─п╦я│я┌п╟п╫п╫я▐ п©я√п╢
 GNOME.
 
 %prep
 %setup -q
 %patch0 -p1
+%{?with_kerberos5:%patch1 -p1}
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
 %{?with_ldap:%patch5 -p1}
-%{?with_kerberos5:%patch6 -p1}
+%patch6 -p1
 #%patch7 -p1
 %patch8 -p1
 %patch9 -p1
@@ -480,7 +505,7 @@ cp /usr/share/automake/config.sub .
 	%{?with_kerberos5:--with-kerberos5} \
 	--with-privsep-path=%{_privsepdir} \
 	--with-pid-dir=%{_localstatedir}/run \
-	--with-xauth=/usr/bin/xauth \
+	--with-xauth=/usr/X11R6/bin/xauth \
 	--enable-utmpx \
 	--enable-wtmpx
 
@@ -502,24 +527,19 @@ cd contrib
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{pam.d,rc.d/init.d,sysconfig,security,env.d}} \
 	$RPM_BUILD_ROOT%{_libexecdir}/ssh
-%{?with_sshagentsh:install -d $RPM_BUILD_ROOT/etc/{profile.d,X11/xinit/xinitrc.d}}
+install -d $RPM_BUILD_ROOT/etc/{profile.d,X11/xinit/xinitrc.d}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-install %{SOURCE4} $RPM_BUILD_ROOT/etc/pam.d/sshd
-install %{SOURCE6} $RPM_BUILD_ROOT/etc/pam.d/passwdssh
-install %{SOURCE5} $RPM_BUILD_ROOT/etc/sysconfig/sshd
-install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
-install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/ssh_config
-install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/sshd_config
-%if %{with sshagentsh}
-install %{SOURCE11} $RPM_BUILD_ROOT/etc/profile.d
-ln -sf	/etc/profile.d/ssh-agent.sh $RPM_BUILD_ROOT/etc/X11/xinit/xinitrc.d/ssh-agent.sh
-install %{SOURCE12} $RPM_BUILD_ROOT%{_sysconfdir}
-%endif
+bzip2 -dc %{SOURCE1} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
 
-bzip2 -dc %{SOURCE7} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
+install %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
+install %{SOURCE3} $RPM_BUILD_ROOT/etc/pam.d/sshd
+install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/sshd
+install %{SOURCE5} $RPM_BUILD_ROOT/etc/profile.d
+ln -sf	/etc/profile.d/ssh-agent.sh $RPM_BUILD_ROOT/etc/X11/xinit/xinitrc.d/ssh-agent.sh
+install %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}
 
 %if %{with gnome}
 install contrib/gnome-ssh-askpass1 $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
@@ -549,6 +569,9 @@ find $RPM_BUILD_ROOT%{_sysconfdir} -type f -print0 | xargs -0 sed -i -e 's#%{_pr
 cat << 'EOF' > $RPM_BUILD_ROOT/etc/env.d/SSH_ASKPASS
 #SSH_ASKPASS="%{_libexecdir}/ssh-askpass"
 EOF
+
+rm -f $RPM_BUILD_ROOT%{_datadir}/Ssh.bin # ???
+rm -f $RPM_BUILD_ROOT%{_mandir}/README.openssh-non-english-man-pages
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -605,11 +628,6 @@ fi
 %attr(755,root,root) %{_bindir}/scp
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ssh_config
 %config(noreplace,missingok) %verify(not md5 mtime size) /etc/env.d/SSH_ASKPASS
-%if %{with sshagentsh}
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ssh-agent.conf
-%attr(755,root,root) /etc/profile.d/ssh-agent.sh
-%attr(755,root,root) /etc/X11/xinit/xinitrc.d/ssh-agent.sh
-%endif
 %{_mandir}/man1/scp.1*
 %{_mandir}/man1/ssh.1*
 %{_mandir}/man1/slogin.1*
@@ -625,6 +643,15 @@ fi
 # for host-based auth (suid required for accessing private host key)
 #%attr(4755,root,root) %{_libexecdir}/ssh-keysign
 #%{_mandir}/man8/ssh-keysign.8*
+
+%files clients-agent-profile_d
+%defattr(644,root,root,755)
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ssh-agent.conf
+%attr(755,root,root) /etc/profile.d/ssh-agent.sh
+
+%files clients-agent-xinitrc
+%defattr(644,root,root,755)
+%attr(755,root,root) /etc/X11/xinit/xinitrc.d/ssh-agent.sh
 
 %files server
 %defattr(644,root,root,755)

@@ -16,7 +16,7 @@
 # gtk2-based gnome-askpass means no gnome1-based
 %{?with_gtk:%undefine with_gnome}
 #
-%define		_rel	5
+%define		_rel	1
 #
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(de.UTF-8):	OpenSSH - freie Implementation der Secure Shell (SSH)
@@ -29,13 +29,13 @@ Summary(pt_BR.UTF-8):	Implementação livre do SSH
 Summary(ru.UTF-8):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
-Version:	4.6p1
+Version:	4.7p1
 Release:	%{_rel}%{?with_hpn:hpn}%{?with_hpn_none:hpn_none}
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
 Source0:	ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
-# Source0-md5:	6a7fa99f44d9e1b5b04d15256e1405bb
+# Source0-md5:	50a800fd2c6def9e9a53068837e87b91
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 # Source1-md5:	66943d481cc422512b537bcc2c7400d1
 Source2:	%{name}d.init

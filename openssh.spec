@@ -16,7 +16,7 @@
 # gtk2-based gnome-askpass means no gnome1-based
 %{?with_gtk:%undefine with_gnome}
 #
-%define		_rel	6
+%define		_rel	1
 #
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(de.UTF-8):	OpenSSH - freie Implementation der Secure Shell (SSH)
@@ -29,13 +29,13 @@ Summary(pt_BR.UTF-8):	Implementação livre do SSH
 Summary(ru.UTF-8):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
-Version:	4.6p1
+Version:	4.7p1
 Release:	%{_rel}%{?with_hpn:hpn}%{?with_hpn_none:hpn_none}
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
 Source0:	ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
-# Source0-md5:	6a7fa99f44d9e1b5b04d15256e1405bb
+# Source0-md5:	50a800fd2c6def9e9a53068837e87b91
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 # Source1-md5:	66943d481cc422512b537bcc2c7400d1
 Source2:	%{name}d.init
@@ -44,7 +44,7 @@ Source4:	%{name}.sysconfig
 Source5:	ssh-agent.sh
 Source6:	ssh-agent.conf
 Patch0:		%{name}-no_libnsl.patch
-Patch1:		%{name}-sshv1-openssl.patch
+Patch1:		%{name}-heimdal.patch
 Patch2:		%{name}-linux-ipv6.patch
 Patch3:		%{name}-pam_misc.patch
 Patch4:		%{name}-sigpipe.patch
@@ -69,7 +69,7 @@ BuildRequires:	autoconf
 BuildRequires:	automake
 %{?with_gnome:BuildRequires:	gnome-libs-devel}
 %{?with_gtk:BuildRequires:	gtk+2-devel}
-%{?with_kerberos5:BuildRequires:	krb5-devel}
+%{?with_kerberos5:BuildRequires:	heimdal-devel >= 0.7}
 %{?with_libedit:BuildRequires:	libedit-devel}
 %{?with_selinux:BuildRequires:	libselinux-devel}
 BuildRequires:	libwrap-devel
@@ -79,8 +79,8 @@ BuildRequires:	pam-devel
 %{?with_gtk:BuildRequires:	pkgconfig}
 BuildRequires:	rpmbuild(macros) >= 1.318
 BuildRequires:	zlib-devel
-Requires:	filesystem >= 3.0-11
-Requires:	pam >= 0.99.7.1
+Requires:	filesystem >= 2.0-1
+Requires:	pam >= 0.79.0
 Obsoletes:	ssh
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -342,7 +342,7 @@ Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/useradd
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	/bin/login
-Requires:	pam >= 0.99.7.1
+Requires:	pam >= 0.77.3
 Requires:	rc-scripts >= 0.4.0.18
 Requires:	util-linux
 
@@ -471,7 +471,7 @@ GNOME.
 %prep
 %setup -q
 %patch0 -p1
-%patch1 -p1
+%{?with_kerberos5:%patch1 -p1}
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
@@ -502,10 +502,10 @@ cp /usr/share/automake/config.sub .
 	--with-tcp-wrappers \
 	%{?with_ldap:--with-libs="-lldap -llber"} \
 	%{?with_ldap:--with-cppflags="-DWITH_LDAP_PUBKEY"} \
-	%{?with_kerberos5:--with-kerberos5=/usr} \
+	%{?with_kerberos5:--with-kerberos5} \
 	--with-privsep-path=%{_privsepdir} \
 	--with-pid-dir=%{_localstatedir}/run \
-	--with-xauth=/usr/bin/xauth \
+	--with-xauth=/usr/X11R6/bin/xauth \
 	--enable-utmpx \
 	--enable-wtmpx
 

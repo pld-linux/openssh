@@ -1,11 +1,11 @@
 --- openssh-4.4p1/configure.ac~	2006-09-28 17:40:25.601119384 +0300
 +++ openssh-4.4p1/configure.ac	2006-09-28 17:41:49.162994417 +0300
-@@ -2010,7 +2010,7 @@
+@@ -2056,7 +2056,7 @@
  
  			PAM_MSG="yes"
  
--			LIBPAM="-lpam"
-+			LIBPAM="-lpam -lpam_misc"
+-			SSHDLIBS="$SSHDLIBS -lpam"
++			SSHDLIBS="$SSHDLIBS -lpam -lpam_misc"
  			AC_DEFINE(USE_PAM, 1,
  				[Define if you want to enable PAM support])
  

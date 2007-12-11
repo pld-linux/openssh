@@ -16,7 +16,7 @@
 # gtk2-based gnome-askpass means no gnome1-based
 %{?with_gtk:%undefine with_gnome}
 #
-%define		_rel	2
+%define		_rel	3
 #
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(de.UTF-8):	OpenSSH - freie Implementation der Secure Shell (SSH)
@@ -544,10 +544,10 @@ install contrib/gnome-ssh-askpass1 $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
 install contrib/gnome-ssh-askpass2 $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
 %endif
 %if %{with gnome} || %{with gtk}
-cat << EOF >$RPM_BUILD_ROOT/etc/env.d/GNOME_SSH_ASKPASS_GRAB_SERVER
+cat << 'EOF' >$RPM_BUILD_ROOT/etc/env.d/GNOME_SSH_ASKPASS_GRAB_SERVER
 #GNOME_SSH_ASKPASS_GRAB_SERVER="true"
 EOF
-cat << EOF >$RPM_BUILD_ROOT/etc/env.d/GNOME_SSH_ASKPASS_GRAB_POINTER
+cat << 'EOF' >$RPM_BUILD_ROOT/etc/env.d/GNOME_SSH_ASKPASS_GRAB_POINTER
 #GNOME_SSH_ASKPASS_GRAB_POINTER="true"
 EOF
 ln -s %{_libexecdir}/ssh/ssh-askpass $RPM_BUILD_ROOT%{_libexecdir}/ssh-askpass
@@ -557,10 +557,6 @@ rm -f	$RPM_BUILD_ROOT%{_mandir}/man1/slogin.1
 echo ".so ssh.1" > $RPM_BUILD_ROOT%{_mandir}/man1/slogin.1
 
 touch $RPM_BUILD_ROOT/etc/security/blacklist.sshd
-
-%if "%{_lib}" != "lib"
-find $RPM_BUILD_ROOT%{_sysconfdir} -type f -print0 | xargs -0 sed -i -e 's#%{_prefix}/lib#%{_libdir}#'
-%endif
 
 cat << 'EOF' > $RPM_BUILD_ROOT/etc/env.d/SSH_ASKPASS
 #SSH_ASKPASS="%{_libexecdir}/ssh-askpass"

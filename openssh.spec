@@ -7,16 +7,10 @@
 %bcond_without	libedit		# without libedit (editline/history support in sftp client)
 %bcond_without	kerberos5	# without kerberos5 support
 %bcond_without	selinux		# build without SELinux support
-%bcond_with	hpn		# with High Performance SSH/SCP - HPN-SSH (see patch comment)
-%bcond_with	hpn_none	# with hpn (above) and '-z' none cipher option
-#
-%if %{with hpn_none}
-%undefine	with_hpn
-%endif
+%bcond_with	hpn		# with High Performance SSH/SCP - HPN-SSH including Cipher NONE
+
 # gtk2-based gnome-askpass means no gnome1-based
 %{?with_gtk:%undefine with_gnome}
-#
-%define		_rel	3
 #
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(de.UTF-8):	OpenSSH - freie Implementation der Secure Shell (SSH)
@@ -30,7 +24,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	4.7p1
-Release:	%{_rel}%{?with_hpn:hpn}%{?with_hpn_none:hpn_none}
+Release:	3%{?with_hpn:hpn}
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -53,13 +47,9 @@ Patch5:		%{name}-config.patch
 # http://chrootssh.sourceforge.net/download/osshChroot-3.7.1p2.diff
 Patch6:		%{name}-chroot.patch
 Patch7:		%{name}-selinux.patch
-# HPN patches rediffed due sigpipe patch.
 # High Performance SSH/SCP - HPN-SSH - http://www.psc.edu/networking/projects/hpn-ssh/
 # http://www.psc.edu/networking/projects/hpn-ssh/openssh-4.2p1-hpn11.diff
-Patch8:		%{name}-4.3p1-hpn11.patch
-# Adds HPN (see p11) and an undocumented -z none cipher flag
-# http://www.psc.edu/networking/projects/hpn-ssh/openssh-4.2p1-hpn11-none.diff
-Patch9:		%{name}-4.3p1-hpn11-none.patch
+Patch9:	%{name}-4.7p1-hpn13v1.diff
 Patch10:	%{name}-include.patch
 URL:		http://www.openssh.com/
 BuildRequires:	%{__perl}
@@ -245,8 +235,8 @@ Summary(pt_BR.UTF-8):	Clientes do OpenSSH
 Summary(ru.UTF-8):	OpenSSH - клиенты протокола Secure Shell
 Summary(uk.UTF-8):	OpenSSH - клієнти протоколу Secure Shell
 Group:		Applications/Networking
-Provides:	ssh-clients
 Requires:	%{name} = %{epoch}:%{version}-%{release}
+Provides:	ssh-clients
 Obsoletes:	ssh-clients
 
 %description clients
@@ -330,8 +320,6 @@ Summary(pt_BR.UTF-8):	Servidor OpenSSH para comunicações encriptadas
 Summary(ru.UTF-8):	OpenSSH - сервер протокола Secure Shell (sshd)
 Summary(uk.UTF-8):	OpenSSH - сервер протоколу Secure Shell (sshd)
 Group:		Networking/Daemons
-Provides:	ssh-server
-Provides:	user(sshd)
 Requires(post):	chkconfig >= 0.9
 Requires(post):	grep
 Requires(post,preun):	/sbin/chkconfig
@@ -343,6 +331,8 @@ Requires:	/bin/login
 Requires:	pam >= 0.99.7.1
 Requires:	rc-scripts >= 0.4.0.18
 Requires:	util-linux
+Provides:	ssh-server
+Provides:	user(sshd)
 
 %description server
 Ssh (Secure Shell) a program for logging into a remote machine and for
@@ -476,8 +466,7 @@ GNOME.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
-%{?with_hpn:%patch8 -p1}
-%{?with_hpn_none:%patch9 -p1}
+%{?with_hpn:%patch9 -p1}
 %patch10 -p1
 
 %build

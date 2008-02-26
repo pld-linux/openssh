@@ -53,7 +53,6 @@ Patch7:		%{name}-selinux.patch
 Patch9:	%{name}-4.7p1-hpn13v1.diff
 Patch10:	%{name}-include.patch
 Patch100:	%{name}-heimdal.patch
-Patch101:	%{name}-pam-conv.patch
 URL:		http://www.openssh.com/
 BuildRequires:	%{__perl}
 BuildRequires:	autoconf
@@ -473,7 +472,6 @@ GNOME.
 %patch10 -p1
 
 %{?with_kerberos5:%patch100 -p1}
-#%patch101 -p1
 
 %build
 cp /usr/share/automake/config.sub .

@@ -38,22 +38,22 @@ Source4:	%{name}.sysconfig
 Source5:	ssh-agent.sh
 Source6:	ssh-agent.conf
 Patch0:		%{name}-no_libnsl.patch
-Patch1:		%{name}-heimdal.patch
-Patch2:		%{name}-linux-ipv6.patch
-Patch3:		%{name}-pam_misc.patch
-Patch4:		%{name}-sigpipe.patch
+Patch1:		%{name}-linux-ipv6.patch
+Patch2:		%{name}-pam_misc.patch
+Patch3:		%{name}-sigpipe.patch
 # http://www.opendarwin.org/projects/openssh-lpk/
-Patch5:		%{name}-lpk-4.3p1-0.3.7.patch
-Patch6:		%{name}-config.patch
-Patch7:		%{name}-pam-conv.patch
+Patch4:		%{name}-lpk-4.3p1-0.3.7.patch
+Patch5:		%{name}-config.patch
 # http://chrootssh.sourceforge.net/download/osshChroot-3.7.1p2.diff
-Patch8:		%{name}-chroot.patch
-Patch9:		%{name}-selinux.patch
+Patch6:		%{name}-chroot.patch
+Patch7:		%{name}-selinux.patch
 # HPN patches rediffed due sigpipe patch.
 # High Performance SSH/SCP - HPN-SSH - http://www.psc.edu/networking/projects/hpn-ssh/
 # http://www.psc.edu/networking/projects/hpn-ssh/openssh-4.2p1-hpn11.diff
-Patch10:	%{name}-4.7p1-hpn13v1.diff
-Patch11:	%{name}-include.patch
+Patch9:	%{name}-4.7p1-hpn13v1.diff
+Patch10:	%{name}-include.patch
+Patch100:	%{name}-heimdal.patch
+Patch101:	%{name}-pam-conv.patch
 URL:		http://www.openssh.com/
 BuildRequires:	%{__perl}
 BuildRequires:	autoconf
@@ -462,17 +462,18 @@ GNOME.
 %prep
 %setup -q
 %patch0 -p1
-%{?with_kerberos5:%patch1 -p1}
+%patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
-%{?with_ldap:%patch5 -p1}
+%{?with_ldap:%patch4 -p1}
+%patch5 -p1
 %patch6 -p1
-#%patch7 -p1
-%patch8 -p1
-%patch9 -p1
-%{?with_hpn:%patch10 -p1}
-%patch11 -p1
+%patch7 -p1
+%{?with_hpn:%patch9 -p1}
+%patch10 -p1
+
+%{?with_kerberos5:%patch100 -p1}
+#%patch101 -p1
 
 %build
 cp /usr/share/automake/config.sub .

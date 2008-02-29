@@ -7,7 +7,7 @@
 %bcond_without	libedit		# without libedit (editline/history support in sftp client)
 %bcond_without	kerberos5	# without kerberos5 support
 %bcond_without	selinux		# build without SELinux support
-%bcond_with	hpn		# with High Performance SSH/SCP - HPN-SSH including Cipher NONE
+%bcond_without	hpn		# High Performance SSH/SCP - HPN-SSH including Cipher NONE
 
 # gtk2-based gnome-askpass means no gnome1-based
 %{?with_gtk:%undefine with_gnome}
@@ -24,7 +24,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	4.7p1
-Release:	2%{?with_hpn:hpn}
+Release:	3
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking

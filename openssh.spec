@@ -7,16 +7,10 @@
 %bcond_without	libedit		# without libedit (editline/history support in sftp client)
 %bcond_without	kerberos5	# without kerberos5 support
 %bcond_without	selinux		# build without SELinux support
-%bcond_with	hpn		# with High Performance SSH/SCP - HPN-SSH (see patch comment)
-%bcond_with	hpn_none	# with hpn (above) and '-z' none cipher option
-#
-%if %{with hpn_none}
-%undefine	with_hpn
-%endif
+%bcond_without	hpn		# High Performance SSH/SCP - HPN-SSH including Cipher NONE
+
 # gtk2-based gnome-askpass means no gnome1-based
 %{?with_gtk:%undefine with_gnome}
-#
-%define		_rel	3
 #
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(de.UTF-8):	OpenSSH - freie Implementation der Secure Shell (SSH)
@@ -30,7 +24,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	4.7p1
-Release:	%{_rel}%{?with_hpn:hpn}%{?with_hpn_none:hpn_none}
+Release:	3
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -56,29 +50,27 @@ Patch7:		%{name}-selinux.patch
 # HPN patches rediffed due sigpipe patch.
 # High Performance SSH/SCP - HPN-SSH - http://www.psc.edu/networking/projects/hpn-ssh/
 # http://www.psc.edu/networking/projects/hpn-ssh/openssh-4.2p1-hpn11.diff
-Patch8:		%{name}-4.3p1-hpn11.patch
-# Adds HPN (see p11) and an undocumented -z none cipher flag
-# http://www.psc.edu/networking/projects/hpn-ssh/openssh-4.2p1-hpn11-none.diff
-Patch9:		%{name}-4.3p1-hpn11-none.patch
+Patch9:	%{name}-4.7p1-hpn13v1.diff
 Patch10:	%{name}-include.patch
+Patch100:	%{name}-heimdal.patch
 URL:		http://www.openssh.com/
 BuildRequires:	%{__perl}
 BuildRequires:	autoconf
 BuildRequires:	automake
 %{?with_gnome:BuildRequires:	gnome-libs-devel}
 %{?with_gtk:BuildRequires:	gtk+2-devel}
-%{?with_kerberos5:BuildRequires:	krb5-devel}
+%{?with_kerberos5:BuildRequires:	heimdal-devel >= 0.7}
 %{?with_libedit:BuildRequires:	libedit-devel}
 %{?with_selinux:BuildRequires:	libselinux-devel}
 BuildRequires:	libwrap-devel
-%{?with_ldap:BuildRequires:	openldap-devel >= 2.4.6}
+%{?with_ldap:BuildRequires:	openldap-devel}
 BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	pam-devel
 %{?with_gtk:BuildRequires:	pkgconfig}
 BuildRequires:	rpmbuild(macros) >= 1.318
 BuildRequires:	zlib-devel
-Requires:	filesystem >= 3.0-11
-Requires:	pam >= 0.99.7.1
+Requires:	filesystem >= 2.0-1
+Requires:	pam >= 0.79.0
 Obsoletes:	ssh
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -245,8 +237,8 @@ Summary(pt_BR.UTF-8):	Clientes do OpenSSH
 Summary(ru.UTF-8):	OpenSSH - клиенты протокола Secure Shell
 Summary(uk.UTF-8):	OpenSSH - клієнти протоколу Secure Shell
 Group:		Applications/Networking
-Provides:	ssh-clients
 Requires:	%{name} = %{epoch}:%{version}-%{release}
+Provides:	ssh-clients
 Obsoletes:	ssh-clients
 
 %description clients
@@ -330,8 +322,6 @@ Summary(pt_BR.UTF-8):	Servidor OpenSSH para comunicações encriptadas
 Summary(ru.UTF-8):	OpenSSH - сервер протокола Secure Shell (sshd)
 Summary(uk.UTF-8):	OpenSSH - сервер протоколу Secure Shell (sshd)
 Group:		Networking/Daemons
-Provides:	ssh-server
-Provides:	user(sshd)
 Requires(post):	chkconfig >= 0.9
 Requires(post):	grep
 Requires(post,preun):	/sbin/chkconfig
@@ -340,9 +330,11 @@ Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/useradd
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	/bin/login
-Requires:	pam >= 0.99.7.1
+Requires:	pam >= 0.77.3
 Requires:	rc-scripts >= 0.4.0.18
 Requires:	util-linux
+Provides:	ssh-server
+Provides:	user(sshd)
 
 %description server
 Ssh (Secure Shell) a program for logging into a remote machine and for
@@ -476,9 +468,10 @@ GNOME.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
-%{?with_hpn:%patch8 -p1}
-%{?with_hpn_none:%patch9 -p1}
+%{?with_hpn:%patch9 -p1}
 %patch10 -p1
+
+%{?with_kerberos5:%patch100 -p1}
 
 %build
 cp /usr/share/automake/config.sub .
@@ -498,10 +491,10 @@ cp /usr/share/automake/config.sub .
 	--with-tcp-wrappers \
 	%{?with_ldap:--with-libs="-lldap -llber"} \
 	%{?with_ldap:--with-cppflags="-DWITH_LDAP_PUBKEY"} \
-	%{?with_kerberos5:--with-kerberos5=/usr} \
+	%{?with_kerberos5:--with-kerberos5} \
 	--with-privsep-path=%{_privsepdir} \
 	--with-pid-dir=%{_localstatedir}/run \
-	--with-xauth=/usr/bin/xauth \
+	--with-xauth=/usr/X11R6/bin/xauth \
 	--enable-utmpx \
 	--enable-wtmpx
 

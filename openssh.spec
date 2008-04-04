@@ -6,7 +6,7 @@
 %bcond_without	libedit		# without libedit (editline/history support in sftp client)
 %bcond_without	kerberos5	# without kerberos5 support
 %bcond_without	selinux		# build without SELinux support
-%bcond_with	hpn		# with High Performance SSH/SCP - HPN-SSH including Cipher NONE
+%bcond_without	hpn		# High Performance SSH/SCP - HPN-SSH including Cipher NONE
 
 # gtk2-based gnome-askpass means no gnome1-based
 %{?with_gtk:%undefine with_gnome}
@@ -23,7 +23,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	5.0p1
-Release:	1
+Release:	2
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -45,8 +45,8 @@ Patch4:		%{name}-lpk-4.3p1-0.3.7.patch
 Patch5:		%{name}-config.patch
 Patch7:		%{name}-selinux.patch
 # High Performance SSH/SCP - HPN-SSH - http://www.psc.edu/networking/projects/hpn-ssh/
-# http://www.psc.edu/networking/projects/hpn-ssh/openssh-4.2p1-hpn11.diff
-Patch9:	%{name}-4.7p1-hpn13v1.diff
+# http://www.psc.edu/networking/projects/hpn-ssh/openssh-4.9p1-hpn13v2.diff.gz
+Patch9:		%{name}-4.9p1-hpn13v2.diff
 Patch10:	%{name}-include.patch
 URL:		http://www.openssh.com/
 BuildRequires:	%{__perl}

@@ -6,7 +6,7 @@
 %bcond_without	libedit		# without libedit (editline/history support in sftp client)
 %bcond_without	kerberos5	# without kerberos5 support
 %bcond_without	selinux		# build without SELinux support
-%bcond_with	hpn		# with High Performance SSH/SCP - HPN-SSH including Cipher NONE
+%bcond_without	hpn		# High Performance SSH/SCP - HPN-SSH including Cipher NONE
 
 # gtk2-based gnome-askpass means no gnome1-based
 %{?with_gtk:%undefine with_gnome}
@@ -45,27 +45,28 @@ Patch4:		%{name}-lpk-4.3p1-0.3.7.patch
 Patch5:		%{name}-config.patch
 Patch7:		%{name}-selinux.patch
 # High Performance SSH/SCP - HPN-SSH - http://www.psc.edu/networking/projects/hpn-ssh/
-# http://www.psc.edu/networking/projects/hpn-ssh/openssh-4.2p1-hpn11.diff
-Patch9:	%{name}-4.7p1-hpn13v1.diff
+# http://www.psc.edu/networking/projects/hpn-ssh/openssh-4.9p1-hpn13v2.diff.gz
+Patch9:		%{name}-4.9p1-hpn13v2.diff
 Patch10:	%{name}-include.patch
+Patch100:	%{name}-heimdal.patch
 URL:		http://www.openssh.com/
 BuildRequires:	%{__perl}
 BuildRequires:	autoconf
 BuildRequires:	automake
 %{?with_gnome:BuildRequires:	gnome-libs-devel}
 %{?with_gtk:BuildRequires:	gtk+2-devel}
-%{?with_kerberos5:BuildRequires:	krb5-devel}
+%{?with_kerberos5:BuildRequires:	heimdal-devel >= 0.7}
 %{?with_libedit:BuildRequires:	libedit-devel}
 %{?with_selinux:BuildRequires:	libselinux-devel}
 BuildRequires:	libwrap-devel
-%{?with_ldap:BuildRequires:	openldap-devel >= 2.4.6}
+%{?with_ldap:BuildRequires:	openldap-devel}
 BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	pam-devel
 %{?with_gtk:BuildRequires:	pkgconfig}
 BuildRequires:	rpmbuild(macros) >= 1.318
 BuildRequires:	zlib-devel
-Requires:	filesystem >= 3.0-11
-Requires:	pam >= 0.99.7.1
+Requires:	filesystem >= 2.0-1
+Requires:	pam >= 0.79.0
 Obsoletes:	ssh
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -325,7 +326,7 @@ Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/useradd
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	/bin/login
-Requires:	pam >= 0.99.7.1
+Requires:	pam >= 0.77.3
 Requires:	rc-scripts >= 0.4.0.18
 Requires:	util-linux
 Provides:	ssh-server
@@ -465,6 +466,8 @@ GNOME.
 %{?with_hpn:%patch9 -p1}
 %patch10 -p1
 
+%{?with_kerberos5:%patch100 -p1}
+
 %build
 cp /usr/share/automake/config.sub .
 %{__aclocal}
@@ -482,10 +485,10 @@ cp /usr/share/automake/config.sub .
 	--with-tcp-wrappers \
 	%{?with_ldap:--with-libs="-lldap -llber"} \
 	%{?with_ldap:--with-cppflags="-DWITH_LDAP_PUBKEY"} \
-	%{?with_kerberos5:--with-kerberos5=/usr} \
+	%{?with_kerberos5:--with-kerberos5} \
 	--with-privsep-path=%{_privsepdir} \
 	--with-pid-dir=%{_localstatedir}/run \
-	--with-xauth=/usr/bin/xauth \
+	--with-xauth=/usr/X11R6/bin/xauth \
 	--enable-utmpx \
 	--enable-wtmpx
 

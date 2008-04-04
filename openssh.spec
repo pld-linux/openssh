@@ -1,6 +1,5 @@
 #
 # Conditional build:
-%bcond_without	chroot		# without chrooted user environment support
 %bcond_with	gnome		# with gnome-askpass (GNOME 1.x) utility
 %bcond_without	gtk		# without GTK+ (2.x)
 %bcond_with	ldap		# with ldap support
@@ -23,13 +22,13 @@ Summary(pt_BR.UTF-8):	Implementação livre do SSH
 Summary(ru.UTF-8):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
-Version:	4.7p1
-Release:	4
+Version:	5.0p1
+Release:	1
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
 Source0:	ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
-# Source0-md5:	50a800fd2c6def9e9a53068837e87b91
+# Source0-md5:	1f1dfaa775f33dd3328169de9bdc292a
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 # Source1-md5:	66943d481cc422512b537bcc2c7400d1
 Source2:	%{name}d.init
@@ -44,8 +43,6 @@ Patch3:		%{name}-sigpipe.patch
 # http://www.opendarwin.org/projects/openssh-lpk/
 Patch4:		%{name}-lpk-4.3p1-0.3.7.patch
 Patch5:		%{name}-config.patch
-# http://chrootssh.sourceforge.net/download/osshChroot-3.7.1p2.diff
-Patch6:		%{name}-chroot.patch
 Patch7:		%{name}-selinux.patch
 # High Performance SSH/SCP - HPN-SSH - http://www.psc.edu/networking/projects/hpn-ssh/
 # http://www.psc.edu/networking/projects/hpn-ssh/openssh-4.2p1-hpn11.diff
@@ -464,7 +461,6 @@ GNOME.
 %patch3 -p1
 %{?with_ldap:%patch4 -p1}
 %patch5 -p1
-%patch6 -p1
 %patch7 -p1
 %{?with_hpn:%patch9 -p1}
 %patch10 -p1
@@ -473,7 +469,6 @@ GNOME.
 cp /usr/share/automake/config.sub .
 %{__aclocal}
 %{__autoconf}
-%{?with_chroot:CPPFLAGS="-DCHROOT"}
 %configure \
 	PERL=%{__perl} \
 	--with-dns \

@@ -45,8 +45,8 @@ Patch4:		%{name}-lpk-4.3p1-0.3.7.patch
 Patch5:		%{name}-config.patch
 Patch7:		%{name}-selinux.patch
 # High Performance SSH/SCP - HPN-SSH - http://www.psc.edu/networking/projects/hpn-ssh/
-# http://www.psc.edu/networking/projects/hpn-ssh/openssh-4.2p1-hpn11.diff
-Patch9:	%{name}-4.7p1-hpn13v1.diff
+# http://www.psc.edu/networking/projects/hpn-ssh/openssh-4.9p1-hpn13v2.diff.gz
+Patch9:		%{name}-4.9p1-hpn13v2.diff
 Patch10:	%{name}-include.patch
 Patch100:	%{name}-heimdal.patch
 URL:		http://www.openssh.com/

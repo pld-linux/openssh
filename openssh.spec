@@ -471,6 +471,7 @@ GNOME.
 cp /usr/share/automake/config.sub .
 %{__aclocal}
 %{__autoconf}
+CPPFLAGS="-DCHROOT"
 %configure \
 	PERL=%{__perl} \
 	--with-dns \

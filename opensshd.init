@@ -61,7 +61,7 @@ start() {
 	# Check if the service is already running?
 	if [ ! -f /var/lock/subsys/sshd ]; then
 		msg_starting OpenSSH
-		daemon /usr/sbin/sshd
+		daemon --pidfile /var/run/sshd.pid /usr/sbin/sshd
 		RETVAL=$?
 		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/sshd
 	else

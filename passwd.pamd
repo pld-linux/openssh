@@ -1,5 +1,0 @@
-#%PAM-1.0
-auth		required	pam_listfile.so item=user sense=deny file=/etc/security/blacklist.passwd onerr=succeed
-auth		include		system-auth
-account		include		system-auth
-password	include		system-auth

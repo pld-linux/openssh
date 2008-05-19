@@ -23,7 +23,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	5.0p1
-Release:	1
+Release:	2
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -45,9 +45,9 @@ Patch4:		%{name}-lpk-4.3p1-0.3.7.patch
 Patch5:		%{name}-config.patch
 Patch7:		%{name}-selinux.patch
 # High Performance SSH/SCP - HPN-SSH - http://www.psc.edu/networking/projects/hpn-ssh/
-# http://www.psc.edu/networking/projects/hpn-ssh/openssh-4.9p1-hpn13v2.diff.gz
-Patch9:		%{name}-4.9p1-hpn13v2.diff
+Patch9:		%{name}-5.0p1-hpn13v4.diff
 Patch10:	%{name}-include.patch
+Patch11:	%{name}-chroot.patch
 Patch100:	%{name}-heimdal.patch
 URL:		http://www.openssh.com/
 BuildRequires:	%{__perl}
@@ -465,6 +465,7 @@ GNOME.
 %patch7 -p1
 %{?with_hpn:%patch9 -p1}
 %patch10 -p1
+%patch11 -p1
 
 %{?with_kerberos5:%patch100 -p1}
 
@@ -472,6 +473,7 @@ GNOME.
 cp /usr/share/automake/config.sub .
 %{__aclocal}
 %{__autoconf}
+CPPFLAGS="-DCHROOT"
 %configure \
 	PERL=%{__perl} \
 	--with-dns \

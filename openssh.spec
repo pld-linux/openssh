@@ -327,7 +327,7 @@ Requires(pre):	/usr/sbin/useradd
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	/bin/login
 Requires:	pam >= 0.77.3
-Requires:	rc-scripts >= 0.4.0.18
+Requires:	rc-scripts >= 0.4.1.23
 Requires:	util-linux
 Provides:	ssh-server
 Provides:	user(sshd)

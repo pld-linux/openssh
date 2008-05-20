@@ -23,7 +23,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	5.0p1
-Release:	4
+Release:	5
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -49,6 +49,7 @@ Patch7:		%{name}-selinux.patch
 Patch9:		%{name}-5.0p1-hpn13v4.diff
 Patch10:	%{name}-include.patch
 Patch11:	%{name}-chroot.patch
+Patch12:	http://people.debian.org/~cjwatson/%{name}-blacklist.diff
 URL:		http://www.openssh.com/
 BuildRequires:	%{__perl}
 BuildRequires:	autoconf
@@ -67,6 +68,7 @@ BuildRequires:	rpmbuild(macros) >= 1.318
 BuildRequires:	zlib-devel
 Requires:	filesystem >= 3.0-11
 Requires:	pam >= 0.99.7.1
+Suggests:	openssh-blacklist
 Obsoletes:	ssh
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -466,6 +468,7 @@ GNOME.
 %{?with_hpn:%patch9 -p1}
 %patch10 -p1
 %patch11 -p1
+%patch12 -p1
 
 %build
 cp /usr/share/automake/config.sub .
@@ -593,7 +596,9 @@ fi
 %defattr(644,root,root,755)
 %doc *.RNG TODO README OVERVIEW CREDITS Change*
 %attr(755,root,root) %{_bindir}/ssh-key*
+%attr(755,root,root) %{_bindir}/ssh-vulnkey*
 %{_mandir}/man1/ssh-key*.1*
+%{_mandir}/man1/ssh-vulnkey*.1*
 %dir %{_sysconfdir}
 %dir %{_libexecdir}
 

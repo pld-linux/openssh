@@ -69,6 +69,7 @@ BuildRequires:	zlib-devel
 Requires:	filesystem >= 3.0-11
 Requires:	pam >= 0.99.7.1
 Suggests:	openssh-blacklist
+Suggests:	xorg-app-xauth
 Obsoletes:	ssh
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 

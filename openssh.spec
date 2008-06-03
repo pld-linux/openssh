@@ -23,7 +23,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	5.0p1
-Release:	5
+Release:	6
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -50,6 +50,7 @@ Patch9:		%{name}-5.0p1-hpn13v4.diff
 Patch10:	%{name}-include.patch
 Patch11:	%{name}-chroot.patch
 Patch12:	http://people.debian.org/~cjwatson/%{name}-blacklist.diff
+Patch13:	%{name}-unbreakalive.patch
 URL:		http://www.openssh.com/
 BuildRequires:	%{__perl}
 BuildRequires:	autoconf
@@ -470,6 +471,7 @@ GNOME.
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
+%patch13 -p0
 
 %build
 cp /usr/share/automake/config.sub .

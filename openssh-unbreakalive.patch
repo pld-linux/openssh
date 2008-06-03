@@ -1,0 +1,16 @@
+diff -u -p packet.c
+--- packet.c	8 May 2008 06:59:01 -0000
++++ packet.c	19 May 2008 04:00:34 -0000
+@@ -1185,9 +1185,10 @@ packet_read_poll_seqnr(u_int32_t *seqnr_
+ 	for (;;) {
+ 		if (compat20) {
+ 			type = packet_read_poll2(seqnr_p);
+-			keep_alive_timeouts = 0;
+-			if (type)
++			if (type) {
++				keep_alive_timeouts = 0;
+ 				DBG(debug("received packet type %d", type));
++			}
+ 			switch (type) {
+ 			case SSH2_MSG_IGNORE:
+ 				debug3("Received SSH2_MSG_IGNORE");

@@ -23,7 +23,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	5.0p1
-Release:	3
+Release:	4
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -48,6 +48,7 @@ Patch7:		%{name}-selinux.patch
 Patch9:		%{name}-5.0p1-hpn13v4.diff
 Patch10:	%{name}-include.patch
 Patch11:	%{name}-chroot.patch
+Patch12:	%{name}-unbreakalive.patch
 Patch100:	%{name}-heimdal.patch
 URL:		http://www.openssh.com/
 BuildRequires:	%{__perl}
@@ -466,6 +467,7 @@ GNOME.
 %{?with_hpn:%patch9 -p1}
 %patch10 -p1
 %patch11 -p1
+%patch12 -p0
 
 %{?with_kerberos5:%patch100 -p1}
 

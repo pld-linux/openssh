@@ -1,0 +1,2 @@
+- changed default HPN bcond to off due to some uncompatibilities with eg. PuTTY
+  software. Th and Ti did it earlier. Release 3.

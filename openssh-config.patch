@@ -31,17 +31,15 @@
  
  # Set this to 'yes' to enable PAM authentication, account processing, 
  # and session processing. If this is enabled, PAM authentication will 
-@@ -78,8 +79,16 @@
+@@ -89,10 +89,12 @@
+ # If you just want the PAM account and session checks to run without
  # PAM authentication, then enable this but set PasswordAuthentication
  # and ChallengeResponseAuthentication to 'no'.
- #UsePAM no
+-#UsePAM no
 +UsePAM yes
-+
-+# Set this to 'yes' to enable support for chrooted user environment.
-+# You must create such environment before you can use this feature. 
-+#UseChroot yes
  
- #AllowTcpForwarding yes
+ #AllowAgentForwarding yes
+-#AllowTcpForwarding yes
 +# Security advisory:
 +# http://securitytracker.com/alerts/2004/Sep/1011143.html
 +AllowTcpForwarding no

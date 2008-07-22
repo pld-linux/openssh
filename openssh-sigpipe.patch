@@ -74,12 +74,12 @@ diff -urN openssh-3.9p1.org/ssh.0 openssh-3.9p1/ssh.0
  "           [-D [bind_address:]port] [-e escape_char] [-F configfile]\n"
  "           [-i identity_file] [-L [bind_address:]port:host:hostport]\n"
  "           [-l login_name] [-m mac_spec] [-O ctl_cmd] [-o option] [-p port]\n"
-@@ -244,7 +247,7 @@
+@@ -275,7 +275,7 @@
  
- again:
- 	while ((opt = getopt(ac, av,
--	    "1246ab:c:e:fgi:kl:m:no:p:qstvxACD:F:I:KL:MNO:PR:S:TVw:XY")) != -1) {
-+	    "1246ab:c:e:fgi:kl:m:no:p:qstvxABCD:F:I:KL:MNO:PR:S:TVw:XY")) != -1) {
+  again:
+ 	while ((opt = getopt(ac, av, "1246ab:c:e:fgi:kl:m:no:p:qstvx"
+-	    "ACD:F:I:KL:MNO:PR:S:TVw:XY")) != -1) {
++	    "ABCD:F:I:KL:MNO:PR:S:TVw:XY")) != -1) {
  		switch (opt) {
  		case '1':
  			options.protocol = SSH_PROTO_1;

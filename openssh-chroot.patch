@@ -106,17 +106,17 @@
  			perror("unable to set user context (setuser)");
 --- openssh-3.7.1p2/sshd_config	2003-09-02 14:51:18.000000000 +0200
 +++ openssh-3.7.1p2.pius/sshd_config	2003-10-07 20:49:08.000000000 +0200
-@@ -71,6 +71,10 @@
- # bypass the setting of 'PasswordAuthentication'
- #UsePAM yes
+@@ -91,6 +91,10 @@
+ # and ChallengeResponseAuthentication to 'no'.
+ UsePAM yes
  
 +# Set this to 'yes' to enable support for chrooted user environment.
-+# You must create such environment before you can use this feature. 
++# You must create such environment before you can use this feature.
 +#UseChroot yes
 +
- #AllowTcpForwarding yes
- #GatewayPorts no
- #X11Forwarding no
+ #AllowAgentForwarding yes
+ # Security advisory:
+ # http://securitytracker.com/alerts/2004/Sep/1011143.html
 --- openssh-4.4p1/sshd_config.0.orig	2006-09-26 13:03:48.000000000 +0200
 +++ openssh-4.4p1/sshd_config.0	2006-10-05 10:11:41.615971000 +0200
 @@ -451,6 +451,16 @@

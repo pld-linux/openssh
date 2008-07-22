@@ -22,13 +22,13 @@ Summary(pt_BR.UTF-8):	Implementação livre do SSH
 Summary(ru.UTF-8):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
-Version:	5.0p1
-Release:	7
+Version:	5.1p1
+Release:	1
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
 Source0:	ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
-# Source0-md5:	1f1dfaa775f33dd3328169de9bdc292a
+# Source0-md5:	03f2d0c1b5ec60d4ac9997a146d2faec
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 # Source1-md5:	66943d481cc422512b537bcc2c7400d1
 Source2:	%{name}d.init
@@ -37,7 +37,6 @@ Source4:	%{name}.sysconfig
 Source5:	ssh-agent.sh
 Source6:	ssh-agent.conf
 Patch0:		%{name}-no_libnsl.patch
-Patch1:		%{name}-linux-ipv6.patch
 Patch2:		%{name}-pam_misc.patch
 Patch3:		%{name}-sigpipe.patch
 # http://www.opendarwin.org/projects/openssh-lpk/
@@ -50,7 +49,6 @@ Patch9:		%{name}-5.0p1-hpn13v4.diff
 Patch10:	%{name}-include.patch
 Patch11:	%{name}-chroot.patch
 Patch12:	http://people.debian.org/~cjwatson/%{name}-blacklist.diff
-Patch13:	%{name}-unbreakalive.patch
 URL:		http://www.openssh.com/
 BuildRequires:	%{__perl}
 BuildRequires:	autoconf
@@ -461,7 +459,6 @@ GNOME.
 %prep
 %setup -q
 %patch0 -p1
-%patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %{?with_ldap:%patch4 -p1}
@@ -471,7 +468,6 @@ GNOME.
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
-%patch13 -p0
 
 %build
 cp /usr/share/automake/config.sub .
@@ -649,6 +645,7 @@ fi
 %{_mandir}/man8/sftp-server.8*
 %{_mandir}/man8/ssh-keysign.8*
 %{_mandir}/man5/sshd_config.5*
+%{_mandir}/man5/moduli.5*
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/sshd_config
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/sshd
 %attr(640,root,root) %{_sysconfdir}/moduli

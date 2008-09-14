@@ -51,7 +51,7 @@
  #Banner /some/path
  
 +# Accept locale-related environment variables
-+AcceptEnv LANG TZ LC_*
++AcceptEnv LANG LC_* LANGUAGE TZ
 +
  # override default of no subsystems
  Subsystem	sftp	/usr/libexec/sftp-server
@@ -93,4 +93,4 @@
 +	ServerAliveCountMax 10
 +	TCPKeepAlive no
 +# Send locale-related environment variables
-+	SendEnv LANG TZ LC_*
++	SendEnv LANG LC_* LANGUAGE TZ

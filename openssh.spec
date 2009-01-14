@@ -1,4 +1,8 @@
 #
+# TODO:
+# - check this:
+#   http://securitytracker.com/alerts/2008/Nov/1021235.html (CVE-2008-5161)
+#
 # Conditional build:
 %bcond_with	gnome		# with gnome-askpass (GNOME 1.x) utility
 %bcond_without	gtk		# without GTK+ (2.x)
@@ -6,7 +10,7 @@
 %bcond_without	libedit		# without libedit (editline/history support in sftp client)
 %bcond_without	kerberos5	# without kerberos5 support
 %bcond_without	selinux		# build without SELinux support
-%bcond_with	hpn		# High Performance SSH/SCP - HPN-SSH including Cipher NONE
+%bcond_with	hpn		# High Performance SSH/SCP - HPN-SSH including Cipher NONE (broken too often)
 
 # gtk2-based gnome-askpass means no gnome1-based
 %{?with_gtk:%undefine with_gnome}
@@ -23,7 +27,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	5.1p1
-Release:	2
+Release:	3
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -542,6 +546,9 @@ EOF
 ln -s %{_libexecdir}/ssh/ssh-askpass $RPM_BUILD_ROOT%{_libexecdir}/ssh-askpass
 %endif
 
+install contrib/ssh-copy-id $RPM_BUILD_ROOT%{_bindir}
+install contrib/ssh-copy-id.1 $RPM_BUILD_ROOT%{_mandir}/man1
+
 rm -f	$RPM_BUILD_ROOT%{_mandir}/man1/slogin.1
 echo ".so ssh.1" > $RPM_BUILD_ROOT%{_mandir}/man1/slogin.1
 
@@ -608,6 +615,7 @@ fi
 %attr(755,root,root) %{_bindir}/sftp
 %attr(755,root,root) %{_bindir}/ssh-agent
 %attr(755,root,root) %{_bindir}/ssh-add
+%attr(755,root,root) %{_bindir}/ssh-copy-id
 %attr(755,root,root) %{_bindir}/scp
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ssh_config
 %config(noreplace,missingok) %verify(not md5 mtime size) /etc/env.d/SSH_ASKPASS
@@ -617,6 +625,7 @@ fi
 %{_mandir}/man1/sftp.1*
 %{_mandir}/man1/ssh-agent.1*
 %{_mandir}/man1/ssh-add.1*
+%{_mandir}/man1/ssh-copy-id.1*
 %{_mandir}/man5/ssh_config.5*
 %lang(it) %{_mandir}/it/man1/ssh.1*
 %lang(it) %{_mandir}/it/man5/ssh_config.5*

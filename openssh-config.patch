@@ -75,9 +75,9 @@
  #   CheckHostIP yes
  #   AddressFamily any
 @@ -42,3 +45,19 @@
- #   Tunnel no
  #   TunnelDevice any:any
  #   PermitLocalCommand no
+ #   VisualHostKey no
 +
 +Host *
 +	GSSAPIAuthentication yes

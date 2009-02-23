@@ -37,8 +37,8 @@ diff -urN openssh-3.9p1.org/ssh.0 openssh-3.9p1/ssh.0
  .Nd OpenSSH SSH client (remote login program)
  .Sh SYNOPSIS
  .Nm ssh
--.Op Fl 1246AaCfgKkMNnqsTtVvXxY
-+.Op Fl 1246AaBCfgKkMNnqsTtVvXxY
+-.Op Fl 1246AaCfgKkMNnqsTtVvXxYy
++.Op Fl 1246AaBCfgKkMNnqsTtVvXxYy
  .Op Fl b Ar bind_address
  .Op Fl c Ar cipher_spec
  .Oo Fl D\ \&
@@ -69,8 +69,8 @@ diff -urN openssh-3.9p1.org/ssh.0 openssh-3.9p1/ssh.0
  usage(void)
  {
  	fprintf(stderr,
--"usage: ssh [-1246AaCfgKkMNnqsTtVvXxY] [-b bind_address] [-c cipher_spec]\n"
-+"usage: ssh [-1246AaBCfgKkMNnqsTtVvXxY] [-b bind_address] [-c cipher_spec]\n"
+-"usage: ssh [-1246AaCfgKkMNnqsTtVvXxYy] [-b bind_address] [-c cipher_spec]\n"
++"usage: ssh [-1246AaBCfgKkMNnqsTtVvXxYy] [-b bind_address] [-c cipher_spec]\n"
  "           [-D [bind_address:]port] [-e escape_char] [-F configfile]\n"
  "           [-i identity_file] [-L [bind_address:]port:host:hostport]\n"
  "           [-l login_name] [-m mac_spec] [-O ctl_cmd] [-o option] [-p port]\n"
@@ -78,8 +78,8 @@ diff -urN openssh-3.9p1.org/ssh.0 openssh-3.9p1/ssh.0
  
   again:
  	while ((opt = getopt(ac, av, "1246ab:c:e:fgi:kl:m:no:p:qstvx"
--	    "ACD:F:I:KL:MNO:PR:S:TVw:XY")) != -1) {
-+	    "ABCD:F:I:KL:MNO:PR:S:TVw:XY")) != -1) {
+-	    "ACD:F:I:KL:MNO:PR:S:TVw:XYy")) != -1) {
++	    "ABCD:F:I:KL:MNO:PR:S:TVw:XYy")) != -1) {
  		switch (opt) {
  		case '1':
  			options.protocol = SSH_PROTO_1;

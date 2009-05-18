@@ -1,8 +1,3 @@
-#
-# TODO:
-# - check this:
-#   http://securitytracker.com/alerts/2008/Nov/1021235.html (CVE-2008-5161)
-#
 # Conditional build:
 %bcond_with	gnome		# with gnome-askpass (GNOME 1.x) utility
 %bcond_without	gtk		# without GTK+ (2.x)

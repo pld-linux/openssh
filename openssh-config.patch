@@ -94,3 +94,4 @@
 +	TCPKeepAlive no
 +# Send locale-related environment variables, also pass GIT vars
 +	SendEnv LANG LC_* LANGUAGE TZ GIT_*
++	HashKnownHosts yes

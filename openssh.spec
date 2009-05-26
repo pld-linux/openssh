@@ -1,7 +1,7 @@
 # Conditional build:
 %bcond_with	gnome		# with gnome-askpass (GNOME 1.x) utility
 %bcond_without	gtk		# without GTK+ (2.x)
-%bcond_with	ldap		# with ldap support
+%bcond_without	ldap		# with ldap support
 %bcond_without	libedit		# without libedit (editline/history support in sftp client)
 %bcond_without	kerberos5	# without kerberos5 support
 %bcond_without	selinux		# build without SELinux support
@@ -22,7 +22,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	5.2p1
-Release:	1
+Release:	2
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -35,11 +35,12 @@ Source3:	%{name}d.pamd
 Source4:	%{name}.sysconfig
 Source5:	ssh-agent.sh
 Source6:	ssh-agent.conf
+Source7:	%{name}-lpk.schema
 Patch0:		%{name}-no_libnsl.patch
 Patch2:		%{name}-pam_misc.patch
 Patch3:		%{name}-sigpipe.patch
-# http://www.opendarwin.org/projects/openssh-lpk/
-Patch4:		%{name}-lpk-4.3p1-0.3.7.patch
+# http://code.google.com/p/openssh-lpk/
+Patch4:		%{name}-lpk.patch
 Patch5:		%{name}-config.patch
 Patch7:		%{name}-selinux.patch
 # High Performance SSH/SCP - HPN-SSH - http://www.psc.edu/networking/projects/hpn-ssh/
@@ -74,6 +75,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_sysconfdir	/etc/ssh
 %define		_libexecdir	%{_libdir}/%{name}
 %define		_privsepdir	/usr/share/empty
+%define		schemadir	/usr/share/openldap/schema
 
 %description
 Ssh (Secure Shell) a program for logging into a remote machine and for
@@ -455,6 +457,20 @@ Ssh (Secure Shell) - це програма для "заходу" (login) до в
 Цей пакет містить діалог вводу ключової фрази для використання під
 GNOME.
 
+%package -n openldap-schema-openssh-lpk
+Summary:	OpenSSH LDAP Public Key schema
+Summary(pl.UTF-8):	Schemat klucza publicznego LDAP dla OpenSSH
+Group:		Networking/Daemons
+Requires(post,postun):	sed >= 4.0
+Requires:	openldap-servers
+
+%description -n openldap-schema-openssh-lpk
+This package contains OpenSSH LDAP Public Key schema for openldap.
+
+%description -n openldap-schema-openssh-lpk -l pl.UTF-8
+Ten pakiet zawiera schemat klucza publicznego LDAP dla OpenSSH
+dla openldap-a.
+
 %prep
 %setup -q
 %patch0 -p1
@@ -510,7 +526,7 @@ cd contrib
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{pam.d,rc.d/init.d,sysconfig,security,env.d}} \
-	$RPM_BUILD_ROOT%{_libexecdir}/ssh
+	$RPM_BUILD_ROOT{%{_libexecdir}/ssh,%{schemadir}}
 install -d $RPM_BUILD_ROOT/etc/{profile.d,X11/xinit/xinitrc.d}
 
 %{__make} install \
@@ -524,6 +540,7 @@ install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/sshd
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/profile.d
 ln -sf	/etc/profile.d/ssh-agent.sh $RPM_BUILD_ROOT/etc/X11/xinit/xinitrc.d/ssh-agent.sh
 install %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}
+install %{SOURCE7} $RPM_BUILD_ROOT%{schemadir}
 
 %if %{with gnome}
 install contrib/gnome-ssh-askpass1 $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
@@ -664,4 +681,10 @@ fi
 %dir %{_libexecdir}/ssh
 %attr(755,root,root) %{_libexecdir}/ssh/ssh-askpass
 %attr(755,root,root) %{_libexecdir}/ssh-askpass
+%endif
+
+%if %{with ldap}
+%files -n openldap-schema-openssh-lpk
+%defattr(644,root,root,755)
+%{schemadir}/openssh-lpk.schema
 %endif

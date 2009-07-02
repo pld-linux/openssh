@@ -22,7 +22,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	5.2p1
-Release:	3
+Release:	4
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -55,7 +55,7 @@ BuildRequires:	autoconf
 BuildRequires:	automake
 %{?with_gnome:BuildRequires:	gnome-libs-devel}
 %{?with_gtk:BuildRequires:	gtk+2-devel}
-%{?with_kerberos5:BuildRequires:	krb5-devel}
+%{?with_kerberos5:BuildRequires:	heimdal-devel}
 %{?with_libedit:BuildRequires:	libedit-devel}
 %{?with_selinux:BuildRequires:	libselinux-devel}
 BuildRequires:	libwrap-devel

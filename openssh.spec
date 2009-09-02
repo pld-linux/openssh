@@ -22,7 +22,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	5.2p1
-Release:	5
+Release:	6
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -328,7 +328,7 @@ Requires(postun):	/usr/sbin/userdel
 Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/useradd
 Requires:	%{name} = %{epoch}:%{version}-%{release}
-Requires:	/bin/login
+Suggests:	/bin/login
 Requires:	pam >= 0.99.7.1
 Requires:	rc-scripts >= 0.4.1.23
 Requires:	util-linux

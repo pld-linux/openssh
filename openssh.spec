@@ -44,8 +44,8 @@ Patch4:		%{name}-lpk.patch
 Patch5:		%{name}-config.patch
 Patch7:		%{name}-selinux.patch
 # High Performance SSH/SCP - HPN-SSH - http://www.psc.edu/networking/projects/hpn-ssh/
-# http://www.psc.edu/networking/projects/hpn-ssh/openssh-4.9p1-hpn13v2.diff.gz
-Patch9:		%{name}-5.0p1-hpn13v4.diff
+# http://www.psc.edu/networking/projects/hpn-ssh/openssh-5.2p1-hpn13v6.diff.gz
+Patch9:		%{name}-5.2p1-hpn13v6.diff
 Patch10:	%{name}-include.patch
 Patch11:	%{name}-chroot.patch
 Patch12:	http://people.debian.org/~cjwatson/%{name}-blacklist.diff
@@ -91,21 +91,12 @@ all patented algorithms to seperate libraries (OpenSSL).
 This package includes the core files necessary for both the OpenSSH
 client and server. To make this package useful, you should also
 install openssh-clients, openssh-server, or both.
-%if %{with hpn} || %{with hpn_none}
+%if %{with hpn}
 This release includes High Performance SSH/SCP patches from
 http://www.psc.edu/networking/projects/hpn-ssh/ which are supposed
 to increase throughput on fast connections with high RTT (20-150 msec).
 See the website for '-w' values for your connection and /proc/sys TCP
 values. BTW. in a LAN you have got generally RTT < 1 msec.
-%endif
-%if %{with hpn_none}
-It also includes an undocumented '-z' option which switches
-the cipher to none after authentication is completed. Data is
-still secured from tampering and corruption in transit through
-the use of the Message Authentication Code (MAC).
-This option will significantly reduce the number of cpu cycles used
-by the SSH/SCP process. This may allow some users to see significant
-improvement in (sniffable) data tranfer rates.
 %endif
 
 %description -l de.UTF-8
@@ -155,22 +146,13 @@ pomiędzy dwoma hostami.
 Ten pakiet zawiera podstawowe pliki potrzebne zarówno po stronie
 klienta jak i serwera OpenSSH. Aby był użyteczny, trzeba zainstalować
 co najmniej jeden z pakietów: openssh-clients lub openssh-server.
-%if %{with hpn} || %{with hpn_none}
+%if %{with hpn}
 Ta wersja zawiera łaty z projektu High Performance SSH/SCP
 http://www.psc.edu/networking/projects/hpn-ssh/, które mają na celu
 zwiększenie przepustowości transmisji dla szybkich połączeń
 z dużym RTT (20-150 msec). Na stronie projektu znaleźć można
 odpowednie dla danego połączenia wartości parametru '-w' oraz
 opcje /proc/sys dla TCP. Nawiasem mówiąc w sieciach LAN RTT < 1 msec.
-%endif
-%if %{with hpn_none}
-Obsługiwana jest również nieudokumentowana opcja '-z' odpowiedzialna
-za wyłączenie szyfrowania danych po zakończeniu procesu uwierzytelniania.
-Dane są zabezpieczone przed modyfikacją lub uszkodzeniem przez
-stosowanie Message Authentication Code (MAC).
-Opcja ta znacznie redukuje liczbę cykli procesora zużywanych przez
-procesy SSH/SCP. W wybranych zastosowaniach może ona wpłynąć
-na wyraźne przyspieszenie (podsłuchiwalnej) transmisji danych.
 %endif
 
 %description -l pt.UTF-8
@@ -328,10 +310,10 @@ Requires(postun):	/usr/sbin/userdel
 Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/useradd
 Requires:	%{name} = %{epoch}:%{version}-%{release}
-Suggests:	/bin/login
 Requires:	pam >= 0.99.7.1
 Requires:	rc-scripts >= 0.4.1.23
 Requires:	util-linux
+Suggests:	/bin/login
 Provides:	ssh-server
 Provides:	user(sshd)
 
@@ -468,8 +450,8 @@ Requires:	openldap-servers
 This package contains OpenSSH LDAP Public Key schema for openldap.
 
 %description -n openldap-schema-openssh-lpk -l pl.UTF-8
-Ten pakiet zawiera schemat klucza publicznego LDAP dla OpenSSH
-dla openldap-a.
+Ten pakiet zawiera schemat klucza publicznego LDAP dla OpenSSH dla
+openldap-a.
 
 %prep
 %setup -q

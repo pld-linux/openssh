@@ -22,7 +22,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	5.2p1
-Release:	6
+Release:	2
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -36,6 +36,7 @@ Source4:	%{name}.sysconfig
 Source5:	ssh-agent.sh
 Source6:	ssh-agent.conf
 Source7:	%{name}-lpk.schema
+Patch100:	%{name}-heimdal.patch
 Patch0:		%{name}-no_libnsl.patch
 Patch2:		%{name}-pam_misc.patch
 Patch3:		%{name}-sigpipe.patch
@@ -55,20 +56,18 @@ BuildRequires:	autoconf
 BuildRequires:	automake
 %{?with_gnome:BuildRequires:	gnome-libs-devel}
 %{?with_gtk:BuildRequires:	gtk+2-devel}
-%{?with_kerberos5:BuildRequires:	heimdal-devel}
+%{?with_kerberos5:BuildRequires:	heimdal-devel >= 0.7}
 %{?with_libedit:BuildRequires:	libedit-devel}
 %{?with_selinux:BuildRequires:	libselinux-devel}
 BuildRequires:	libwrap-devel
-%{?with_ldap:BuildRequires:	openldap-devel >= 2.4.6}
+%{?with_ldap:BuildRequires:	openldap-devel}
 BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	pam-devel
 %{?with_gtk:BuildRequires:	pkgconfig}
 BuildRequires:	rpmbuild(macros) >= 1.318
 BuildRequires:	zlib-devel
-Requires:	filesystem >= 3.0-11
-Requires:	pam >= 0.99.7.1
-Suggests:	openssh-blacklist
-Suggests:	xorg-app-xauth
+Requires:	filesystem >= 2.0-1
+Requires:	pam >= 0.79.0
 Obsoletes:	ssh
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -310,7 +309,7 @@ Requires(postun):	/usr/sbin/userdel
 Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/useradd
 Requires:	%{name} = %{epoch}:%{version}-%{release}
-Requires:	pam >= 0.99.7.1
+Requires:	pam >= 0.77.3
 Requires:	rc-scripts >= 0.4.1.23
 Requires:	util-linux
 Suggests:	/bin/login
@@ -455,6 +454,7 @@ openldap-a.
 
 %prep
 %setup -q
+%{?with_kerberos5:%patch100 -p1}
 %patch0 -p1
 %patch2 -p1
 %patch3 -p1
@@ -484,10 +484,10 @@ CPPFLAGS="-DCHROOT"
 	--with-tcp-wrappers \
 	%{?with_ldap:--with-libs="-lldap -llber"} \
 	%{?with_ldap:--with-cppflags="-DWITH_LDAP_PUBKEY"} \
-	%{?with_kerberos5:--with-kerberos5=/usr} \
+	%{?with_kerberos5:--with-kerberos5} \
 	--with-privsep-path=%{_privsepdir} \
 	--with-pid-dir=%{_localstatedir}/run \
-	--with-xauth=/usr/bin/xauth \
+	--with-xauth=/usr/X11R6/bin/xauth \
 	--enable-utmpx \
 	--enable-wtmpx
 

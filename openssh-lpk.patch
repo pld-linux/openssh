@@ -1205,12 +1205,12 @@ diff -Nuar --exclude '*.orig' --exclude '*.rej' openssh-5.1p1.orig/lpk-user-exam
 diff -Nuar --exclude '*.orig' --exclude '*.rej' openssh-5.1p1.orig/Makefile.in openssh-5.1p1+lpk/Makefile.in
 --- openssh-5.1p1.orig/Makefile.in	2008-07-08 07:21:12.000000000 -0700
 +++ openssh-5.1p1+lpk/Makefile.in	2008-08-23 15:02:47.000000000 -0700
-@@ -86,7 +86,7 @@
- 	auth-krb5.o \
+@@ -88,7 +88,7 @@
  	auth2-gss.o gss-serv.o gss-serv-krb5.o \
  	loginrec.o auth-pam.o auth-shadow.o auth-sia.o md5crypt.o \
--	audit.o audit-bsm.o platform.o sftp-server.o sftp-common.o
-+	audit.o audit-bsm.o platform.o ldapauth.o sftp-server.o sftp-common.o
+ 	audit.o audit-bsm.o platform.o sftp-server.o sftp-common.o \
+-	roaming_common.o
++	roaming_common.o ldapauth.o
  
  MANPAGES	= moduli.5.out scp.1.out ssh-add.1.out ssh-agent.1.out ssh-keygen.1.out ssh-keyscan.1.out ssh.1.out sshd.8.out sftp-server.8.out sftp.1.out ssh-rand-helper.8.out ssh-keysign.8.out sshd_config.5.out ssh_config.5.out
  MANPAGES_IN	= moduli.5 scp.1 ssh-add.1 ssh-agent.1 ssh-keygen.1 ssh-keyscan.1 ssh.1 sshd.8 sftp-server.8 sftp.1 ssh-rand-helper.8 ssh-keysign.8 sshd_config.5 ssh_config.5
@@ -1637,7 +1637,7 @@ diff -Nuar --exclude '*.orig' --exclude '*.rej' openssh-5.1p1.orig/servconf.c op
 +	{ _DEFAULT_STI_TOKEN, sSearchTimeout, SSHCFG_GLOBAL },
 +	{ _DEFAULT_LDP_TOKEN, sLdapConf, SSHCFG_GLOBAL },
 +#endif
- 	{ "useprivilegeseparation", sUsePrivilegeSeparation, SSHCFG_GLOBAL },
+ 	{ "useprivilegeseparation", sUsePrivilegeSeparation, SSHCFG_GLOBAL},
  	{ "acceptenv", sAcceptEnv, SSHCFG_GLOBAL },
  	{ "permittunnel", sPermitTunnel, SSHCFG_GLOBAL },
 @@ -1294,6 +1363,107 @@

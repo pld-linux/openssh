@@ -48,7 +48,8 @@ Patch7:		%{name}-selinux.patch
 Patch9:		%{name}-5.2p1-hpn13v6.diff
 Patch10:	%{name}-include.patch
 Patch11:	%{name}-chroot.patch
-Patch12:	http://people.debian.org/~cjwatson/%{name}-blacklist.diff
+Patch12:	%{name}-blacklist.diff
+# http://people.debian.org/~cjwatson/%{name}-blacklist.diff
 URL:		http://www.openssh.com/
 BuildRequires:	%{__perl}
 BuildRequires:	autoconf

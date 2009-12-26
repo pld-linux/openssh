@@ -9,7 +9,7 @@
 
 # gtk2-based gnome-askpass means no gnome1-based
 %{?with_gtk:%undefine with_gnome}
-#
+
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(de.UTF-8):	OpenSSH - freie Implementation der Secure Shell (SSH)
 Summary(es.UTF-8):	Implementación libre de SSH
@@ -48,8 +48,8 @@ Patch7:		%{name}-selinux.patch
 Patch9:		%{name}-5.2p1-hpn13v6.diff
 Patch10:	%{name}-include.patch
 Patch11:	%{name}-chroot.patch
-Patch12:	%{name}-blacklist.diff
 # http://people.debian.org/~cjwatson/%{name}-blacklist.diff
+Patch12:	%{name}-blacklist.diff
 URL:		http://www.openssh.com/
 BuildRequires:	%{__perl}
 BuildRequires:	autoconf

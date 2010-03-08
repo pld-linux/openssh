@@ -101,9 +101,9 @@
  		}
  
 +
- #ifdef HAVE_SETPCRED
- 		if (setpcred(pw->pw_name, (char **)NULL) == -1)
- 			fatal("Failed to set process credentials");
+ #ifdef HAVE_LOGIN_CAP
+ 		if (setusercontext(lc, pw, pw->pw_uid, LOGIN_SETUSER) < 0) {
+ 			perror("unable to set user context (setuser)");
 --- openssh-3.7.1p2/sshd_config	2003-09-02 14:51:18.000000000 +0200
 +++ openssh-3.7.1p2.pius/sshd_config	2003-10-07 20:49:08.000000000 +0200
 @@ -91,6 +91,10 @@

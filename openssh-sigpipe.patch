@@ -78,8 +78,8 @@ diff -urN openssh-3.9p1.org/ssh.0 openssh-3.9p1/ssh.0
  
   again:
  	while ((opt = getopt(ac, av, "1246ab:c:e:fgi:kl:m:no:p:qstvx"
--	    "ACD:F:I:KL:MNO:PR:S:TVw:XYy")) != -1) {
-+	    "ABCD:F:I:KL:MNO:PR:S:TVw:XYy")) != -1) {
+-	    "ACD:F:I:KL:MNO:PR:S:TVw:W:XYy")) != -1) {
++	    "ABCD:F:I:KL:MNO:PR:S:TVw:W:XYy")) != -1) {
  		switch (opt) {
  		case '1':
  			options.protocol = SSH_PROTO_1;

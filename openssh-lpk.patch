@@ -1205,15 +1205,15 @@ diff -Nuar --exclude '*.orig' --exclude '*.rej' openssh-5.1p1.orig/lpk-user-exam
 diff -Nuar --exclude '*.orig' --exclude '*.rej' openssh-5.1p1.orig/Makefile.in openssh-5.1p1+lpk/Makefile.in
 --- openssh-5.1p1.orig/Makefile.in	2008-07-08 07:21:12.000000000 -0700
 +++ openssh-5.1p1+lpk/Makefile.in	2008-08-23 15:02:47.000000000 -0700
-@@ -88,7 +88,7 @@
- 	auth2-gss.o gss-serv.o gss-serv-krb5.o \
- 	loginrec.o auth-pam.o auth-shadow.o auth-sia.o md5crypt.o \
- 	audit.o audit-bsm.o platform.o sftp-server.o sftp-common.o \
--	roaming_common.o
-+	roaming_common.o ldapauth.o
+@@ -78,7 +78,7 @@
  
- MANPAGES	= moduli.5.out scp.1.out ssh-add.1.out ssh-agent.1.out ssh-keygen.1.out ssh-keyscan.1.out ssh.1.out sshd.8.out sftp-server.8.out sftp.1.out ssh-rand-helper.8.out ssh-keysign.8.out sshd_config.5.out ssh_config.5.out
- MANPAGES_IN	= moduli.5 scp.1 ssh-add.1 ssh-agent.1 ssh-keygen.1 ssh-keyscan.1 ssh.1 sshd.8 sftp-server.8 sftp.1 ssh-rand-helper.8 ssh-keysign.8 sshd_config.5 ssh_config.5
+ SSHOBJS= ssh.o readconf.o clientloop.o sshtty.o \
+ 	sshconnect.o sshconnect1.o sshconnect2.o mux.o \
+-	roaming_common.o roaming_client.o
++	roaming_common.o roaming_client.o ldapauth.o
+ 
+ SSHDOBJS=sshd.o auth-rhosts.o auth-passwd.o auth-rsa.o auth-rh-rsa.o \
+ 	sshpty.o sshlogin.o servconf.o serverloop.o \
 diff -Nuar --exclude '*.orig' --exclude '*.rej' openssh-5.1p1.orig/openssh-lpk_openldap.schema openssh-5.1p1+lpk/openssh-lpk_openldap.schema
 --- openssh-5.1p1.orig/openssh-lpk_openldap.schema	1969-12-31 16:00:00.000000000 -0800
 +++ openssh-5.1p1+lpk/openssh-lpk_openldap.schema	2008-08-23 15:02:47.000000000 -0700
@@ -1548,9 +1548,9 @@ diff -Nuar --exclude '*.orig' --exclude '*.rej' openssh-5.1p1.orig/servconf.c op
  static void add_one_listen_addr(ServerOptions *, char *, int);
  
 @@ -127,6 +131,25 @@
- 	options->adm_forced_command = NULL;
- 	options->chroot_directory = NULL;
  	options->zero_knowledge_password_authentication = -1;
+ 	options->revoked_keys_file = NULL;
+ 	options->trusted_user_ca_keys = NULL;
 +#ifdef WITH_LDAP_PUBKEY
 + 	/* XXX dirty */
 + 	options->lpk.ld = NULL;

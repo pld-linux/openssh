@@ -80,8 +80,15 @@ start() {
 		exit 1
 	fi
 
+	if is_yes "$IPV4_NETWORKING" && is_no "$IPV6_NETWORKING"; then
+		OPTIONS="$OPTIONS -4"
+	fi
+	if is_yes "$IPV6_NETWORKING" && is_no "$IPV4_NETWORKING"; then
+		OPTIONS="$OPTIONS -6"
+	fi
+
 	msg_starting "OpenSSH"
-	daemon --pidfile /var/run/sshd.pid /usr/sbin/sshd
+	daemon --pidfile /var/run/sshd.pid /usr/sbin/sshd $OPTIONS
 	RETVAL=$?
 	adjust_oom
 	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/sshd

@@ -655,9 +655,11 @@ fi
 %attr(755,root,root) %{_sbindir}/sshd
 %attr(755,root,root) %{_libexecdir}/sftp-server
 %attr(755,root,root) %{_libexecdir}/ssh-keysign
+%attr(755,root,root) %{_libexecdir}/ssh-pkcs11-helper
 %{_mandir}/man8/sshd.8*
 %{_mandir}/man8/sftp-server.8*
 %{_mandir}/man8/ssh-keysign.8*
+%{_mandir}/man8/ssh-pkcs11-helper.8*
 %{_mandir}/man5/sshd_config.5*
 %{_mandir}/man5/moduli.5*
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/sshd_config

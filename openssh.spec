@@ -1,3 +1,6 @@
+# TODO
+# - configure: WARNING: unrecognized options: --with-dns, --disable-suid-ssh
+#
 # Conditional build:
 %bcond_with	gnome		# with gnome-askpass (GNOME 1.x) utility
 %bcond_without	gtk		# without GTK+ (2.x)
@@ -9,6 +12,12 @@
 
 # gtk2-based gnome-askpass means no gnome1-based
 %{?with_gtk:%undefine with_gnome}
+
+%if "%{pld_release}" == "ac"
+%define		pam_ver	0.79.0
+%else
+%define		pam_ver	0.99.7.1
+%endif
 
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(de.UTF-8):	OpenSSH - freie Implementation der Secure Shell (SSH)
@@ -36,6 +45,7 @@ Source4:	%{name}.sysconfig
 Source5:	ssh-agent.sh
 Source6:	ssh-agent.conf
 Source7:	%{name}-lpk.schema
+Patch100:	%{name}-heimdal.patch
 Patch0:		%{name}-no_libnsl.patch
 Patch2:		%{name}-pam_misc.patch
 Patch3:		%{name}-sigpipe.patch
@@ -64,12 +74,18 @@ BuildRequires:	libwrap-devel
 BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	pam-devel
 %{?with_gtk:BuildRequires:	pkgconfig}
+BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	rpmbuild(macros) >= 1.318
 BuildRequires:	zlib-devel
+%if "%{pld_release}" == "ac"
+Requires:	filesystem >= 2.0-1
+Requires:	pam >= 0.79.0
+%else
 Requires:	filesystem >= 3.0-11
-Requires:	pam >= 0.99.7.1
+Requires:	pam >= %{pam_ver}
 Suggests:	openssh-blacklist
 Suggests:	xorg-app-xauth
+%endif
 Obsoletes:	ssh
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -304,14 +320,14 @@ Summary(pt_BR.UTF-8):	Servidor OpenSSH para comunicações encriptadas
 Summary(ru.UTF-8):	OpenSSH - сервер протокола Secure Shell (sshd)
 Summary(uk.UTF-8):	OpenSSH - сервер протоколу Secure Shell (sshd)
 Group:		Networking/Daemons
-Requires(post):	chkconfig >= 0.9
+Requires(post):	/sbin/chkconfig
 Requires(post):	grep
 Requires(post,preun):	/sbin/chkconfig
 Requires(postun):	/usr/sbin/userdel
 Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/useradd
 Requires:	%{name} = %{epoch}:%{version}-%{release}
-Requires:	pam >= 0.99.7.1
+Requires:	pam >= %{pam_ver}
 Requires:	rc-scripts >= 0.4.1.23
 Requires:	util-linux
 Suggests:	/bin/login
@@ -456,6 +472,7 @@ openldap-a.
 
 %prep
 %setup -q
+%{?with_kerberos5:%patch100 -p1}
 %patch0 -p1
 %patch2 -p1
 %patch3 -p1
@@ -488,7 +505,11 @@ CPPFLAGS="-DCHROOT"
 	%{?with_kerberos5:--with-kerberos5=/usr} \
 	--with-privsep-path=%{_privsepdir} \
 	--with-pid-dir=%{_localstatedir}/run \
+%if "%{pld_release}" == "ac"
+	--with-xauth=/usr/X11R6/bin/xauth \
+%else
 	--with-xauth=/usr/bin/xauth \
+%endif
 	--enable-utmpx \
 	--enable-wtmpx
 

@@ -107,7 +107,7 @@ This patch is up to date with respect to Debian openssh 1:4.7p1-10.
 --- openssh-4.7p1.orig/servconf.h
 +++ openssh-4.7p1/servconf.h
 @@ -94,6 +94,7 @@
- 						 * authentication. */
+ 						 * authentication. /
  	int     kbd_interactive_authentication;	/* If true, permit */
  	int     challenge_response_authentication;
 +	int     permit_blacklisted_keys;	/* If true, permit */
@@ -146,11 +146,11 @@ This patch is up to date with respect to Debian openssh 1:4.7p1-10.
  # test driver for the loginrec code - not built by default
  logintest: logintest.o $(LIBCOMPAT) libssh.a loginrec.o
  	$(LD) -o $@ logintest.o $(LDFLAGS) loginrec.o -lopenbsd-compat -lssh $(LIBS)
-@@ -264,6 +267,7 @@
- 	$(INSTALL) -m 4711 $(STRIP_OPT) ssh-keysign $(DESTDIR)$(SSH_KEYSIGN)
- 	$(INSTALL) -m 0755 $(STRIP_OPT) sftp $(DESTDIR)$(bindir)/sftp
- 	$(INSTALL) -m 0755 $(STRIP_OPT) sftp-server $(DESTDIR)$(SFTP_SERVER)
-+	$(INSTALL) -m 0755 $(STRIP_OPT) ssh-vulnkey $(DESTDIR)$(bindir)/ssh-vulnkey
+@@ -271,6 +271,7 @@
+ 	$(INSTALL) -m 0755 $(STRIP_OPT) ssh-pkcs11-helper$(EXEEXT) $(DESTDIR)$(SSH_PKCS11_HELPER)$(EXEEXT)
+ 	$(INSTALL) -m 0755 $(STRIP_OPT) sftp$(EXEEXT) $(DESTDIR)$(bindir)/sftp$(EXEEXT)
+ 	$(INSTALL) -m 0755 $(STRIP_OPT) sftp-server$(EXEEXT) $(DESTDIR)$(SFTP_SERVER)$(EXEEXT)
++	$(INSTALL) -m 0755 $(STRIP_OPT) ssh-vulnkey$(EXEEXT) $(DESTDIR)$(bindir)/ssh-vulnkey$(EXEEXT)
  	$(INSTALL) -m 644 ssh.1.out $(DESTDIR)$(mandir)/$(mansubdir)1/ssh.1
  	$(INSTALL) -m 644 scp.1.out $(DESTDIR)$(mandir)/$(mansubdir)1/scp.1
  	$(INSTALL) -m 644 ssh-add.1.out $(DESTDIR)$(mandir)/$(mansubdir)1/ssh-add.1

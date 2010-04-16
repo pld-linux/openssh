@@ -76,6 +76,7 @@ BuildRequires:	pam-devel
 %{?with_gtk:BuildRequires:	pkgconfig}
 BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	rpmbuild(macros) >= 1.318
+BuildRequires:	sed >= 4.0
 BuildRequires:	zlib-devel
 %if "%{pld_release}" == "ac"
 Requires:	filesystem >= 2.0-1
@@ -108,10 +109,11 @@ all patented algorithms to seperate libraries (OpenSSL).
 This package includes the core files necessary for both the OpenSSH
 client and server. To make this package useful, you should also
 install openssh-clients, openssh-server, or both.
+
 %if %{with hpn}
 This release includes High Performance SSH/SCP patches from
-http://www.psc.edu/networking/projects/hpn-ssh/ which are supposed
-to increase throughput on fast connections with high RTT (20-150 msec).
+http://www.psc.edu/networking/projects/hpn-ssh/ which are supposed to
+increase throughput on fast connections with high RTT (20-150 msec).
 See the website for '-w' values for your connection and /proc/sys TCP
 values. BTW. in a LAN you have got generally RTT < 1 msec.
 %endif
@@ -163,13 +165,14 @@ pomiędzy dwoma hostami.
 Ten pakiet zawiera podstawowe pliki potrzebne zarówno po stronie
 klienta jak i serwera OpenSSH. Aby był użyteczny, trzeba zainstalować
 co najmniej jeden z pakietów: openssh-clients lub openssh-server.
+
 %if %{with hpn}
 Ta wersja zawiera łaty z projektu High Performance SSH/SCP
 http://www.psc.edu/networking/projects/hpn-ssh/, które mają na celu
-zwiększenie przepustowości transmisji dla szybkich połączeń
-z dużym RTT (20-150 msec). Na stronie projektu znaleźć można
-odpowednie dla danego połączenia wartości parametru '-w' oraz
-opcje /proc/sys dla TCP. Nawiasem mówiąc w sieciach LAN RTT < 1 msec.
+zwiększenie przepustowości transmisji dla szybkich połączeń z dużym
+RTT (20-150 msec). Na stronie projektu znaleźć można odpowednie dla
+danego połączenia wartości parametru '-w' oraz opcje /proc/sys dla
+TCP. Nawiasem mówiąc w sieciach LAN RTT < 1 msec.
 %endif
 
 %description -l pt.UTF-8
@@ -483,6 +486,11 @@ openldap-a.
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
+
+%if "%{pld_release}" == "ac"
+# fix for missing x11.pc
+%{__sed} -i -e '/pkg-config/s/ x11//' contrib/Makefile
+%endif
 
 %build
 cp /usr/share/automake/config.sub .

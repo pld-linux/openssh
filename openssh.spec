@@ -350,7 +350,7 @@ Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/useradd
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	pam >= %{pam_ver}
-Requires:	rc-scripts >= 0.4.1.23
+Requires:	rc-scripts > 0.4.2.8
 Requires:	util-linux
 Suggests:	/bin/login
 Provides:	ssh-server
@@ -423,8 +423,7 @@ Summary:	Upstart job description for OpenSSH server
 Summary(pl.UTF-8):	Opis zadania Upstart dla serwera OpenSSH
 Group:		Daemons
 Requires:	%{name}-server = %{epoch}:%{version}-%{release}
-Requires:	upstart
-Requires:	rc-scripts > 0.4.2.8
+Requires:	upstart >= 0.6
 
 %description server-upstart
 Upstart job description for OpenSSH.

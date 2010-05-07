@@ -107,6 +107,9 @@ stop() {
 	fi
 }
 
+# init is handled by this script
+upstart_controlled start stop restart status reload force-reload try-restart
+
 RETVAL=0
 # See how we were called.
 case "$1" in

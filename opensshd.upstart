@@ -21,8 +21,7 @@ script
 		OPTIONS="$OPTIONS -6"
 	fi
 
-	exec /usr/sbin/sshd $OPTIONS
+	exec /usr/sbin/sshd -D $OPTIONS
 end script
-expect daemon
 
 # vi: ft=upstart

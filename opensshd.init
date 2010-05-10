@@ -107,7 +107,7 @@ stop() {
 	fi
 }
 
-upstart_controlled --except init
+upstart_controlled --except init configtest
 
 RETVAL=0
 # See how we were called.
@@ -132,6 +132,9 @@ case "$1" in
 	nls "will use password for the key, you will need to type it on each"
 	nls "reboot."
 	ssh_gen_keys
+	;;
+  configtest)
+	checkconfig
 	;;
   reload|force-reload)
 	if [ -f /var/lock/subsys/sshd ]; then

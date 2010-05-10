@@ -31,7 +31,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	5.5p1
-Release:	2
+Release:	2.1
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -45,6 +45,7 @@ Source4:	%{name}.sysconfig
 Source5:	ssh-agent.sh
 Source6:	ssh-agent.conf
 Source7:	%{name}-lpk.schema
+Source8:	%{name}d.upstart
 Patch100:	%{name}-heimdal.patch
 Patch0:		%{name}-no_libnsl.patch
 Patch2:		%{name}-pam_misc.patch
@@ -94,6 +95,26 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_libexecdir	%{_libdir}/%{name}
 %define		_privsepdir	/usr/share/empty
 %define		schemadir	/usr/share/openldap/schema
+
+## to be moved to rpm-build-macros
+## TODO: handle RPM_SKIP_AUTO_RESTART
+
+# migrate from init script to upstart job
+%define	upstart_post() \
+	if [ -f /var/lock/subsys/"%1" ] ; then \
+		/sbin/service --no-upstart "%1" stop \
+		/sbin/service "%1" start \
+	else \
+		/sbin/service "%1" try-restart \
+	fi
+
+# restart the job after upgrade or migrate to init script on removal
+%define	upstart_postun() \
+	if [ -x /sbin/initctl ] && /sbin/initctl status "%1" 2>/dev/null | grep -q 'running' ; then \
+		/sbin/initctl stop "%1" 2>/dev/null \
+		[ -f "/etc/rc.d/init.d/%1" -o -f "/etc/init/%1.conf" ] && /sbin/service "%1" start \
+	fi
+
 
 %description
 Ssh (Secure Shell) a program for logging into a remote machine and for
@@ -331,7 +352,7 @@ Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/useradd
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	pam >= %{pam_ver}
-Requires:	rc-scripts >= 0.4.1.23
+Requires:	rc-scripts >= 0.4.3.0
 Requires:	util-linux
 Suggests:	/bin/login
 Provides:	ssh-server
@@ -398,6 +419,19 @@ Ssh (Secure Shell) - це програма для "заходу" (login) до в
 Цей пакет містить sshd - "демон" Secure Shell. sshd - це серверна
 частина протоколу Secure Shell, яка дозволяє клієнтам ssh зв'язуватись
 з вашим хостом.
+
+%package server-upstart
+Summary:	Upstart job description for OpenSSH server
+Summary(pl.UTF-8):	Opis zadania Upstart dla serwera OpenSSH
+Group:		Daemons
+Requires:	%{name}-server = %{epoch}:%{version}-%{release}
+Requires:	upstart >= 0.6
+
+%description server-upstart
+Upstart job description for OpenSSH.
+
+%description server-upstart -l pl.UTF-8
+Opis zadania Upstart dla OpenSSH.
 
 %package gnome-askpass
 Summary:	OpenSSH GNOME passphrase dialog
@@ -537,7 +571,7 @@ cd contrib
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{pam.d,rc.d/init.d,sysconfig,security,env.d}} \
+install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{init,pam.d,rc.d/init.d,sysconfig,security,env.d}} \
 	$RPM_BUILD_ROOT{%{_libexecdir}/ssh,%{schemadir}}
 install -d $RPM_BUILD_ROOT/etc/{profile.d,X11/xinit/xinitrc.d}
 
@@ -553,6 +587,8 @@ install %{SOURCE5} $RPM_BUILD_ROOT/etc/profile.d
 ln -sf	/etc/profile.d/ssh-agent.sh $RPM_BUILD_ROOT/etc/X11/xinit/xinitrc.d/ssh-agent.sh
 install %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}
 install %{SOURCE7} $RPM_BUILD_ROOT%{schemadir}
+
+install %{SOURCE8} $RPM_BUILD_ROOT/etc/init/sshd.conf
 
 %if %{with gnome}
 install contrib/gnome-ssh-askpass1 $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
@@ -621,6 +657,12 @@ fi
 if [ "$1" = "0" ]; then
 	%userremove sshd
 fi
+
+%post server-upstart
+%upstart_post sshd
+
+%postun server-upstart
+%upstart_postun sshd
 
 %post -n openldap-schema-openssh-lpk
 %openldap_schema_register %{schemadir}/openssh-lpk.schema
@@ -712,3 +754,7 @@ fi
 %defattr(644,root,root,755)
 %{schemadir}/openssh-lpk.schema
 %endif
+
+%files server-upstart
+%defattr(644,root,root,755)
+%config(noreplace) %verify(not md5 mtime size) /etc/init/sshd.conf

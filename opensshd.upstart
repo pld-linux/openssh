@@ -1,0 +1,27 @@
+
+start on pld.network-started and started SERVICE=syslog and started random
+stop on pld.shutdown-started
+
+respawn
+
+console output
+
+script
+	. /etc/rc.d/init.d/functions
+	. /etc/sysconfig/network
+
+  	if [ ! -s /etc/ssh/ssh_host_key ] ; then
+		/etc/rc.d/init.d/sshd init
+  	fi
+
+	if is_yes "$IPV4_NETWORKING" && is_no "$IPV6_NETWORKING"; then
+		OPTIONS="$OPTIONS -4"
+	fi
+	if is_yes "$IPV6_NETWORKING" && is_no "$IPV4_NETWORKING"; then
+		OPTIONS="$OPTIONS -6"
+	fi
+
+	exec /usr/sbin/sshd -D $OPTIONS
+end script
+
+# vi: ft=upstart

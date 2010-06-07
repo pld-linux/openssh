@@ -31,7 +31,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	5.5p1
-Release:	3
+Release:	4
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -755,6 +755,8 @@ fi
 %{schemadir}/openssh-lpk.schema
 %endif
 
+%if "%{pld_release}" != "ti"
 %files server-upstart
 %defattr(644,root,root,755)
 %config(noreplace) %verify(not md5 mtime size) /etc/init/sshd.conf
+%endif

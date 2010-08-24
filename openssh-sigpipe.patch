@@ -31,17 +31,17 @@ diff -urN openssh-3.9p1.org/ssh.0 openssh-3.9p1/ssh.0
       -a      Disables forwarding of the authentication agent connection.
  
       -b bind_address
---- openssh-4.0p1/ssh.1.orig	2005-03-09 01:00:06.000000000 +0100
-+++ openssh-4.0p1/ssh.1	2005-03-10 15:10:40.000000000 +0100
-@@ -43,7 +43,7 @@
- .Nd OpenSSH SSH client (remote login program)
+--- openssh-5.6p1/ssh.1~	2010-08-24 14:05:48.000000000 +0300
++++ openssh-5.6p1/ssh.1	2010-08-24 14:06:57.879253682 +0300
+@@ -44,7 +44,7 @@
  .Sh SYNOPSIS
  .Nm ssh
+ .Bk -words
 -.Op Fl 1246AaCfgKkMNnqsTtVvXxYy
 +.Op Fl 1246AaBCfgKkMNnqsTtVvXxYy
  .Op Fl b Ar bind_address
  .Op Fl c Ar cipher_spec
- .Oo Fl D\ \&
+ .Op Fl D Oo Ar bind_address : Oc Ns Ar port
 @@ -425,6 +425,10 @@
  on the local machine as the source address
  of the connection.

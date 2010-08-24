@@ -419,8 +419,8 @@ This patch is up to date with respect to Debian openssh 1:4.7p1-10.
 +of processing
 +.Xr ssh-keyscan 1
 +output.
---- openssh-4.7p1.orig/auth2-hostbased.c
-+++ openssh-4.7p1/auth2-hostbased.c
+--- openssh-5.6p1/auth2-hostbased.c~	2010-08-24 14:10:03.000000000 +0300
++++ openssh-5.6p1/auth2-hostbased.c	2010-08-24 14:12:10.632553591 +0300
 @@ -40,6 +40,7 @@
  #include "compat.h"
  #include "key.h"
@@ -429,14 +429,9 @@ This patch is up to date with respect to Debian openssh 1:4.7p1-10.
  #include "auth.h"
  #include "canohost.h"
  #ifdef GSSAPI
-@@ -141,10 +142,24 @@
- hostbased_key_allowed(struct passwd *pw, const char *cuser, char *chost,
-     Key *key)
- {
-+	char *fp;
- 	const char *resolvedname, *ipaddr, *lookup;
- 	HostStatus host_status;
+@@ -147,6 +147,19 @@
  	int len;
+ 	char *fp;
  
 +	if (blacklisted_key(key)) {
 +		fp = key_fingerprint(key, SSH_FP_MD5, SSH_FP_HEX);

@@ -1533,9 +1533,8 @@ diff -Nuar --exclude '*.orig' --exclude '*.rej' openssh-5.1p1.orig/README.lpk op
 +- CONTACT :
 +  - Eric AUGE <eau@phear.org>
 +  - Andrea Barisani <andrea@inversepath.com>
-diff -Nuar --exclude '*.orig' --exclude '*.rej' openssh-5.1p1.orig/servconf.c openssh-5.1p1+lpk/servconf.c
---- openssh-5.1p1.orig/servconf.c	2008-07-03 20:51:12.000000000 -0700
-+++ openssh-5.1p1+lpk/servconf.c	2008-08-23 15:02:47.000000000 -0700
+--- openssh-5.6p1/servconf.c~	2010-08-24 14:07:30.000000000 +0300
++++ openssh-5.6p1/servconf.c	2010-08-24 14:09:08.999656164 +0300
 @@ -42,6 +42,10 @@
  #include "channels.h"
  #include "groupaccess.h"
@@ -1547,10 +1546,10 @@ diff -Nuar --exclude '*.orig' --exclude '*.rej' openssh-5.1p1.orig/servconf.c op
  static void add_listen_addr(ServerOptions *, char *, int);
  static void add_one_listen_addr(ServerOptions *, char *, int);
  
-@@ -127,6 +131,25 @@
- 	options->zero_knowledge_password_authentication = -1;
+@@ -136,6 +136,24 @@
  	options->revoked_keys_file = NULL;
  	options->trusted_user_ca_keys = NULL;
+ 	options->authorized_principals_file = NULL;
 +#ifdef WITH_LDAP_PUBKEY
 + 	/* XXX dirty */
 + 	options->lpk.ld = NULL;
@@ -1569,7 +1568,6 @@ diff -Nuar --exclude '*.orig' --exclude '*.rej' openssh-5.1p1.orig/servconf.c op
 + 	options->lpk.s_timeout.tv_sec = -1;
 + 	options->lpk.flags = FLAG_EMPTY;
 +#endif
-+
  }
  
  void
@@ -1619,10 +1617,10 @@ diff -Nuar --exclude '*.orig' --exclude '*.rej' openssh-5.1p1.orig/servconf.c op
  } ServerOpCodes;
  
  #define SSHCFG_GLOBAL	0x01	/* allowed in main section of sshd_config */
-@@ -408,6 +463,20 @@
+@@ -459,6 +477,20 @@
  	{ "clientalivecountmax", sClientAliveCountMax, SSHCFG_GLOBAL },
- 	{ "authorizedkeysfile", sAuthorizedKeysFile, SSHCFG_GLOBAL },
- 	{ "authorizedkeysfile2", sAuthorizedKeysFile2, SSHCFG_GLOBAL },
+ 	{ "authorizedkeysfile", sAuthorizedKeysFile, SSHCFG_ALL },
+ 	{ "authorizedkeysfile2", sAuthorizedKeysFile2, SSHCFG_ALL },
 +#ifdef WITH_LDAP_PUBKEY
 +	{ _DEFAULT_LPK_TOKEN, sLdapPublickey, SSHCFG_GLOBAL },
 +	{ _DEFAULT_SRV_TOKEN, sLdapServers, SSHCFG_GLOBAL },
@@ -1639,7 +1637,7 @@ diff -Nuar --exclude '*.orig' --exclude '*.rej' openssh-5.1p1.orig/servconf.c op
 +#endif
  	{ "useprivilegeseparation", sUsePrivilegeSeparation, SSHCFG_GLOBAL},
  	{ "acceptenv", sAcceptEnv, SSHCFG_GLOBAL },
- 	{ "permittunnel", sPermitTunnel, SSHCFG_GLOBAL },
+ 	{ "permittunnel", sPermitTunnel, SSHCFG_ALL },
 @@ -1294,6 +1363,107 @@
  		while (arg)
  		    arg = strdelim(&cp);

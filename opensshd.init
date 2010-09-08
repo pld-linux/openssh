@@ -32,7 +32,11 @@ fi
 adjust_oom() {
 	if [ -e /var/run/sshd.pid ]; then
 		for pid in $(cat /var/run/sshd.pid); do
-			echo "$SSHD_OOM_ADJUST" 2>/dev/null > /proc/$pid/oom_adj
+			if [ -e /proc/$pid/oom_score_adj ]; then
+				echo "$SSHD_OOM_ADJUST" 2>/dev/null > /proc/$pid/oom_score_adj
+			else
+				echo "$SSHD_OOM_ADJUST" 2>/dev/null > /proc/$pid/oom_adj
+			fi
 		done
 	fi
 }

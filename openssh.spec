@@ -1,5 +1,3 @@
-# TODO
-# - configure: WARNING: unrecognized options: --with-dns, --disable-suid-ssh
 #
 # Conditional build:
 %bcond_with	gnome		# with gnome-askpass (GNOME 1.x) utility
@@ -533,14 +531,12 @@ cp /usr/share/automake/config.sub .
 CPPFLAGS="-DCHROOT"
 %configure \
 	PERL=%{__perl} \
-	--with-dns \
 	--with-pam \
 	--with-mantype=man \
 	--with-md5-passwords \
 	--with-ipaddr-display \
 	%{?with_libedit:--with-libedit} \
 	--with-4in6 \
-	--disable-suid-ssh \
 	--with-tcp-wrappers \
 	%{?with_ldap:--with-libs="-lldap -llber"} \
 	%{?with_ldap:--with-cppflags="-DWITH_LDAP_PUBKEY"} \

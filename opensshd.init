@@ -2,7 +2,7 @@
 #
 # sshd		sshd (secure shell daemon)
 #
-# chkconfig:	345 11 89
+# chkconfig:	345 21 89
 #
 # description:	sshd (secure shell daemon) is a server part of the ssh suite. \
 #		Ssh can be used for remote login, remote file copying, TCP port \

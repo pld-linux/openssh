@@ -28,13 +28,13 @@ Summary(pt_BR.UTF-8):	Implementação livre do SSH
 Summary(ru.UTF-8):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
-Version:	5.6p1
-Release:	4
+Version:	5.7p1
+Release:	1
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
 Source0:	ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
-# Source0-md5:	e6ee52e47c768bf0ec42a232b5d18fb0
+# Source0-md5:	50231fa257219791fa41b84a16c9df04
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 # Source1-md5:	66943d481cc422512b537bcc2c7400d1
 Source2:	%{name}d.init
@@ -51,7 +51,6 @@ Patch3:		%{name}-sigpipe.patch
 # http://code.google.com/p/openssh-lpk/
 Patch4:		%{name}-lpk.patch
 Patch5:		%{name}-config.patch
-Patch7:		%{name}-selinux.patch
 # High Performance SSH/SCP - HPN-SSH - http://www.psc.edu/networking/projects/hpn-ssh/
 # http://www.psc.edu/networking/projects/hpn-ssh/openssh-5.2p1-hpn13v6.diff.gz
 Patch9:		%{name}-5.2p1-hpn13v6.diff
@@ -513,7 +512,6 @@ openldap-a.
 %patch3 -p1
 %{?with_ldap:%patch4 -p1}
 %patch5 -p1
-%patch7 -p1
 %{?with_hpn:%patch9 -p1}
 %patch10 -p1
 %patch11 -p1
@@ -546,7 +544,7 @@ CPPFLAGS="-DCHROOT"
 %if "%{pld_release}" == "ac"
 	--with-xauth=/usr/X11R6/bin/xauth \
 %else
-	--with-xauth=/usr/bin/xauth \
+	--with-xauth=%{_bindir}/xauth \
 %endif
 	--enable-utmpx \
 	--enable-wtmpx

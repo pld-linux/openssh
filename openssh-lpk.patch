@@ -220,18 +220,17 @@ diff -Nuar --exclude '*.orig' --exclude '*.rej' openssh-5.1p1.orig/config.h.in o
  /* Define if your libraries define login() */
  #undef HAVE_LOGIN
  
-diff -Nuar --exclude '*.orig' --exclude '*.rej' openssh-5.1p1.orig/configure openssh-5.1p1+lpk/configure
---- openssh-5.1p1.orig/configure	2008-07-21 01:30:50.000000000 -0700
-+++ openssh-5.1p1+lpk/configure	2008-08-23 15:02:47.000000000 -0700
-@@ -1340,6 +1340,7 @@
+--- openssh-5.7p1/configure.orig	2011-01-22 11:29:11.000000000 +0200
++++ openssh-5.7p1/configure	2011-01-24 16:33:06.271393457 +0200
+@@ -1348,6 +1348,7 @@
    --with-tcp-wrappers[=PATH] Enable tcpwrappers support (optionally in PATH)
    --with-libedit[=PATH]   Enable libedit support for sftp
-   --with-audit=module     Enable EXPERIMENTAL audit support (modules=debug,bsm)
+   --with-audit=module     Enable audit support (modules=debug,bsm,linux)
 +  --with-ldap[=PATH]      Enable LDAP pubkey support (optionally in PATH)
    --with-ssl-dir=PATH     Specify path to OpenSSL installation
    --without-openssl-header-check Disable OpenSSL version consistency check
    --with-ssl-engine       Enable OpenSSL (hardware) ENGINE support
-@@ -12568,6 +12569,85 @@
+@@ -12198,6 +12199,85 @@
  fi
  
  
@@ -317,7 +316,7 @@ diff -Nuar --exclude '*.orig' --exclude '*.rej' openssh-5.1p1.orig/configure ope
  
  
  
-@@ -30135,6 +30215,7 @@
+@@ -31970,6 +32050,7 @@
  echo "                 Smartcard support: $SCARD_MSG"
  echo "                     S/KEY support: $SKEY_MSG"
  echo "              TCP Wrappers support: $TCPW_MSG"
@@ -1202,13 +1201,12 @@ diff -Nuar --exclude '*.orig' --exclude '*.rej' openssh-5.1p1.orig/lpk-user-exam
 +puTTY). Login should succeed.
 +
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-diff -Nuar --exclude '*.orig' --exclude '*.rej' openssh-5.1p1.orig/Makefile.in openssh-5.1p1+lpk/Makefile.in
---- openssh-5.1p1.orig/Makefile.in	2008-07-08 07:21:12.000000000 -0700
-+++ openssh-5.1p1+lpk/Makefile.in	2008-08-23 15:02:47.000000000 -0700
-@@ -91,7 +91,7 @@
+--- openssh-5.7p1/Makefile.in.orig	2011-01-17 12:15:29.000000000 +0200
++++ openssh-5.7p1/Makefile.in	2011-01-24 16:35:51.174726790 +0200
+@@ -93,7 +93,7 @@
  	auth2-gss.o gss-serv.o gss-serv-krb5.o \
  	loginrec.o auth-pam.o auth-shadow.o auth-sia.o md5crypt.o \
- 	audit.o audit-bsm.o platform.o sftp-server.o sftp-common.o \
+ 	sftp-server.o sftp-common.o \
 -	roaming_common.o roaming_serv.o
 +	roaming_common.o roaming_serv.o ldapauth.o
  
@@ -1533,9 +1531,9 @@ diff -Nuar --exclude '*.orig' --exclude '*.rej' openssh-5.1p1.orig/README.lpk op
 +- CONTACT :
 +  - Eric AUGE <eau@phear.org>
 +  - Andrea Barisani <andrea@inversepath.com>
---- openssh-5.6p1/servconf.c~	2010-08-24 14:07:30.000000000 +0300
-+++ openssh-5.6p1/servconf.c	2010-08-24 14:09:08.999656164 +0300
-@@ -42,6 +42,10 @@
+--- openssh-5.7p1/servconf.c.orig	2010-11-20 06:19:38.000000000 +0200
++++ openssh-5.7p1/servconf.c	2011-01-24 16:38:27.381393458 +0200
+@@ -46,6 +46,10 @@
  #include "channels.h"
  #include "groupaccess.h"
  
@@ -1546,10 +1544,10 @@ diff -Nuar --exclude '*.orig' --exclude '*.rej' openssh-5.1p1.orig/README.lpk op
  static void add_listen_addr(ServerOptions *, char *, int);
  static void add_one_listen_addr(ServerOptions *, char *, int);
  
-@@ -136,6 +136,24 @@
- 	options->revoked_keys_file = NULL;
- 	options->trusted_user_ca_keys = NULL;
+@@ -139,6 +143,24 @@
  	options->authorized_principals_file = NULL;
+ 	options->ip_qos_interactive = -1;
+ 	options->ip_qos_bulk = -1;
 +#ifdef WITH_LDAP_PUBKEY
 + 	/* XXX dirty */
 + 	options->lpk.ld = NULL;
@@ -1571,10 +1569,10 @@ diff -Nuar --exclude '*.orig' --exclude '*.rej' openssh-5.1p1.orig/README.lpk op
  }
  
  void
-@@ -258,6 +281,32 @@
- 		options->permit_tun = SSH_TUNMODE_NO;
- 	if (options->zero_knowledge_password_authentication == -1)
- 		options->zero_knowledge_password_authentication = 0;
+@@ -281,6 +303,32 @@
+ 		options->ip_qos_interactive = IPTOS_LOWDELAY;
+ 	if (options->ip_qos_bulk == -1)
+ 		options->ip_qos_bulk = IPTOS_THROUGHPUT;
 +#ifdef WITH_LDAP_PUBKEY
 +	if (options->lpk.on == -1)
 +	    options->lpk.on = _DEFAULT_LPK_ON;
@@ -1604,9 +1602,9 @@ diff -Nuar --exclude '*.orig' --exclude '*.rej' openssh-5.1p1.orig/README.lpk op
  
  	/* Turn privilege separation on by default */
  	if (use_privsep == -1)
-@@ -303,6 +352,12 @@
- 	sMatch, sPermitOpen, sForceCommand, sChrootDirectory,
- 	sUsePrivilegeSeparation, sAllowAgentForwarding,
+@@ -329,6 +377,12 @@
+ 	sRevokedKeys, sTrustedUserCAKeys, sAuthorizedPrincipalsFile,
+ 	sKexAlgorithms, sIPQoS,
  	sDeprecated, sUnsupported
 +#ifdef WITH_LDAP_PUBKEY
 +	,sLdapPublickey, sLdapServers, sLdapUserDN
@@ -1617,7 +1615,7 @@ diff -Nuar --exclude '*.orig' --exclude '*.rej' openssh-5.1p1.orig/README.lpk op
  } ServerOpCodes;
  
  #define SSHCFG_GLOBAL	0x01	/* allowed in main section of sshd_config */
-@@ -459,6 +477,20 @@
+@@ -439,6 +493,20 @@
  	{ "clientalivecountmax", sClientAliveCountMax, SSHCFG_GLOBAL },
  	{ "authorizedkeysfile", sAuthorizedKeysFile, SSHCFG_ALL },
  	{ "authorizedkeysfile2", sAuthorizedKeysFile2, SSHCFG_ALL },
@@ -1638,7 +1636,7 @@ diff -Nuar --exclude '*.orig' --exclude '*.rej' openssh-5.1p1.orig/README.lpk op
  	{ "useprivilegeseparation", sUsePrivilegeSeparation, SSHCFG_GLOBAL},
  	{ "acceptenv", sAcceptEnv, SSHCFG_GLOBAL },
  	{ "permittunnel", sPermitTunnel, SSHCFG_ALL },
-@@ -1294,6 +1363,107 @@
+@@ -1411,6 +1479,107 @@
  		while (arg)
  		    arg = strdelim(&cp);
  		break;

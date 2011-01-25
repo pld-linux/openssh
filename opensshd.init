@@ -8,7 +8,7 @@
 #		Ssh can be used for remote login, remote file copying, TCP port \
 #		forwarding etc. Ssh offers strong encryption and authentication.
 
-SSHD_OOM_ADJUST=-17
+SSHD_OOM_ADJUST=-1000
 
 # Source function library
 . /etc/rc.d/init.d/functions
@@ -32,11 +32,7 @@ fi
 adjust_oom() {
 	if [ -e /var/run/sshd.pid ]; then
 		for pid in $(cat /var/run/sshd.pid); do
-			if [ -e /proc/$pid/oom_score_adj ]; then
-				echo "$SSHD_OOM_ADJUST" 2>/dev/null > /proc/$pid/oom_score_adj
-			else
-				echo "$SSHD_OOM_ADJUST" 2>/dev/null > /proc/$pid/oom_adj
-			fi
+			echo "$SSHD_OOM_ADJUST" 2>/dev/null > /proc/$pid/oom_score_adj
 		done
 	fi
 }

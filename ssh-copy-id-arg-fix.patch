@@ -1,0 +1,11 @@
+--- openssh-5.7p1/contrib/ssh-copy-id~	2011-01-25 20:27:50.000000000 +0200
++++ openssh-5.7p1/contrib/ssh-copy-id	2011-01-29 13:02:29.597909848 +0200
+@@ -10,7 +10,7 @@
+ if [ "-i" = "$1" ]; then
+   shift
+   # check if we have 2 parameters left, if so the first is the new ID file
+-  if [ -n "$2" ]; then
++  if [ -n "$1" ]; then
+     if expr "$1" : ".*\.pub" > /dev/null ; then
+       ID_FILE="$1"
+     else

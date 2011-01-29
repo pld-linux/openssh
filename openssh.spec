@@ -58,7 +58,7 @@ Patch10:	%{name}-include.patch
 Patch11:	%{name}-chroot.patch
 # http://people.debian.org/~cjwatson/%{name}-blacklist.diff
 Patch12:	%{name}-blacklist.diff
-URL:		http://www.openssh.com/
+URL:		http://www.openssh.com/portable.html
 BuildRequires:	%{__perl}
 BuildRequires:	autoconf
 BuildRequires:	automake

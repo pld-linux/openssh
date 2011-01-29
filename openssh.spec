@@ -58,7 +58,6 @@ Patch10:	%{name}-include.patch
 Patch11:	%{name}-chroot.patch
 # http://people.debian.org/~cjwatson/%{name}-blacklist.diff
 Patch12:	%{name}-blacklist.diff
-Patch13:	ssh-copy-id-arg-fix.patch
 URL:		http://www.openssh.com/
 BuildRequires:	%{__perl}
 BuildRequires:	autoconf
@@ -517,7 +516,6 @@ openldap-a.
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
-%patch13 -p1
 
 %if "%{pld_release}" == "ac"
 # fix for missing x11.pc

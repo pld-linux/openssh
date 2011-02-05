@@ -11,6 +11,8 @@
 # Source function library
 . /etc/rc.d/init.d/functions
 
+upstart_controlled --except init configtest
+
 # Get network config
 . /etc/sysconfig/network
 
@@ -121,8 +123,6 @@ reload() {
 	killproc sshd -HUP
 	RETVAL=$?
 }
-
-upstart_controlled --except init configtest
 
 RETVAL=0
 # See how we were called.

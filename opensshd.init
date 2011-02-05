@@ -118,6 +118,7 @@ reload() {
 		return
 	fi
 
+	ssh_gen_keys
 	checkconfig
 	msg_reloading "OpenSSH"
 	killproc sshd -HUP

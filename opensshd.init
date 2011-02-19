@@ -125,6 +125,18 @@ reload() {
 	RETVAL=$?
 }
 
+condrestart() {
+	if [ ! -f /var/lock/subsys/sshd ]; then
+		msg_not_running "OpenSSH"
+		RETVAL=$1
+		return
+	fi
+
+	checkconfig
+	stop
+	start
+}
+
 RETVAL=0
 # See how we were called.
 case "$1" in
@@ -138,6 +150,9 @@ case "$1" in
 	checkconfig
 	stop
 	start
+	;;
+  try-restart)
+	condrestart 0
 	;;
   reload|force-reload)
 	reload
@@ -156,7 +171,7 @@ case "$1" in
 	exit $?
 	;;
   *)
-	msg_usage "$0 {start|stop|restart|reload|force-reload|configtest|init|status}"
+	msg_usage "$0 {start|stop|restart|try-restart|reload|force-reload|configtest|init|status}"
 	exit 3
 esac
 

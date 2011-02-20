@@ -40,6 +40,7 @@ adjust_oom() {
 }
 
 checkconfig() {
+	ssh_gen_keys
 	/usr/sbin/sshd -t || exit 1
 }
 
@@ -74,7 +75,6 @@ start() {
 		return
 	fi
 
-	ssh_gen_keys
 	checkconfig
 
 	if [ ! -s /etc/ssh/ssh_host_key ]; then
@@ -118,7 +118,6 @@ reload() {
 		return
 	fi
 
-	ssh_gen_keys
 	checkconfig
 	msg_reloading "OpenSSH"
 	killproc sshd -HUP

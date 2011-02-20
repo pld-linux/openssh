@@ -1,9 +1,8 @@
-
 start on pld.network-started and started SERVICE=syslog and started random
 stop on pld.shutdown-started
 
 respawn
-
+oom -16
 console output
 
 script
@@ -23,5 +22,3 @@ script
 
 	exec /usr/sbin/sshd -D $OPTIONS
 end script
-
-# vi: ft=upstart

@@ -25,7 +25,7 @@
  	int len;
 +#ifdef HEIMDAL
 +	const char *ccache_type, *ccache_name;
-+#else
++#endif
  
  	if (client->creds == NULL) {
  		debug("No credentials stored");

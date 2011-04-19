@@ -59,9 +59,9 @@ diff -up openssh-5.8p1/servconf.c.kuserok openssh-5.8p1/servconf.c
  	options->ip_qos_interactive = -1;
  	options->ip_qos_bulk = -1;
 +	options->use_kuserok = -1;
- }
- 
- void
+ #ifdef WITH_LDAP_PUBKEY
+  	/* XXX dirty */
+  	options->lpk.ld = NULL;
 @@ -291,6 +292,8 @@ fill_default_server_options(ServerOption
  	if (use_privsep == -1)
  		use_privsep = 1;

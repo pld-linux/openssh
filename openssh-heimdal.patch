@@ -66,7 +66,7 @@
  	if (options.use_pam)
 --- openssh-5.8p1/auth-krb5.c.orig	2009-12-21 00:49:22.000000000 +0100
 +++ openssh-5.8p1/auth-krb5.c	2011-04-19 22:16:14.622268002 +0200
-@@ -74,6 +88,9 @@
+@@ -74,6 +88,8 @@
  #ifndef HEIMDAL
  	krb5_creds creds;
  	krb5_principal server;

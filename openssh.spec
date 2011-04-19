@@ -29,7 +29,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	5.8p1
-Release:	3
+Release:	3.1
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -58,6 +58,7 @@ Patch10:	%{name}-include.patch
 Patch11:	%{name}-chroot.patch
 # http://people.debian.org/~cjwatson/%{name}-blacklist.diff
 Patch12:	%{name}-blacklist.diff
+Patch13:	%{name}-kuserok.patch
 URL:		http://www.openssh.com/portable.html
 BuildRequires:	%{__perl}
 BuildRequires:	autoconf
@@ -516,6 +517,7 @@ openldap-a.
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
+%patch13 -p1
 
 %if "%{pld_release}" == "ac"
 # fix for missing x11.pc

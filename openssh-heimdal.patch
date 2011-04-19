@@ -51,7 +51,7 @@
 +		client->store.filename = xstrdup(ccache_name);
 +	}
 +	client->store.envvar = "KRB5CCNAME";
-+	len = strlen(ccache_type) + strlen(ccache_name) + 1;
++	len = strlen(ccache_type) + strlen(ccache_name) + 2;
 +	client->store.envval = xmalloc(len);
 +	snprintf(client->store.envval, len, "%s:%s", ccache_type, ccache_name);
 +#else
@@ -94,7 +94,7 @@
 +	if (strncmp(ccache_type, "FILE", 4) == 0) {
 +		authctxt->krb5_ticket_file = (char *)ccache_name;
 +	}
-+	len = strlen(ccache_type) + strlen(ccache_name) + 1;
++	len = strlen(ccache_type) + strlen(ccache_name) + 2;
 +	authctxt->krb5_ccname = xmalloc(len);
 +	snprintf(authctxt->krb5_ccname, len, "%s:%s", ccache_type, ccache_name);
 +#else

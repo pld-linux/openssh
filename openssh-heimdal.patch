@@ -17,3 +17,93 @@
  				       ]
  			)
  			AC_SEARCH_LIBS(dn_expand, resolv)
+--- openssh-5.8p1/gss-serv-krb5.c~	2011-04-19 14:09:54.832721425 +0200
++++ openssh-5.8p1/gss-serv-krb5.c	2011-04-19 21:54:01.818248221 +0200
+@@ -121,6 +121,9 @@
+ 	krb5_principal princ;
+ 	OM_uint32 maj_status, min_status;
+ 	int len;
++#ifdef HEIMDAL
++	const char *ccache_type, *ccache_name;
++#else
+ 
+ 	if (client->creds == NULL) {
+ 		debug("No credentials stored");
+@@ -131,8 +132,8 @@
+ 		return;
+ 
+ #ifdef HEIMDAL
+-	if ((problem = krb5_cc_gen_new(krb_context, &krb5_fcc_ops, &ccache))) {
+-		logit("krb5_cc_gen_new(): %.100s",
++	if ((problem = krb5_cc_new_unique(krb_context, NULL, NULL, &ccache))) {
++		logit("krb5_cc_new_unique(): %.100s",
+ 		    krb5_get_err_text(krb_context, problem));
+ 		return;
+ 	}
+@@ -169,11 +170,23 @@
+ 		return;
+ 	}
+ 
++#ifdef HEIMDAL
++	ccache_type = krb5_cc_get_type(krb_context, ccache);
++	ccache_name = krb5_cc_get_name(krb_context, ccache);
++	if (strncmp(ccache_type, "FILE", 4) == 0) {
++		client->store.filename = xstrdup(ccache_name);
++	}
++	client->store.envvar = "KRB5CCNAME";
++	len = strlen(ccache_type) + strlen(ccache_name) + 1;
++	client->store.envval = xmalloc(len);
++	snprintf(client->store.envval, len, "%s:%s", ccache_type, ccache_name);
++#else
+ 	client->store.filename = xstrdup(krb5_cc_get_name(krb_context, ccache));
+ 	client->store.envvar = "KRB5CCNAME";
+ 	len = strlen(client->store.filename) + 6;
+ 	client->store.envval = xmalloc(len);
+ 	snprintf(client->store.envval, len, "FILE:%s", client->store.filename);
++#endif
+ 
+ #ifdef USE_PAM
+ 	if (options.use_pam)
+--- openssh-5.8p1/auth-krb5.c.orig	2009-12-21 00:49:22.000000000 +0100
++++ openssh-5.8p1/auth-krb5.c	2011-04-19 22:16:14.622268002 +0200
+@@ -74,6 +88,7 @@
+ #ifndef HEIMDAL
+ 	krb5_creds creds;
+ 	krb5_principal server;
++	const char *ccache_type, *ccache_name;
+ #endif
+ 	krb5_error_code problem;
+ 	krb5_ccache ccache = NULL;
+@@ -115,7 +130,7 @@
+ 	if (problem)
+ 		goto out;
+ 
+-	problem = krb5_cc_gen_new(authctxt->krb5_ctx, &krb5_fcc_ops,
++	problem = krb5_cc_new_unique(authctxt->krb5_ctx, NULL, NULL,
+ 	    &authctxt->krb5_fwd_ccache);
+ 	if (problem)
+ 		goto out;
+@@ -166,12 +181,23 @@
+ 		goto out;
+ #endif
+ 
++#ifdef HEIMDAL
++	ccache_type = krb5_cc_get_type(authctxt->krb5_ctx, authctxt->krb5_fwd_ccache);
++	ccache_name = krb5_cc_get_name(authctxt->krb5_ctx, authctxt->krb5_fwd_ccache);
++	if (strncmp(ccache_type, "FILE", 4) == 0) {
++		authctxt->krb5_ticket_file = (char *)ccache_name;
++	}
++	len = strlen(ccache_type) + strlen(ccache_name) + 1;
++	authctxt->krb5_ccname = xmalloc(len);
++	snprintf(authctxt->krb5_ccname, len, "%s:%s", ccache_type, ccache_name);
++#else
+ 	authctxt->krb5_ticket_file = (char *)krb5_cc_get_name(authctxt->krb5_ctx, authctxt->krb5_fwd_ccache);
+ 
+ 	len = strlen(authctxt->krb5_ticket_file) + 6;
+ 	authctxt->krb5_ccname = xmalloc(len);
+ 	snprintf(authctxt->krb5_ccname, len, "FILE:%s",
+ 	    authctxt->krb5_ticket_file);
++#endif
+ 
+ #ifdef USE_PAM
+ 	if (options.use_pam)

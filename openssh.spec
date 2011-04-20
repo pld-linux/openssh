@@ -519,9 +519,13 @@ openldap-a.
 %patch12 -p1
 %patch13 -p1
 
+cp -p %{SOURCE3} sshd.pamd
+
 %if "%{pld_release}" == "ac"
 # fix for missing x11.pc
 %{__sed} -i -e '/pkg-config/s/ x11//' contrib/Makefile
+# not present in ac, no point searching it
+%{__sed} -i -e '/pam_keyinit.so/d' sshd.pamd
 %endif
 
 %build
@@ -576,21 +580,20 @@ install -d $RPM_BUILD_ROOT/etc/{profile.d,X11/xinit/xinitrc.d}
 
 bzip2 -dc %{SOURCE1} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
 
-install %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
-install %{SOURCE3} $RPM_BUILD_ROOT/etc/pam.d/sshd
-install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/sshd
-install %{SOURCE5} $RPM_BUILD_ROOT/etc/profile.d
+install -p %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
+cp -p sshd.pam $RPM_BUILD_ROOT/etc/pam.d/sshd
+cp -p %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/sshd
+cp -p %{SOURCE5} $RPM_BUILD_ROOT/etc/profile.d
 ln -sf	/etc/profile.d/ssh-agent.sh $RPM_BUILD_ROOT/etc/X11/xinit/xinitrc.d/ssh-agent.sh
-install %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}
-install %{SOURCE7} $RPM_BUILD_ROOT%{schemadir}
-
-install %{SOURCE8} $RPM_BUILD_ROOT/etc/init/sshd.conf
+cp -p %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}
+cp -p %{SOURCE7} $RPM_BUILD_ROOT%{schemadir}
+cp -p %{SOURCE8} $RPM_BUILD_ROOT/etc/init/sshd.conf
 
 %if %{with gnome}
-install contrib/gnome-ssh-askpass1 $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
+install -p contrib/gnome-ssh-askpass1 $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
 %endif
 %if %{with gtk}
-install contrib/gnome-ssh-askpass2 $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
+install -p contrib/gnome-ssh-askpass2 $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
 %endif
 %if %{with gnome} || %{with gtk}
 cat << 'EOF' >$RPM_BUILD_ROOT/etc/env.d/GNOME_SSH_ASKPASS_GRAB_SERVER
@@ -602,8 +605,8 @@ EOF
 ln -s %{_libexecdir}/ssh/ssh-askpass $RPM_BUILD_ROOT%{_libexecdir}/ssh-askpass
 %endif
 
-install contrib/ssh-copy-id $RPM_BUILD_ROOT%{_bindir}
-install contrib/ssh-copy-id.1 $RPM_BUILD_ROOT%{_mandir}/man1
+install -p contrib/ssh-copy-id $RPM_BUILD_ROOT%{_bindir}
+cp -p contrib/ssh-copy-id.1 $RPM_BUILD_ROOT%{_mandir}/man1
 
 rm -f	$RPM_BUILD_ROOT%{_mandir}/man1/slogin.1
 echo ".so ssh.1" > $RPM_BUILD_ROOT%{_mandir}/man1/slogin.1

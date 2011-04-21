@@ -519,13 +519,13 @@ openldap-a.
 %patch12 -p1
 %patch13 -p1
 
-cp -p %{SOURCE3} sshd.pamd
+cp -p %{SOURCE3} sshd.pam
 
 %if "%{pld_release}" == "ac"
 # fix for missing x11.pc
 %{__sed} -i -e '/pkg-config/s/ x11//' contrib/Makefile
 # not present in ac, no point searching it
-%{__sed} -i -e '/pam_keyinit.so/d' sshd.pamd
+%{__sed} -i -e '/pam_keyinit.so/d' sshd.pam
 %endif
 
 %build

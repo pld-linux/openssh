@@ -65,7 +65,7 @@ ssh_gen_keys() {
 		/usr/bin/ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key -N '' >&2
 		chmod 600 /etc/ssh/ssh_host_ecdsa_key
 		[ -x /sbin/restorecon ] && /sbin/restorecon /etc/ssh/ssh_host_ecdsa_key
-	fi
+	fi # ecdsa
 }
 
 start() {

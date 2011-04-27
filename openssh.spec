@@ -29,7 +29,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	5.8p1
-Release:	5
+Release:	6
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -520,12 +520,16 @@ openldap-a.
 %patch13 -p1
 
 cp -p %{SOURCE3} sshd.pam
+install -p %{SOURCE2} sshd.init
 
 %if "%{pld_release}" == "ac"
 # fix for missing x11.pc
 %{__sed} -i -e '/pkg-config/s/ x11//' contrib/Makefile
 # not present in ac, no point searching it
 %{__sed} -i -e '/pam_keyinit.so/d' sshd.pam
+
+# openssl on ac does not have OPENSSL_HAS_ECC
+%{__sed} -i -e '/ecdsa/d' sshd.init
 %endif
 
 %build
@@ -580,7 +584,7 @@ install -d $RPM_BUILD_ROOT/etc/{profile.d,X11/xinit/xinitrc.d}
 
 bzip2 -dc %{SOURCE1} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
 
-install -p %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
+install -p sshd.init $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
 cp -p sshd.pam $RPM_BUILD_ROOT/etc/pam.d/sshd
 cp -p %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/sshd
 cp -p %{SOURCE5} $RPM_BUILD_ROOT/etc/profile.d

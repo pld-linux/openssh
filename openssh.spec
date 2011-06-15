@@ -29,7 +29,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	5.8p2
-Release:	1
+Release:	2
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -93,26 +93,6 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_libexecdir	%{_libdir}/%{name}
 %define		_privsepdir	/usr/share/empty
 %define		schemadir	/usr/share/openldap/schema
-
-## to be moved to rpm-build-macros
-## TODO: handle RPM_SKIP_AUTO_RESTART
-
-# migrate from init script to upstart job
-%define	upstart_post() \
-	if [ -f /var/lock/subsys/"%1" ] ; then \
-		/sbin/service --no-upstart "%1" stop \
-		/sbin/service "%1" start \
-	else \
-		/sbin/service "%1" try-restart \
-	fi
-
-# restart the job after upgrade or migrate to init script on removal
-%define	upstart_postun() \
-	if [ -x /sbin/initctl ] && /sbin/initctl status "%1" 2>/dev/null | grep -q 'running' ; then \
-		/sbin/initctl stop "%1" 2>/dev/null \
-		[ -f "/etc/rc.d/init.d/%1" -o -f "/etc/init/%1.conf" ] && /sbin/service "%1" start \
-	fi
-
 
 %description
 Ssh (Secure Shell) a program for logging into a remote machine and for
@@ -424,6 +404,7 @@ Summary(pl.UTF-8):	Opis zadania Upstart dla serwera OpenSSH
 Group:		Daemons
 Requires:	%{name}-server = %{epoch}:%{version}-%{release}
 Requires:	upstart >= 0.6
+Conflicts:	syslog-ng < 3.2.4-1
 
 %description server-upstart
 Upstart job description for OpenSSH.

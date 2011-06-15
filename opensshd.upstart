@@ -1,4 +1,4 @@
-start on pld.network-started and started SERVICE=syslog and started random
+start on pld.network-started and started SERVICE_syslog=y and started random
 stop on pld.shutdown-started
 
 respawn

@@ -1,22 +1,21 @@
---- openssh-5.7p1/configure.ac.orig	2011-01-22 00:37:05.000000000 +0200
-+++ openssh-5.7p1/configure.ac	2011-01-24 16:21:01.711393457 +0200
-@@ -3572,14 +3572,14 @@
- 				       [ AC_MSG_RESULT(yes)
- 					 AC_DEFINE(HEIMDAL)
+--- openssh-5.9p1/configure.ac~	2011-08-18 06:48:24.000000000 +0200
++++ openssh-5.9p1/configure.ac	2011-09-06 19:00:46.856319713 +0200
+@@ -3424,13 +3424,13 @@
+ 					[ AC_MSG_RESULT([yes])
+ 					 AC_DEFINE([HEIMDAL])
  					 K5LIBS="-lkrb5"
 -					 K5LIBS="$K5LIBS -lcom_err -lasn1"
 +					 K5LIBS="$K5LIBS -lasn1"
- 					 AC_CHECK_LIB(roken, net_write,
+ 					 AC_CHECK_LIB([roken], [net_write],
  					   [K5LIBS="$K5LIBS -lroken"])
- 					 AC_CHECK_LIB(des, des_cbc_encrypt,
+ 					 AC_CHECK_LIB([des], [des_cbc_encrypt],
  					   [K5LIBS="$K5LIBS -ldes"])
- 				       ],
- 				       [ AC_MSG_RESULT(no)
+ 				       ], [ AC_MSG_RESULT([no])
 -					 K5LIBS="-lkrb5 -lk5crypto -lcom_err"
 +					 K5LIBS="-lkrb5 -lk5crypto"
- 				       ]
- 			)
- 			AC_SEARCH_LIBS(dn_expand, resolv)
+ 				       
+ 			])
+ 			AC_SEARCH_LIBS([dn_expand], [resolv])
 diff -ur openssh-5.8p1-orig/auth-krb5.c openssh-5.8p1/auth-krb5.c
 --- openssh-5.8p1-orig/auth-krb5.c	2011-04-20 00:30:23.632652510 +0200
 +++ openssh-5.8p1/auth-krb5.c	2011-04-20 00:34:06.218117429 +0200

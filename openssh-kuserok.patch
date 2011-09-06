@@ -54,14 +54,14 @@ diff -up openssh-5.8p1/gss-serv-krb5.c.kuserok openssh-5.8p1/gss-serv-krb5.c
 diff -up openssh-5.8p1/servconf.c.kuserok openssh-5.8p1/servconf.c
 --- openssh-5.8p1/servconf.c.kuserok	2011-02-14 09:15:12.000000000 +0100
 +++ openssh-5.8p1/servconf.c	2011-02-14 09:20:22.000000000 +0100
-@@ -142,6 +142,7 @@ initialize_server_options(ServerOptions 
- 	options->authorized_principals_file = NULL;
- 	options->ip_qos_interactive = -1;
- 	options->ip_qos_bulk = -1;
+@@ -133,6 +133,7 @@
+ 	options->num_accept_env = 0;
+ 	options->permit_tun = -1;
+ 	options->num_permitted_opens = -1;
 +	options->use_kuserok = -1;
- #ifdef WITH_LDAP_PUBKEY
-  	/* XXX dirty */
-  	options->lpk.ld = NULL;
+ 	options->adm_forced_command = NULL;
+ 	options->chroot_directory = NULL;
+ 	options->zero_knowledge_password_authentication = -1;
 @@ -291,6 +292,8 @@ fill_default_server_options(ServerOption
  	if (use_privsep == -1)
  		use_privsep = 1;

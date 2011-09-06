@@ -27,42 +27,41 @@ diff -Nuar --exclude '*.orig' --exclude '*.rej' openssh-5.1p1.orig/auth2-pubkey.
  /* import */
  extern ServerOptions options;
  extern u_char *session_id2;
-@@ -187,10 +191,79 @@
- 	u_long linenum = 0;
- 	Key *found;
- 	char *fp;
+@@ -272,9 +272,97 @@
+ {
+ 	char *file;
+ 	u_int i, allowed = 0;
 +#ifdef WITH_LDAP_PUBKEY
 +	ldap_key_t * k;
 +	unsigned int i = 0;
 +#endif
  
- 	/* Temporarily use the user's uid. */
  	temporarily_use_uid(pw);
  
 +#ifdef WITH_LDAP_PUBKEY
-+ 	found_key = 0;
-+ 	/* allocate a new key type */
-+ 	found = key_new(key->type);
-+ 
-+ 	/* first check if the options is enabled, then try.. */
++	/* here is the job */
++	key = key_new(KEY_RSA1);
++
 +	if (options.lpk.on) {
-+	    debug("[LDAP] trying LDAP first uid=%s",pw->pw_name);
-+	    if (ldap_ismember(&options.lpk, pw->pw_name) > 0) {
-+		if ((k = ldap_getuserkey(&options.lpk, pw->pw_name)) != NULL) {
-+		    /* Skip leading whitespace, empty and comment lines. */
++	    debug("[LDAP] trying LDAP first uid=%s", pw->pw_name);
++	    if ( ldap_ismember(&options.lpk, pw->pw_name) > 0) {
++		if ( (k = ldap_getuserkey(&options.lpk, pw->pw_name)) != NULL) {
 +		    for (i = 0 ; i < k->num ; i++) {
-+			/* dont forget if multiple keys to reset options */
 +			char *cp, *options = NULL;
 +
-+			for (cp = (char *)k->keys[i]->bv_val; *cp == ' ' || *cp == '\t'; cp++)
++			for (cp = k->keys[i]->bv_val; *cp == ' ' || *cp == '\t'; cp++)
 +			    ;
 +			if (!*cp || *cp == '\n' || *cp == '#')
 +			    continue;
 +
-+			if (key_read(found, &cp) != 1) {
-+			    /* no key?  check if there are options for this key */
++			/*
++			* Check if there are options for this key, and if so,
++			* save their starting address and skip the option part
++			* for now.  If there are no options, set the starting
++			* address to NULL.
++			 */
++			if (*cp < '0' || *cp > '9') {
 +			    int quoted = 0;
-+			    debug2("[LDAP] user_key_allowed: check options: '%s'", cp);
 +			    options = cp;
 +			    for (; *cp && (quoted || (*cp != ' ' && *cp != '\t')); cp++) {
 +				if (*cp == '\\' && cp[1] == '"')
@@ -70,32 +69,49 @@ diff -Nuar --exclude '*.orig' --exclude '*.rej' openssh-5.1p1.orig/auth2-pubkey.
 +				else if (*cp == '"')
 +				    quoted = !quoted;
 +			    }
-+			    /* Skip remaining whitespace. */
-+			    for (; *cp == ' ' || *cp == '\t'; cp++)
-+				;
-+			    if (key_read(found, &cp) != 1) {
-+				debug2("[LDAP] user_key_allowed: advance: '%s'", cp);
-+				/* still no key?  advance to next line*/
-+				continue;
-+			    }
-+			}
++			} else
++			    options = NULL;
 +
-+			if (key_equal(found, key) &&
-+				auth_parse_options(pw, options, file, linenum) == 1) {
-+			    found_key = 1;
-+			    debug("[LDAP] matching key found");
-+			    fp = key_fingerprint(found, SSH_FP_MD5, SSH_FP_HEX);
-+			    verbose("[LDAP] Found matching %s key: %s", key_type(found), fp);
-+
-+			    /* restoring memory */
-+			    ldap_keys_free(k);
-+			    xfree(fp);
-+			    restore_uid();
-+			    key_free(found);
-+			    return found_key;
-+			    break;
++			/* Parse the key from the line. */
++			if (hostfile_read_key(&cp, &bits, key) == 0) {
++			    debug("[LDAP] line %d: non ssh1 key syntax", i);
++			    continue;
 +			}
-+		    }/* end of LDAP for() */
++			/* cp now points to the comment part. */
++
++			/* Check if the we have found the desired key (identified by its modulus). */
++			if (BN_cmp(key->rsa->n, client_n) != 0)
++			    continue;
++
++			/* check the real bits  */
++			if (bits != (unsigned int)BN_num_bits(key->rsa->n))
++			    logit("[LDAP] Warning: ldap, line %lu: keysize mismatch: "
++				    "actual %d vs. announced %d.", (unsigned long)i, BN_num_bits(key->rsa->n), bits);
++
++			/* We have found the desired key. */
++			/*
++			* If our options do not allow this key to be used,
++			* do not send challenge.
++			 */
++			if (!auth_parse_options(pw, options, "[LDAP]", (unsigned long) i))
++			    continue;
++
++			/* break out, this key is allowed */
++			allowed = 1;
++
++			/* add the return stuff etc... */
++			/* Restore the privileged uid. */
++			restore_uid();
++
++			/* return key if allowed */
++			if (allowed && rkey != NULL)
++			    *rkey = key;
++			else
++			    key_free(key);
++
++			ldap_keys_free(k);
++			return (allowed);
++		    }
 +		} else {
 +		    logit("[LDAP] no keys found for '%s'!", pw->pw_name);
 +		}
@@ -104,9 +120,11 @@ diff -Nuar --exclude '*.orig' --exclude '*.rej' openssh-5.1p1.orig/auth2-pubkey.
 +	    }
 +	}
 +#endif
- 	debug("trying public key file %s", file);
- 	f = auth_openkeyfile(file, pw, options.strict_modes);
- 
++
++	/* The authorized keys. */
+ 	for (i = 0; !allowed && i < options.num_authkeys_files; i++) {
+ 		file = expand_authorized_keys(
+ 		    options.authorized_keys_files[i], pw);
 diff -Nuar --exclude '*.orig' --exclude '*.rej' openssh-5.1p1.orig/auth-rsa.c openssh-5.1p1+lpk/auth-rsa.c
 --- openssh-5.1p1.orig/auth-rsa.c	2008-07-02 05:37:30.000000000 -0700
 +++ openssh-5.1p1+lpk/auth-rsa.c	2008-08-23 15:02:47.000000000 -0700

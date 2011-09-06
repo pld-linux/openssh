@@ -28,13 +28,13 @@ Summary(pt_BR.UTF-8):	Implementação livre do SSH
 Summary(ru.UTF-8):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
-Version:	5.8p2
-Release:	3
+Version:	5.9p1
+Release:	0.1
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
 Source0:	ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
-# Source0-md5:	88a4a83b0e0e60cd545430d4e4bd7e0c
+# Source0-md5:	b50a499fa02616a47984b1920848b565
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 # Source1-md5:	66943d481cc422512b537bcc2c7400d1
 Source2:	%{name}d.init
@@ -513,6 +513,9 @@ install -p %{SOURCE2} sshd.init
 %{__sed} -i -e '/ecdsa/d' sshd.init
 %endif
 
+# hack since arc4random from openbsd-compat needs symbols from libssh and vice versa
+sed -i -e 's#-lssh -lopenbsd-compat#-lssh -lopenbsd-compat -lssh#g' Makefile*
+
 %build
 cp /usr/share/automake/config.sub .
 %{__aclocal}
@@ -660,7 +663,7 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc *.RNG TODO README OVERVIEW CREDITS Change*
+%doc TODO README OVERVIEW CREDITS Change*
 %attr(755,root,root) %{_bindir}/ssh-key*
 %attr(755,root,root) %{_bindir}/ssh-vulnkey*
 %{_mandir}/man1/ssh-key*.1*

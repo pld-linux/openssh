@@ -1,10 +1,11 @@
---- openssh-4.2p1/configure.ac~	2006-01-05 02:09:10.000000000 +0100
-+++ openssh-4.2p1/configure.ac	2006-01-05 02:32:00.000000000 +0100
-@@ -808,6 +808,7 @@
+--- openssh-5.9p1/configure.ac~	2011-09-06 19:31:16.000000000 +0200
++++ openssh-5.9p1/configure.ac	2011-09-06 19:31:55.291791679 +0200
+@@ -1076,6 +1076,7 @@
  
- AC_MSG_CHECKING(for possibly buggy zlib)
- AC_RUN_IFELSE([AC_LANG_SOURCE([[
+ AC_MSG_CHECKING([for possibly buggy zlib])
+ AC_RUN_IFELSE([AC_LANG_PROGRAM([[
 +#include <stdlib.h>
  #include <stdio.h>
  #include <zlib.h>
- int main()
+ 	]],
+

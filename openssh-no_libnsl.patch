@@ -10,13 +10,14 @@ diff -urN openssh-3.0p1.orig/configure.ac openssh-3.0p1/configure.ac
  	case `uname -r` in
  	1.*|2.0.*)
  		AC_DEFINE(BROKEN_CMSG_TYPE)
---- openssh-3.2.3p1/configure.ac.orig	Sat May 25 13:02:18 2002
-+++ openssh-3.2.3p1/configure.ac	Sat May 25 13:14:58 2002
-@@ -360,7 +359,6 @@
- 	util.h utime.h utmp.h utmpx.h)
+--- openssh-5.9p1/configure.ac~	2011-09-06 19:01:09.000000000 +0200
++++ openssh-5.9p1/configure.ac	2011-09-06 19:02:14.816070290 +0200
+@@ -972,7 +972,6 @@
  
+ dnl Checks for header files.
  # Checks for libraries.
--AC_CHECK_FUNC(yp_match, , AC_CHECK_LIB(nsl, yp_match))
- AC_CHECK_FUNC(setsockopt, , AC_CHECK_LIB(socket, setsockopt))
+-AC_CHECK_FUNC([yp_match], , [AC_CHECK_LIB([nsl], [yp_match])])
+ AC_CHECK_FUNC([setsockopt], , [AC_CHECK_LIB([socket], [setsockopt])])
  
- dnl SCO OS3 needs this for libwrap
+ dnl IRIX and Solaris 2.5.1 have dirname() in libgen
+

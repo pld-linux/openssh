@@ -29,7 +29,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	5.9p1
-Release:	0.1
+Release:	1
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -48,9 +48,10 @@ Patch100:	%{name}-heimdal.patch
 Patch0:		%{name}-no_libnsl.patch
 Patch2:		%{name}-pam_misc.patch
 Patch3:		%{name}-sigpipe.patch
-# http://code.google.com/p/openssh-lpk/
-Patch4:		%{name}-lpk.patch
-Patch5:		%{name}-config.patch
+# http://pkgs.fedoraproject.org/gitweb/?p=openssh.git;a=tree
+Patch4:		%{name}-5.9p1-ldap.patch
+Patch5:		%{name}-5.9p1-ldap-fixes.patch
+Patch6:		%{name}-config.patch
 # High Performance SSH/SCP - HPN-SSH - http://www.psc.edu/networking/projects/hpn-ssh/
 # http://www.psc.edu/networking/projects/hpn-ssh/openssh-5.2p1-hpn13v6.diff.gz
 Patch9:		%{name}-5.2p1-hpn13v6.diff
@@ -494,6 +495,7 @@ openldap-a.
 %patch3 -p1
 %{?with_ldap:%patch4 -p1}
 %patch5 -p1
+%patch6 -p1
 %{?with_hpn:%patch9 -p1}
 %patch10 -p1
 %patch11 -p1
@@ -520,6 +522,7 @@ sed -i -e 's#-lssh -lopenbsd-compat#-lssh -lopenbsd-compat -lssh#g' Makefile*
 cp /usr/share/automake/config.sub .
 %{__aclocal}
 %{__autoconf}
+%{__autoheader}
 CPPFLAGS="-DCHROOT"
 %configure \
 	PERL=%{__perl} \
@@ -530,8 +533,7 @@ CPPFLAGS="-DCHROOT"
 	%{?with_libedit:--with-libedit} \
 	--with-4in6 \
 	--with-tcp-wrappers \
-	%{?with_ldap:--with-libs="-lldap -llber"} \
-	%{?with_ldap:--with-cppflags="-DWITH_LDAP_PUBKEY"} \
+	%{?with_ldap:--with-ldap} \
 	%{?with_kerberos5:--with-kerberos5=/usr} \
 	--with-privsep-path=%{_privsepdir} \
 	--with-pid-dir=%{_localstatedir}/run \
@@ -713,14 +715,19 @@ fi
 %attr(755,root,root) %{_sbindir}/sshd
 %attr(755,root,root) %{_libexecdir}/sftp-server
 %attr(755,root,root) %{_libexecdir}/ssh-keysign
+%attr(755,root,root) %{_libexecdir}/ssh-ldap-helper
+%attr(755,root,root) %{_libexecdir}/ssh-ldap-wrapper
 %attr(755,root,root) %{_libexecdir}/ssh-pkcs11-helper
 %{_mandir}/man8/sshd.8*
 %{_mandir}/man8/sftp-server.8*
 %{_mandir}/man8/ssh-keysign.8*
+%{_mandir}/man8/ssh-ldap-helper.8*
 %{_mandir}/man8/ssh-pkcs11-helper.8*
 %{_mandir}/man5/sshd_config.5*
+%{_mandir}/man5/ssh-ldap.conf.5*
 %{_mandir}/man5/moduli.5*
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/sshd_config
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ldap.conf
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/sshd
 %attr(640,root,root) %{_sysconfdir}/moduli
 %attr(754,root,root) /etc/rc.d/init.d/sshd

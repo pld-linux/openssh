@@ -1,5 +1,6 @@
 #
 # Conditional build:
+%bcond_with	audit		# sshd audit support
 %bcond_with	gnome		# with gnome-askpass (GNOME 1.x) utility
 %bcond_without	gtk		# without GTK+ (2.x)
 %bcond_without	ldap		# with ldap support
@@ -62,7 +63,8 @@ Patch12:	%{name}-blacklist.diff
 Patch13:	%{name}-kuserok.patch
 URL:		http://www.openssh.com/portable.html
 BuildRequires:	%{__perl}
-BuildRequires:	autoconf
+%{?with_audit:BuildRequires:	audit-libs-devel}
+BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
 %{?with_gnome:BuildRequires:	gnome-libs-devel}
 %{?with_gtk:BuildRequires:	gtk+2-devel}
@@ -526,24 +528,27 @@ cp /usr/share/automake/config.sub .
 CPPFLAGS="-DCHROOT"
 %configure \
 	PERL=%{__perl} \
-	--with-pam \
+	--disable-strip \
+	--enable-utmpx \
+	--enable-wtmpx \
+	--with-4in6 \
+	%{?with_audit:--with-audit=linux} \
+	--with-ipaddr-display \
+	%{?with_kerberos5:--with-kerberos5=/usr} \
+	%{?with_ldap:--with-ldap} \
+	%{?with_libedit:--with-libedit} \
 	--with-mantype=man \
 	--with-md5-passwords \
-	--with-ipaddr-display \
-	%{?with_libedit:--with-libedit} \
-	--with-4in6 \
-	--with-tcp-wrappers \
-	%{?with_ldap:--with-ldap} \
-	%{?with_kerberos5:--with-kerberos5=/usr} \
-	--with-privsep-path=%{_privsepdir} \
+	--with-pam \
 	--with-pid-dir=%{_localstatedir}/run \
+	--with-privsep-path=%{_privsepdir} \
+	%{?with_selinux:--with-selinux} \
+	--with-tcp-wrappers \
 %if "%{pld_release}" == "ac"
-	--with-xauth=/usr/X11R6/bin/xauth \
+	--with-xauth=/usr/X11R6/bin/xauth
 %else
-	--with-xauth=%{_bindir}/xauth \
+	--with-xauth=%{_bindir}/xauth
 %endif
-	--enable-utmpx \
-	--enable-wtmpx
 
 echo '#define LOGIN_PROGRAM		   "/bin/login"' >>config.h
 
@@ -598,7 +603,7 @@ ln -s %{_libexecdir}/ssh/ssh-askpass $RPM_BUILD_ROOT%{_libexecdir}/ssh-askpass
 install -p contrib/ssh-copy-id $RPM_BUILD_ROOT%{_bindir}
 cp -p contrib/ssh-copy-id.1 $RPM_BUILD_ROOT%{_mandir}/man1
 
-rm -f	$RPM_BUILD_ROOT%{_mandir}/man1/slogin.1
+%{__rm} $RPM_BUILD_ROOT%{_mandir}/man1/slogin.1
 echo ".so ssh.1" > $RPM_BUILD_ROOT%{_mandir}/man1/slogin.1
 
 touch $RPM_BUILD_ROOT/etc/security/blacklist.sshd
@@ -607,8 +612,7 @@ cat << 'EOF' > $RPM_BUILD_ROOT/etc/env.d/SSH_ASKPASS
 #SSH_ASKPASS="%{_libexecdir}/ssh-askpass"
 EOF
 
-rm -f $RPM_BUILD_ROOT%{_datadir}/Ssh.bin # ???
-rm -f $RPM_BUILD_ROOT%{_mandir}/README.openssh-non-english-man-pages
+%{__rm} $RPM_BUILD_ROOT%{_mandir}/README.openssh-non-english-man-pages
 
 %clean
 rm -rf $RPM_BUILD_ROOT

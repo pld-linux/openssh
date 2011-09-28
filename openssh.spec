@@ -53,6 +53,8 @@ Patch3:		%{name}-sigpipe.patch
 Patch4:		%{name}-5.9p1-ldap.patch
 Patch5:		%{name}-5.9p1-ldap-fixes.patch
 Patch6:		%{name}-config.patch
+# https://bugzilla.mindrot.org/show_bug.cgi?id=1663
+Patch7:		authorized-keys-command.patch
 # High Performance SSH/SCP - HPN-SSH - http://www.psc.edu/networking/projects/hpn-ssh/
 # http://www.psc.edu/networking/projects/hpn-ssh/openssh-5.2p1-hpn13v6.diff.gz
 Patch9:		%{name}-5.2p1-hpn13v6.diff
@@ -496,8 +498,9 @@ openldap-a.
 %patch2 -p1
 %patch3 -p1
 %{?with_ldap:%patch4 -p1}
-%patch5 -p1
+%{?with_ldap:%patch5 -p1}
 %patch6 -p1
+%patch7 -p1
 %{?with_hpn:%patch9 -p1}
 %patch10 -p1
 %patch11 -p1
@@ -540,6 +543,7 @@ CPPFLAGS="-DCHROOT"
 	--with-mantype=man \
 	--with-md5-passwords \
 	--with-pam \
+	--with-authorized-keys-command \
 	--with-pid-dir=%{_localstatedir}/run \
 	--with-privsep-path=%{_privsepdir} \
 	%{?with_selinux:--with-selinux} \

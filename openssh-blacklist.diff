@@ -950,8 +950,8 @@ This patch is up to date with respect to Debian openssh 1:4.7p1-10.
  #ifndef _PATH_SSH_PROGRAM
  #define _PATH_SSH_PROGRAM		"/usr/bin/ssh"
  #endif
---- openssh-4.7p1.orig/auth2-pubkey.c
-+++ openssh-4.7p1/auth2-pubkey.c
+--- openssh-5.9p1/auth2-pubkey.c~	2011-09-29 00:36:17.000000000 +0300
++++ openssh-5.9p1/auth2-pubkey.c	2011-09-29 00:37:17.847762648 +0300
 @@ -42,6 +42,7 @@
  #include "compat.h"
  #include "key.h"
@@ -960,7 +960,7 @@ This patch is up to date with respect to Debian openssh 1:4.7p1-10.
  #include "auth.h"
  #include "pathnames.h"
  #include "uidswap.h"
-@@ -269,9 +270,23 @@
+@@ -596,9 +596,23 @@
  int
  user_key_allowed(struct passwd *pw, Key *key)
  {
@@ -981,6 +981,6 @@ This patch is up to date with respect to Debian openssh 1:4.7p1-10.
 +			return 0;
 +	}
 +
- 	if (auth_key_is_revoked(key))
- 		return 0;
- 	if (key_is_cert(key) && auth_key_is_revoked(key->cert->signature_key))
+ #ifdef WITH_AUTHORIZED_KEYS_COMMAND
+ 	success = user_key_via_command_allowed2(pw, key);
+ 	if (success > 0)

@@ -52,6 +52,7 @@ Patch3:		%{name}-sigpipe.patch
 # http://pkgs.fedoraproject.org/gitweb/?p=openssh.git;a=tree
 Patch4:		%{name}-5.9p1-ldap.patch
 Patch5:		%{name}-5.9p1-ldap-fixes.patch
+Patch8:		ldap.conf.patch
 Patch6:		%{name}-config.patch
 # https://bugzilla.mindrot.org/show_bug.cgi?id=1663
 Patch7:		authorized-keys-command.patch
@@ -499,6 +500,7 @@ openldap-a.
 %patch3 -p1
 %{?with_ldap:%patch4 -p1}
 %{?with_ldap:%patch5 -p1}
+%{?with_ldap:%patch8 -p1}
 %patch6 -p1
 %patch7 -p1
 %{?with_hpn:%patch9 -p1}
@@ -617,6 +619,7 @@ cat << 'EOF' > $RPM_BUILD_ROOT/etc/env.d/SSH_ASKPASS
 EOF
 
 %{__rm} $RPM_BUILD_ROOT%{_mandir}/README.openssh-non-english-man-pages
+%{__rm} $RPM_BUILD_ROOT%{_sysconfdir}/ldap.conf
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -735,7 +738,7 @@ fi
 
 %files server
 %defattr(644,root,root,755)
-%doc HOWTO.ldap-keys
+%doc HOWTO.ldap-keys ldap.conf
 %attr(755,root,root) %{_sbindir}/sshd
 %attr(755,root,root) %{_libexecdir}/sftp-server
 %attr(755,root,root) %{_libexecdir}/ssh-keysign
@@ -751,7 +754,6 @@ fi
 %{_mandir}/man5/ssh-ldap.conf.5*
 %{_mandir}/man5/moduli.5*
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/sshd_config
-%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ldap.conf
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/sshd
 %attr(640,root,root) %{_sysconfdir}/moduli
 %attr(754,root,root) /etc/rc.d/init.d/sshd

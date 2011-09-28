@@ -1,0 +1,56 @@
+--- openssh-5.9p1/./ldap-helper.c~	2011-09-29 00:38:28.000000000 +0300
++++ openssh-5.9p1/./ldap-helper.c	2011-09-29 00:54:04.004223268 +0300
+@@ -34,7 +34,7 @@
+ 
+ static int config_debug = 0;
+ int config_exclusive_config_file = 0;
+-static char *config_file_name = "/etc/ssh/ldap.conf";
++static char *config_file_name = "/etc/ldap.conf";
+ static char *config_single_user = NULL;
+ static int config_verbose = SYSLOG_LEVEL_VERBOSE;
+ int config_warning_config_file = 0;
+@@ -48,7 +48,7 @@
+ 	fprintf(stderr, "Options:\n");
+ 	fprintf(stderr, "  -d          Output the log messages to stderr.\n");
+ 	fprintf(stderr, "  -e          Check the config file for unknown commands.\n");
+-	fprintf(stderr, "  -f file     Use alternate config file (default is /etc/ssh/ldap.conf).\n");
++	fprintf(stderr, "  -f file     Use alternate config file (default is /etc/ldap.conf).\n");
+ 	fprintf(stderr, "  -s user     Do not demonize, send the user's key to stdout.\n");
+ 	fprintf(stderr, "  -v          Increase verbosity of the debug output (implies -d).\n");
+ 	fprintf(stderr, "  -w          Warn on unknown commands in the config file.\n");
+--- openssh-5.9p1/./ssh-ldap-helper.8~	2011-09-29 00:38:28.000000000 +0300
++++ openssh-5.9p1/./ssh-ldap-helper.8	2011-09-29 00:54:14.308032118 +0300
+@@ -56,7 +56,7 @@
+ halts if it encounters an unknown item in the ldap.conf file.
+ .It Fl f
+ .Nm
+-uses this file as the ldap configuration file instead of /etc/ssh/ldap.conf (default).
++uses this file as the ldap configuration file instead of /etc/ldap.conf (default).
+ .It Fl s
+ .Nm
+ prints out the user's keys to stdout and exits.
+--- openssh-5.9p1/./ssh-ldap.conf.5~	2011-09-29 00:38:28.000000000 +0300
++++ openssh-5.9p1/./ssh-ldap.conf.5	2011-09-29 00:54:40.285897653 +0300
+@@ -21,11 +21,11 @@
+ .Nm ssh-ldap.conf
+ .Nd configuration file for ssh-ldap-helper
+ .Sh SYNOPSIS
+-.Nm /etc/ssh/ldap.conf
++.Nm /etc/ldap.conf
+ .Sh DESCRIPTION
+ .Xr ssh-ldap-helper 8
+ reads configuration data from
+-.Pa /etc/ssh/ldap.conf
++.Pa /etc/ldap.conf
+ (or the file specified with
+ .Fl f
+ on the command line).
+@@ -361,7 +361,7 @@
+ .El
+ .Sh FILES
+ .Bl -tag -width Ds
+-.It Pa  /etc/ssh/ldap.conf
++.It Pa  /etc/ldap.conf
+ Ldap configuration file for
+ .Xr ssh-ldap-helper 8 .
+ .El

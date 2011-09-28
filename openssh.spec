@@ -664,7 +664,7 @@ if grep -qE '^(UseLPK|Lpk)' %{_sysconfdir}/sshd_config; then
 		# disable old configs
 		# just UseLPK/LkpLdapConf supported for now
 		s/^UseLPK/## Obsolete &/
-		s/^LPK/## Obsolete &/
+		s/^Lpk/## Obsolete &/
 		# Enable new ones, assumes /etc/ldap.conf defaults, see HOWTO.ldap-keys
 		/UseLPK/iAuthorizedKeysCommand "%{_libexecdir}/ssh-ldap-wrapper"
 	' %{_sysconfdir}/sshd_config

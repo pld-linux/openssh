@@ -655,7 +655,7 @@ if [ "$1" = "0" ]; then
 	%userremove sshd
 fi
 
-%triggerpostun server -- %{name}-server < 5.9p1-1
+%triggerpostun server -- %{name}-server < 2:5.9p1-1
 # lpk.patch to ldap.patch
 if grep -qE '^(UseLPK|Lpk)' %{_sysconfdir}/sshd_config; then
 	echo >&2 "Migrating LPK patch to LDAP patch"

@@ -498,9 +498,9 @@ openldap-a.
 %patch0 -p1
 %patch2 -p1
 %patch3 -p1
-%{?with_ldap:%patch4 -p1}
-%{?with_ldap:%patch5 -p1}
-%{?with_ldap:%patch8 -p1}
+%patch4 -p1
+%patch5 -p1
+%patch8 -p1
 %patch6 -p1
 %patch7 -p1
 %{?with_hpn:%patch9 -p1}
@@ -525,6 +525,9 @@ install -p %{SOURCE2} sshd.init
 # hack since arc4random from openbsd-compat needs symbols from libssh and vice versa
 sed -i -e 's#-lssh -lopenbsd-compat#-lssh -lopenbsd-compat -lssh#g' Makefile*
 
+grep -rl /usr/libexec/openssh/ssh-ldap-helper . | xargs \
+%{__sed} -i -e 's,/usr/libexec/openssh/ssh-ldap-helper,%{_libexecdir}/ssh-ldap-helper,'
+
 %build
 cp /usr/share/automake/config.sub .
 %{__aclocal}
@@ -540,7 +543,7 @@ CPPFLAGS="-DCHROOT"
 	%{?with_audit:--with-audit=linux} \
 	--with-ipaddr-display \
 	%{?with_kerberos5:--with-kerberos5=/usr} \
-	%{?with_ldap:--with-ldap} \
+	--with-ldap%{!?with_ldap:=no} \
 	%{?with_libedit:--with-libedit} \
 	--with-mantype=man \
 	--with-md5-passwords \

@@ -651,6 +651,21 @@ if [ "$1" = "0" ]; then
 	%userremove sshd
 fi
 
+%triggerpostun server -- %{name}-server < 5.9p1-1
+# lpk.patch to ldap.patch
+if grep -qE '^(UseLPK|Lpk)' %{_sysconfdir}/sshd_config; then
+	echo >&2 "Migrating LPK patch to LDAP patch"
+	cp -f %{_sysconfdir}/sshd_config{,.rpmorig}
+	%{__sed} -i -e '
+		# disable old configs
+		# just UseLPK/LkpLdapConf supported for now
+		s/^UseLPK/## Obsolete &/
+		s/^LPK/## Obsolete &/
+		# Enable new ones, assumes /etc/ldap.conf defaults, see HOWTO.ldap-keys
+		/UseLPK/iAuthorizedKeysCommand "%{_libexecdir}/ssh-ldap-wrapper"
+	' %{_sysconfdir}/sshd_config
+fi
+
 %post server-upstart
 %upstart_post sshd
 
@@ -716,6 +731,7 @@ fi
 
 %files server
 %defattr(644,root,root,755)
+%doc HOWTO.ldap-keys
 %attr(755,root,root) %{_sbindir}/sshd
 %attr(755,root,root) %{_libexecdir}/sftp-server
 %attr(755,root,root) %{_libexecdir}/ssh-keysign

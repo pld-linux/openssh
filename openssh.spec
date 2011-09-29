@@ -30,7 +30,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	5.9p1
-Release:	3
+Release:	4
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -335,6 +335,8 @@ Requires(postun):	/usr/sbin/userdel
 Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/useradd
 Requires:	%{name} = %{epoch}:%{version}-%{release}
+# remove in 6.0, kept for flawless upgrade
+Requires:	%{name}-server-ldap = %{epoch}:%{version}-%{release}
 Requires:	pam >= %{pam_ver}
 Requires:	rc-scripts >= 0.4.3.0
 Requires:	util-linux
@@ -403,6 +405,15 @@ Ssh (Secure Shell) - це програма для "заходу" (login) до в
 Цей пакет містить sshd - "демон" Secure Shell. sshd - це серверна
 частина протоколу Secure Shell, яка дозволяє клієнтам ssh зв'язуватись
 з вашим хостом.
+
+%package server-ldap
+Summary:	A LDAP support for open source SSH server daemon
+Group:		Daemons
+Requires:	%{name} = %{version}-%{release}
+
+%description server-ldap
+OpenSSH LDAP backend is a way how to distribute the authorized tokens
+among the servers in the network.
 
 %package server-upstart
 Summary:	Upstart job description for OpenSSH server
@@ -742,20 +753,15 @@ fi
 
 %files server
 %defattr(644,root,root,755)
-%doc HOWTO.ldap-keys ldap.conf
 %attr(755,root,root) %{_sbindir}/sshd
 %attr(755,root,root) %{_libexecdir}/sftp-server
 %attr(755,root,root) %{_libexecdir}/ssh-keysign
-%attr(755,root,root) %{_libexecdir}/ssh-ldap-helper
-%attr(755,root,root) %{_libexecdir}/ssh-ldap-wrapper
 %attr(755,root,root) %{_libexecdir}/ssh-pkcs11-helper
 %{_mandir}/man8/sshd.8*
 %{_mandir}/man8/sftp-server.8*
 %{_mandir}/man8/ssh-keysign.8*
-%{_mandir}/man8/ssh-ldap-helper.8*
 %{_mandir}/man8/ssh-pkcs11-helper.8*
 %{_mandir}/man5/sshd_config.5*
-%{_mandir}/man5/ssh-ldap.conf.5*
 %{_mandir}/man5/moduli.5*
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/sshd_config
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/sshd
@@ -763,6 +769,16 @@ fi
 %attr(754,root,root) /etc/rc.d/init.d/sshd
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/sshd
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/security/blacklist.sshd
+
+%if %{with ldap}
+%files server-ldap
+%defattr(644,root,root,755)
+%doc HOWTO.ldap-keys ldap.conf
+%attr(755,root,root) %{_libexecdir}/ssh-ldap-helper
+%attr(755,root,root) %{_libexecdir}/ssh-ldap-wrapper
+%{_mandir}/man5/ssh-ldap.conf.5*
+%{_mandir}/man8/ssh-ldap-helper.8*
+%endif
 
 %if %{with gnome} || %{with gtk}
 %files gnome-askpass

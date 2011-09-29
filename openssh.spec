@@ -30,7 +30,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	5.9p1
-Release:	4
+Release:	5
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -409,7 +409,7 @@ Ssh (Secure Shell) - це програма для "заходу" (login) до в
 %package server-ldap
 Summary:	A LDAP support for open source SSH server daemon
 Group:		Daemons
-Requires:	%{name} = %{version}-%{release}
+Requires:	%{name} = %{epoch}:%{version}-%{release}
 
 %description server-ldap
 OpenSSH LDAP backend is a way how to distribute the authorized tokens

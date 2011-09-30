@@ -1,6 +1,6 @@
 #
 # Conditional build:
-%bcond_with	audit		# sshd audit support
+%bcond_without	audit		# sshd audit support
 %bcond_with	gnome		# with gnome-askpass (GNOME 1.x) utility
 %bcond_without	gtk		# without GTK+ (2.x)
 %bcond_without	ldap		# with ldap support
@@ -30,7 +30,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	5.9p1
-Release:	5
+Release:	6
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -408,12 +408,17 @@ Ssh (Secure Shell) - це програма для "заходу" (login) до в
 
 %package server-ldap
 Summary:	A LDAP support for open source SSH server daemon
+Summary(pl.UTF-8):	Wsparcie LDAP dla serwera OpenSSH
 Group:		Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
 %description server-ldap
 OpenSSH LDAP backend is a way how to distribute the authorized tokens
 among the servers in the network.
+
+%description server-ldap -l pl.UTF-8
+Backend LDAP dla OpenSSH to metoda rozprowadzania autoryzowanych
+tokenów między serwerami w sieci.
 
 %package server-upstart
 Summary:	Upstart job description for OpenSSH server

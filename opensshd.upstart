@@ -10,15 +10,20 @@ oom never
 pre-start script
 	test -x /usr/sbin/sshd || { stop; exit 0; }
 	test -c /dev/null || { stop; exit 0; }
+
+	if [ ! -s /etc/ssh/ssh_host_key \
+		-o ! -s /etc/ssh/ssh_host_rsa_key \
+		-o ! -s /etc/ssh/ssh_host_dsa_key \
+		-o ! -s /etc/ssh/ssh_host_ecdsa_key \
+	]; then
+		# call gen keys if any of the files above is missing or empty
+		/etc/rc.d/init.d/sshd ssh_gen_keys
+	fi
 end script
 
 script
 	. /etc/rc.d/init.d/functions
 	. /etc/sysconfig/network
-
-  	if [ ! -s /etc/ssh/ssh_host_key ] ; then
-		/etc/rc.d/init.d/sshd init
-  	fi
 
 	if is_yes "$IPV4_NETWORKING" && is_no "$IPV6_NETWORKING"; then
 		OPTIONS="$OPTIONS -4"

@@ -1,0 +1,11 @@
+--- openssh-5.9p1/channels.c~	2011-06-23 00:31:57.000000000 +0200
++++ openssh-5.9p1/channels.c	2011-11-12 11:37:15.242015675 +0100
+@@ -3301,6 +3301,8 @@
+ 			if (bind(sock, ai->ai_addr, ai->ai_addrlen) < 0) {
+ 				debug2("bind port %d: %.100s", port, strerror(errno));
+ 				close(sock);
++				if (errno == EADDRNOTAVAIL)
++					continue;
+ 
+ 				for (n = 0; n < num_socks; n++) {
+ 					close(socks[n]);

@@ -15,7 +15,7 @@
 %if "%{pld_release}" == "ac"
 %define		pam_ver	0.79.0
 %else
-%define		pam_ver	0.99.7.1
+%define		pam_ver	1:1.1.5-5
 %endif
 
 Summary:	OpenSSH free Secure Shell (SSH) implementation
@@ -30,7 +30,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	5.9p1
-Release:	7
+Release:	8
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -45,6 +45,8 @@ Source5:	ssh-agent.sh
 Source6:	ssh-agent.conf
 Source7:	%{name}-lpk.schema
 Source8:	%{name}d.upstart
+Source9:	sshd.service
+Source10:	sshd-keygen
 Patch100:	%{name}-heimdal.patch
 Patch0:		%{name}-no_libnsl.patch
 Patch2:		%{name}-pam_misc.patch
@@ -81,7 +83,7 @@ BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	pam-devel
 %{?with_gtk:BuildRequires:	pkgconfig}
 BuildRequires:	rpm >= 4.4.9-56
-BuildRequires:	rpmbuild(macros) >= 1.318
+BuildRequires:	rpmbuild(macros) >= 1.627
 BuildRequires:	sed >= 4.0
 BuildRequires:	zlib-devel
 %if "%{pld_release}" == "ac"
@@ -340,6 +342,7 @@ Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	%{name}-server-ldap = %{epoch}:%{version}-%{release}
 Requires:	pam >= %{pam_ver}
 Requires:	rc-scripts >= 0.4.3.0
+Requires:	systemd-units >= 37-0.10
 Requires:	util-linux
 Suggests:	/bin/login
 Provides:	ssh-server
@@ -527,17 +530,9 @@ openldap-a.
 %patch13 -p1
 %patch14 -p1
 
-cp -p %{SOURCE3} sshd.pam
-install -p %{SOURCE2} sshd.init
-
 %if "%{pld_release}" == "ac"
 # fix for missing x11.pc
 %{__sed} -i -e '/pkg-config/s/ x11//' contrib/Makefile
-# not present in ac, no point searching it
-%{__sed} -i -e '/pam_keyinit.so/d' sshd.pam
-
-# openssl on ac does not have OPENSSL_HAS_ECC
-%{__sed} -i -e '/ecdsa/d' sshd.init
 %endif
 
 # hack since arc4random from openbsd-compat needs symbols from libssh and vice versa
@@ -594,13 +589,23 @@ cd contrib
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{init,pam.d,rc.d/init.d,sysconfig,security,env.d}} \
-	$RPM_BUILD_ROOT{%{_libexecdir}/ssh,%{schemadir}}
+	$RPM_BUILD_ROOT{%{_libexecdir}/ssh,%{schemadir},%{systemdunitdir}}
 install -d $RPM_BUILD_ROOT/etc/{profile.d,X11/xinit/xinitrc.d}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
 bzip2 -dc %{SOURCE1} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
+
+cp -p %{SOURCE3} sshd.pam
+install -p %{SOURCE2} sshd.init
+
+%if "%{pld_release}" == "ac"
+# not present in ac, no point searching it
+%{__sed} -i -e '/pam_keyinit.so/d' sshd.pam
+# openssl on ac does not have OPENSSL_HAS_ECC
+%{__sed} -i -e '/ecdsa/d' sshd.init
+%endif
 
 install -p sshd.init $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
 cp -p sshd.pam $RPM_BUILD_ROOT/etc/pam.d/sshd
@@ -610,6 +615,9 @@ ln -sf	/etc/profile.d/ssh-agent.sh $RPM_BUILD_ROOT/etc/X11/xinit/xinitrc.d/ssh-a
 cp -p %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}
 cp -p %{SOURCE7} $RPM_BUILD_ROOT%{schemadir}
 cp -p %{SOURCE8} $RPM_BUILD_ROOT/etc/init/sshd.conf
+
+%{__sed} -e 's|@@LIBEXECDIR@@|%{_libexecdir}|g' %{SOURCE9} >$RPM_BUILD_ROOT%{systemdunitdir}/sshd.service
+cp -p %{SOURCE10} $RPM_BUILD_ROOT%{_libexecdir}/sshd-keygen
 
 %if %{with gnome}
 install -p contrib/gnome-ssh-askpass1 $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
@@ -667,19 +675,32 @@ if ! grep -qs ssh /etc/security/passwd.conf ; then
 	umask 022
 	echo "ssh" >> /etc/security/passwd.conf
 fi
+if [ -x /bin/systemd_booted ] && /bin/systemd_booted; then
+%banner %{name}-server -e << EOF
+!!!!!!!!!!!!!!!!!!!!!!! WARNING !!!!!!!!!!!!!!!!!!!!!!!!!
+! Native systemd support for sshd has been installed.   !
+! Restarting sshd.service with systemctl WILL kill all  !
+! active ssh sessions (daemon as such will be started). !
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+EOF
+fi
+NORESTART=1
+%systemd_post sshd.service
 
 %preun server
 if [ "$1" = "0" ]; then
 	%service sshd stop
 	/sbin/chkconfig --del sshd
 fi
+%systemd_preun sshd.service
 
 %postun server
 if [ "$1" = "0" ]; then
 	%userremove sshd
 fi
+%systemd_reload
 
-%triggerpostun server -- %{name}-server < 2:5.9p1-1
+%triggerpostun server -- %{name}-server < 2:5.9p1-8
 # lpk.patch to ldap.patch
 if grep -qE '^(UseLPK|Lpk)' %{_sysconfdir}/sshd_config; then
 	echo >&2 "Migrating LPK patch to LDAP patch"
@@ -692,8 +713,13 @@ if grep -qE '^(UseLPK|Lpk)' %{_sysconfdir}/sshd_config; then
 		# Enable new ones, assumes /etc/ldap.conf defaults, see HOWTO.ldap-keys
 		/UseLPK/iAuthorizedKeysCommand %{_libexecdir}/ssh-ldap-wrapper
 	' %{_sysconfdir}/sshd_config
-	%service -q sshd reload
+	if [ ! -x /bin/systemd_booted ] || ! /bin/systemd_booted; then
+		/bin/systemctl try-restart sshd.service || :
+	else
+		%service -q sshd reload
+	fi
 fi
+%systemd_trigger sshd.service
 
 %post server-upstart
 %upstart_post sshd
@@ -764,6 +790,7 @@ fi
 %attr(755,root,root) %{_libexecdir}/sftp-server
 %attr(755,root,root) %{_libexecdir}/ssh-keysign
 %attr(755,root,root) %{_libexecdir}/ssh-pkcs11-helper
+%attr(755,root,root) %{_libexecdir}/sshd-keygen
 %{_mandir}/man8/sshd.8*
 %{_mandir}/man8/sftp-server.8*
 %{_mandir}/man8/ssh-keysign.8*
@@ -776,6 +803,7 @@ fi
 %attr(754,root,root) /etc/rc.d/init.d/sshd
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/sshd
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/security/blacklist.sshd
+%{systemdunitdir}/sshd.service
 
 %if %{with ldap}
 %files server-ldap

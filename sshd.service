@@ -4,7 +4,7 @@ After=syslog.target network.target auditd.service
 
 [Service]
 EnvironmentFile=-/etc/sysconfig/sshd
-ExecStartPre=/usr/sbin/sshd-keygen
+ExecStartPre=@@LIBEXECDIR@@/sshd-keygen
 ExecStart=/usr/sbin/sshd -D $OPTIONS
 ExecReload=/bin/kill -HUP $MAINPID
 Restart=always

@@ -1,0 +1,28 @@
+#!/bin/sh
+
+# Get service config
+[ -f /etc/sysconfig/sshd ] && . /etc/sysconfig/sshd
+
+# generate new keys with empty passwords if they do not exist
+if [ ! -f /etc/ssh/ssh_host_key -o ! -s /etc/ssh/ssh_host_key ]; then
+	/usr/bin/ssh-keygen -t rsa1 -f /etc/ssh/ssh_host_key -N '' >&2
+	chmod 600 /etc/ssh/ssh_host_key
+	[ -x /sbin/restorecon ] && /sbin/restorecon /etc/ssh/ssh_host_key
+fi
+if [ ! -f /etc/ssh/ssh_host_rsa_key -o ! -s /etc/ssh/ssh_host_rsa_key ]; then
+	/usr/bin/ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N '' >&2
+	chmod 600 /etc/ssh/ssh_host_rsa_key
+	[ -x /sbin/restorecon ] && /sbin/restorecon /etc/ssh/ssh_host_rsa_key
+fi
+if [ ! -f /etc/ssh/ssh_host_dsa_key -o ! -s /etc/ssh/ssh_host_dsa_key ]; then
+	/usr/bin/ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key -N '' >&2
+	chmod 600 /etc/ssh/ssh_host_dsa_key
+	[ -x /sbin/restorecon ] && /sbin/restorecon /etc/ssh/ssh_host_dsa_key
+fi
+if [ ! -f /etc/ssh/ssh_host_ecdsa_key -o ! -s /etc/ssh/ssh_host_ecdsa_key ]; then
+	/usr/bin/ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key -N '' >&2
+	chmod 600 /etc/ssh/ssh_host_ecdsa_key
+	[ -x /sbin/restorecon ] && /sbin/restorecon /etc/ssh/ssh_host_ecdsa_key
+fi # ecdsa
+
+exit 0

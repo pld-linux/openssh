@@ -8,6 +8,7 @@
 %bcond_without	kerberos5	# without kerberos5 support
 %bcond_without	selinux		# build without SELinux support
 %bcond_with	hpn		# High Performance SSH/SCP - HPN-SSH including Cipher NONE (broken too often)
+%bcond_without	tests
 
 # gtk2-based gnome-askpass means no gnome1-based
 %{?with_gtk:%undefine with_gnome}
@@ -575,6 +576,8 @@ CPPFLAGS="-DCHROOT"
 echo '#define LOGIN_PROGRAM		   "/bin/login"' >>config.h
 
 %{__make}
+
+%{?with_tests:%{__make} tests}
 
 cd contrib
 %if %{with gnome}

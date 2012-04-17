@@ -31,7 +31,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	5.9p1
-Release:	8
+Release:	9
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -338,12 +338,13 @@ Requires(post,preun):	/sbin/chkconfig
 Requires(postun):	/usr/sbin/userdel
 Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/useradd
+Requires(post,preun,postun):	systemd-units >= 38
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 # remove in 6.0, kept for flawless upgrade
 Requires:	%{name}-server-ldap = %{epoch}:%{version}-%{release}
 Requires:	pam >= %{pam_ver}
 Requires:	rc-scripts >= 0.4.3.0
-Requires:	systemd-units >= 37-0.10
+Requires:	systemd-units >= 38
 Requires:	util-linux
 Suggests:	/bin/login
 Provides:	ssh-server

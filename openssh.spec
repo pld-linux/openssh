@@ -679,15 +679,6 @@ if ! grep -qs ssh /etc/security/passwd.conf ; then
 	umask 022
 	echo "ssh" >> /etc/security/passwd.conf
 fi
-if [ -x /bin/systemd_booted ] && /bin/systemd_booted; then
-%banner %{name}-server -e << EOF
-!!!!!!!!!!!!!!!!!!!!!!! WARNING !!!!!!!!!!!!!!!!!!!!!!!!!
-! Native systemd support for sshd has been installed.   !
-! Restarting sshd.service with systemctl WILL kill all  !
-! active ssh sessions (daemon as such will be started). !
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-EOF
-fi
 NORESTART=1
 %systemd_post sshd.service
 
@@ -724,6 +715,15 @@ if grep -qE '^(UseLPK|Lpk)' %{_sysconfdir}/sshd_config; then
 	fi
 fi
 %systemd_trigger sshd.service
+if [ -x /bin/systemd_booted ] && /bin/systemd_booted; then
+%banner %{name}-server -e << EOF
+!!!!!!!!!!!!!!!!!!!!!!! WARNING !!!!!!!!!!!!!!!!!!!!!!!!!
+! Native systemd support for sshd has been installed.   !
+! Restarting sshd.service with systemctl WILL kill all  !
+! active ssh sessions (daemon as such will be started). !
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+EOF
+fi
 
 %post server-upstart
 %upstart_post sshd

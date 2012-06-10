@@ -31,7 +31,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	6.0p1
-Release:	1
+Release:	2
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -48,6 +48,8 @@ Source7:	%{name}-lpk.schema
 Source8:	%{name}d.upstart
 Source9:	sshd.service
 Source10:	sshd-keygen
+Source11:	sshd.socket
+Source12:	sshd@.service
 Patch100:	%{name}-heimdal.patch
 Patch0:		%{name}-no_libnsl.patch
 Patch2:		%{name}-pam_misc.patch
@@ -623,6 +625,9 @@ cp -p %{SOURCE8} $RPM_BUILD_ROOT/etc/init/sshd.conf
 %{__sed} -e 's|@@LIBEXECDIR@@|%{_libexecdir}|g' %{SOURCE9} >$RPM_BUILD_ROOT%{systemdunitdir}/sshd.service
 cp -p %{SOURCE10} $RPM_BUILD_ROOT%{_libexecdir}/sshd-keygen
 
+cp -p %{SOURCE11} $RPM_BUILD_ROOT%{systemdunitdir}
+cp -p %{SOURCE12} $RPM_BUILD_ROOT%{systemdunitdir}
+
 %if %{with gnome}
 install -p contrib/gnome-ssh-askpass1 $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass
 %endif
@@ -808,6 +813,8 @@ fi
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/sshd
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/security/blacklist.sshd
 %{systemdunitdir}/sshd.service
+%{systemdunitdir}/sshd.socket
+%{systemdunitdir}/sshd@.service
 
 %if %{with ldap}
 %files server-ldap

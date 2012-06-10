@@ -72,6 +72,7 @@ Patch13:	%{name}-kuserok.patch
 Patch14:	%{name}-bind.patch
 URL:		http://www.openssh.com/portable.html
 BuildRequires:	%{__perl}
+%{?with_tests:BuildRequires:	%{name}-server}
 %{?with_audit:BuildRequires:	audit-libs-devel}
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake

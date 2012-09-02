@@ -282,15 +282,15 @@
 @@ -324,6 +326,7 @@ typedef enum {
  	sZeroKnowledgePasswordAuthentication, sHostCertificate,
  	sRevokedKeys, sTrustedUserCAKeys, sAuthorizedPrincipalsFile,
- 	sKexAlgorithms, sIPQoS,
+ 	sKexAlgorithms, sIPQoS, sVersionAddendum,
 +	sAuthorizedKeysCommand, sAuthorizedKeysCommandRunAs,
  	sDeprecated, sUnsupported
  } ServerOpCodes;
  
 @@ -448,6 +451,13 @@ static struct {
- 	{ "authorizedprincipalsfile", sAuthorizedPrincipalsFile, SSHCFG_ALL },
  	{ "kexalgorithms", sKexAlgorithms, SSHCFG_GLOBAL },
  	{ "ipqos", sIPQoS, SSHCFG_ALL },
+ 	{ "versionaddendum", sVersionAddendum, SSHCFG_GLOBAL },
 +#ifdef WITH_AUTHORIZED_KEYS_COMMAND
 +	{ "authorizedkeyscommand", sAuthorizedKeysCommand, SSHCFG_ALL },
 +	{ "authorizedkeyscommandrunas", sAuthorizedKeysCommandRunAs, SSHCFG_ALL },
@@ -332,9 +332,9 @@
  	M_CP_INTOPT(permit_empty_passwd);
  
 @@ -1758,6 +1784,8 @@ dump_config(ServerOptions *o)
- 	dump_cfg_string(sRevokedKeys, o->revoked_keys_file);
  	dump_cfg_string(sAuthorizedPrincipalsFile,
  	    o->authorized_principals_file);
+ 	dump_cfg_string(sVersionAddendum, o->version_addendum);
 +	dump_cfg_string(sAuthorizedKeysCommand, o->authorized_keys_command);
 +	dump_cfg_string(sAuthorizedKeysCommandRunAs, o->authorized_keys_command_runas);
  
@@ -343,9 +343,9 @@
 --- openssh-5.9p1/servconf.h	2011-06-23 00:30:03.000000000 +0200
 +++ openssh-5.9p1/servconf.h	2011-09-13 01:17:16.481674272 +0200
 @@ -166,6 +166,8 @@ typedef struct {
- 	char   *revoked_keys_file;
- 	char   *trusted_user_ca_keys;
  	char   *authorized_principals_file;
+ 
+ 	char   *version_addendum;	/* Appended to SSH banner */
 +	char   *authorized_keys_command;
 +	char   *authorized_keys_command_runas;
  }       ServerOptions;
@@ -377,15 +377,15 @@
       AuthorizedKeysFile
               Specifies the file that contains the public keys that can be used
               for user authentication.  The format is described in the
-@@ -401,7 +418,8 @@ DESCRIPTION
- 
+@@ -419,7 +419,8 @@ DESCRIPTION
               Only a subset of keywords may be used on the lines following a
-              Match keyword.  Available keywords are AllowAgentForwarding,
--             AllowTcpForwarding, AuthorizedKeysFile, AuthorizedPrincipalsFile,
-+             AllowTcpForwarding, AuthorizedKeysFile, AuthorizedKeysCommand,
-+             AuthorizedKeysCommandRunAs, AuthorizedPrincipalsFile,
-              Banner, ChrootDirectory, ForceCommand, GatewayPorts,
-              GSSAPIAuthentication, HostbasedAuthentication,
+              Match keyword.  Available keywords are AcceptEnv,
+              AllowAgentForwarding, AllowGroups, AllowTcpForwarding,
+-             AllowUsers, AuthorizedKeysFile, AuthorizedPrincipalsFile, Banner,
++             AllowUsers, AuthorizedKeysFile, AuthorizedKeysCommand,
++             AuthorizedPrincipalsFile, Banner,
+              ChrootDirectory, DenyGroups, DenyUsers, ForceCommand,
+              GatewayPorts, GSSAPIAuthentication, HostbasedAuthentication,
               HostbasedUsesNameFromPacketOnly, KbdInteractiveAuthentication,
 --- openssh-5.9p1/sshd_config.5	2011-08-05 22:17:33.000000000 +0200
 +++ openssh-5.9p1/sshd_config.5	2011-09-13 01:17:16.536674498 +0200

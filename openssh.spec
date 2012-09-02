@@ -1,3 +1,7 @@
+# TODO:
+# - add trigger to enable this:
+#  * sshd(8): This release turns on pre-auth sandboxing sshd by default for
+#   new installs, by setting UsePrivilegeSeparation=sandbox in sshd_config.
 #
 # Conditional build:
 %bcond_without	audit		# sshd audit support
@@ -30,13 +34,13 @@ Summary(pt_BR.UTF-8):	Implementação livre do SSH
 Summary(ru.UTF-8):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
-Version:	6.0p1
-Release:	3
+Version:	6.1p1
+Release:	1
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
 Source0:	ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
-# Source0-md5:	3c9347aa67862881c5da3f3b1c08da7b
+# Source0-md5:	3345cbf4efe90ffb06a78670ab2d05d5
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 # Source1-md5:	66943d481cc422512b537bcc2c7400d1
 Source2:	%{name}d.init

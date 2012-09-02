@@ -31,7 +31,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	6.0p1
-Release:	2
+Release:	3
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -709,8 +709,8 @@ if grep -qE '^(UseLPK|Lpk)' %{_sysconfdir}/sshd_config; then
 	%{__sed} -i -e '
 		# disable old configs
 		# just UseLPK/LkpLdapConf supported for now
-		s/^UseLPK/## Obsolete &/
-		s/^Lpk/## Obsolete &/
+		s/^\s*UseLPK/## Obsolete &/
+		s/^\s*Lpk/## Obsolete &/
 		# Enable new ones, assumes /etc/ldap.conf defaults, see HOWTO.ldap-keys
 		/UseLPK/iAuthorizedKeysCommand %{_libexecdir}/ssh-ldap-wrapper
 	' %{_sysconfdir}/sshd_config

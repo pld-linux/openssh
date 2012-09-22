@@ -93,7 +93,8 @@ BuildRequires:	pam-devel
 BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	rpmbuild(macros) >= 1.627
 BuildRequires:	sed >= 4.0
-BuildRequires:	zlib-devel
+BuildRequires:	zlib-devel >= 1.2.3
+Requires:	zlib >= 1.2.3
 %if "%{pld_release}" == "ac"
 Requires:	filesystem >= 2.0-1
 Requires:	pam >= 0.79.0

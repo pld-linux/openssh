@@ -35,7 +35,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	6.1p1
-Release:	1
+Release:	2
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -686,10 +686,6 @@ rm -rf $RPM_BUILD_ROOT
 %post server
 /sbin/chkconfig --add sshd
 %service sshd reload "OpenSSH Daemon"
-if ! grep -qs ssh /etc/security/passwd.conf ; then
-	umask 022
-	echo "ssh" >> /etc/security/passwd.conf
-fi
 NORESTART=1
 %systemd_post sshd.service
 

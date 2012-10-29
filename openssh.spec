@@ -350,7 +350,7 @@ Requires(pre):	/usr/sbin/useradd
 Requires(post,preun,postun):	systemd-units >= 38
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 # remove in 6.0, kept for flawless upgrade
-Requires:	%{name}-server-ldap = %{epoch}:%{version}-%{release}
+%{?with_ldap:Requires:	%{name}-server-ldap = %{epoch}:%{version}-%{release}}
 Requires:	pam >= %{pam_ver}
 Requires:	rc-scripts >= 0.4.3.0
 Requires:	systemd-units >= 38

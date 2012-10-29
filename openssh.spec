@@ -74,6 +74,7 @@ Patch11:	%{name}-chroot.patch
 Patch12:	%{name}-blacklist.diff
 Patch13:	%{name}-kuserok.patch
 Patch14:	%{name}-bind.patch
+Patch15:	%{name}-disable_ldap.patch
 URL:		http://www.openssh.com/portable.html
 BuildRequires:	%{__perl}
 %{?with_tests:BuildRequires:	%{name}-server}
@@ -539,6 +540,7 @@ openldap-a.
 %patch12 -p1
 %patch13 -p1
 %patch14 -p1
+%patch15 -p1
 
 %if "%{pld_release}" == "ac"
 # fix for missing x11.pc
@@ -663,7 +665,7 @@ cat << 'EOF' > $RPM_BUILD_ROOT/etc/env.d/SSH_ASKPASS
 EOF
 
 %{__rm} $RPM_BUILD_ROOT%{_mandir}/README.openssh-non-english-man-pages
-%{__rm} $RPM_BUILD_ROOT%{_sysconfdir}/ldap.conf
+%{?with_ldap:%{__rm} $RPM_BUILD_ROOT%{_sysconfdir}/ldap.conf}
 
 %clean
 rm -rf $RPM_BUILD_ROOT

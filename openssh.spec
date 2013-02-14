@@ -540,7 +540,7 @@ openldap-a.
 %patch12 -p1
 %patch13 -p1
 %patch14 -p1
-%patch15 -p1
+%{!?with_ldap:%patch15 -p1}
 
 %if "%{pld_release}" == "ac"
 # fix for missing x11.pc

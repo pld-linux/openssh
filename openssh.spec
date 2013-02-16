@@ -356,6 +356,7 @@ Requires:	rc-scripts >= 0.4.3.0
 Requires:	systemd-units >= 38
 Requires:	util-linux
 Suggests:	/bin/login
+Suggests:	xorg-app-xauth
 Provides:	ssh-server
 Provides:	user(sshd)
 

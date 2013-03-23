@@ -34,13 +34,13 @@ Summary(pt_BR.UTF-8):	Implementação livre do SSH
 Summary(ru.UTF-8):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
-Version:	6.1p1
-Release:	2
+Version:	6.2p1
+Release:	1
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
 Source0:	ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
-# Source0-md5:	3345cbf4efe90ffb06a78670ab2d05d5
+# Source0-md5:	7b2d9dd75b5cf267ea1737ec75500316
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 # Source1-md5:	66943d481cc422512b537bcc2c7400d1
 Source2:	%{name}d.init
@@ -63,8 +63,7 @@ Patch4:		%{name}-5.9p1-ldap.patch
 Patch5:		%{name}-5.9p1-ldap-fixes.patch
 Patch8:		ldap.conf.patch
 Patch6:		%{name}-config.patch
-# https://bugzilla.mindrot.org/show_bug.cgi?id=1663
-Patch7:		authorized-keys-command.patch
+
 # High Performance SSH/SCP - HPN-SSH - http://www.psc.edu/networking/projects/hpn-ssh/
 # http://www.psc.edu/networking/projects/hpn-ssh/openssh-5.2p1-hpn13v6.diff.gz
 Patch9:		%{name}-5.2p1-hpn13v6.diff
@@ -534,7 +533,7 @@ openldap-a.
 %patch5 -p1
 %patch8 -p1
 %patch6 -p1
-%patch7 -p1
+
 %{?with_hpn:%patch9 -p1}
 %patch10 -p1
 %patch11 -p1
@@ -574,9 +573,9 @@ CPPFLAGS="-DCHROOT"
 	--with-mantype=man \
 	--with-md5-passwords \
 	--with-pam \
-	--with-authorized-keys-command \
 	--with-pid-dir=%{_localstatedir}/run \
 	--with-privsep-path=%{_privsepdir} \
+	--with-sandbox=seccomp_filter \
 	%{?with_selinux:--with-selinux} \
 	--with-tcp-wrappers \
 %if "%{pld_release}" == "ac"
@@ -704,6 +703,10 @@ if [ "$1" = "0" ]; then
 	%userremove sshd
 fi
 %systemd_reload
+
+%triggerpostun server -- %{name}-server < 6.2p1-1
+cp -f %{_sysconfdir}/sshd_config{,.rpmorig}
+sed -i -e 's#AuthorizedKeysCommandRunAs#AuthorizedKeysCommandUser##g' %{_sysconfdir}/sshd_config
 
 %triggerpostun server -- %{name}-server < 2:5.9p1-8
 # lpk.patch to ldap.patch

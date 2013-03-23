@@ -960,27 +960,25 @@ This patch is up to date with respect to Debian openssh 1:4.7p1-10.
  #include "auth.h"
  #include "pathnames.h"
  #include "uidswap.h"
-@@ -596,9 +596,23 @@
- int
- user_key_allowed(struct passwd *pw, Key *key)
+@@ -608,6 +608,20 @@
  {
-+	char *fp;
  	u_int success, i;
  	char *file;
- 
++	char *fp;
++
 +	if (blacklisted_key(key)) {
 +		fp = key_fingerprint(key, SSH_FP_MD5, SSH_FP_HEX);
 +		if (options.permit_blacklisted_keys)
 +			logit("Public key %s blacklisted (see "
-+			    "ssh-vulnkey(1)); continuing anyway", fp);
++					"ssh-vulnkey(1)); continuing anyway", fp);
 +		else
 +			logit("Public key %s blacklisted (see "
-+			    "ssh-vulnkey(1))", fp);
++					"ssh-vulnkey(1))", fp);
 +		xfree(fp);
 +		if (!options.permit_blacklisted_keys)
 +			return 0;
 +	}
-+
- #ifdef WITH_AUTHORIZED_KEYS_COMMAND
- 	success = user_key_via_command_allowed2(pw, key);
- 	if (success > 0)
+ 
+ 	if (auth_key_is_revoked(key))
+ 		return 0;
+

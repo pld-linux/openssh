@@ -35,7 +35,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	6.2p2
-Release:	2
+Release:	3
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -359,6 +359,7 @@ Suggests:	/bin/login
 Suggests:	xorg-app-xauth
 Provides:	ssh-server
 Provides:	user(sshd)
+%requires_eq_to	openssl	openssl-devel
 
 %description server
 Ssh (Secure Shell) a program for logging into a remote machine and for

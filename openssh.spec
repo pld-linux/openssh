@@ -22,7 +22,6 @@
 %else
 %define		pam_ver	1:1.1.5-5
 %endif
-
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(de.UTF-8):	OpenSSH - freie Implementation der Secure Shell (SSH)
 Summary(es.UTF-8):	Implementación libre de SSH
@@ -517,6 +516,9 @@ Summary(pl.UTF-8):	Schemat klucza publicznego LDAP dla OpenSSH
 Group:		Networking/Daemons
 Requires(post,postun):	sed >= 4.0
 Requires:	openldap-servers
+%if "%{_rpmversion}" >= "5"
+BuildArch:	noarch
+%endif
 
 %description -n openldap-schema-openssh-lpk
 This package contains OpenSSH LDAP Public Key schema for openldap.

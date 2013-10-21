@@ -50,8 +50,8 @@
  # no default banner path
  #Banner /some/path
  
-+# Accept locale-related environment variables, also accept GIT vars
-+AcceptEnv LANG LC_* LANGUAGE TZ GIT_*
++# Accept locale-related environment variables, also accept some GIT vars
++AcceptEnv LANG LC_* LANGUAGE TZ GIT_AUTHOR_NAME GIT_AUTHOR_EMAIL GIT_COMMITTER_NAME GIT_COMMITTER_EMAIL
 +
  # override default of no subsystems
  Subsystem	sftp	/usr/libexec/sftp-server
@@ -92,6 +92,6 @@
 +	ServerAliveInterval 60
 +	ServerAliveCountMax 10
 +	TCPKeepAlive no
-+# Send locale-related environment variables, also pass GIT vars
-+	SendEnv LANG LC_* LANGUAGE TZ GIT_*
++# Send locale-related environment variables, also pass some GIT vars
++	SendEnv LANG LC_* LANGUAGE TZ GIT_AUTHOR_NAME GIT_AUTHOR_EMAIL GIT_COMMITTER_NAME GIT_COMMITTER_EMAIL
 +	HashKnownHosts yes

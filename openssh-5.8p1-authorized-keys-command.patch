@@ -216,7 +216,7 @@ diff -up openssh-5.8p1/auth2-pubkey.c.akc openssh-5.8p1/auth2-pubkey.c
 +	/* what about the return value from the child process? */
 +go_away:
 +	if (progname)
-+		xfree (progname);
++		free (progname);
 +
 +	if (runas_pw->pw_uid != 0)
 +		restore_uid();

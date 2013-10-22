@@ -75,9 +75,9 @@
  #   CheckHostIP yes
  #   AddressFamily any
 @@ -42,3 +45,19 @@
- #   PermitLocalCommand no
  #   VisualHostKey no
  #   ProxyCommand ssh -q -W %h:%p gateway.example.com
+ #   RekeyLimit 1G 1h
 +
 +Host *
 +	GSSAPIAuthentication yes

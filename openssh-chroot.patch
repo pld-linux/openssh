@@ -76,9 +76,9 @@
  #ifdef WITH_SELINUX
  	/* Cache selinux status for later use */
 @@ -1425,8 +1429,28 @@ do_setusercontext(struct passwd *pw)
- 			safely_chroot(chroot_path, pw->pw_uid);
- 			free(tmp);
- 			free(chroot_path);
+ 			/* Make sure we don't attempt to chroot again */
+ 			free(options.chroot_directory);
+ 			options.chroot_directory = NULL;
 +#ifdef CHROOT
 +		} else if (options.use_chroot) {
 +			user_dir = xstrdup(pw->pw_dir);

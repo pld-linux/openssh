@@ -33,13 +33,13 @@ Summary(pt_BR.UTF-8):	Implementação livre do SSH
 Summary(ru.UTF-8):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
-Version:	6.2p2
-Release:	4
+Version:	6.3p1
+Release:	1
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
 Source0:	ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
-# Source0-md5:	be46174dcbb77ebb4ea88ef140685de1
+# Source0-md5:	225e75c9856f76011966013163784038
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 # Source1-md5:	66943d481cc422512b537bcc2c7400d1
 Source2:	%{name}d.init
@@ -53,7 +53,6 @@ Source9:	sshd.service
 Source10:	sshd-keygen
 Source11:	sshd.socket
 Source12:	sshd@.service
-Patch100:	%{name}-heimdal.patch
 Patch0:		%{name}-no_libnsl.patch
 Patch2:		%{name}-pam_misc.patch
 Patch3:		%{name}-sigpipe.patch
@@ -529,7 +528,6 @@ openldap-a.
 
 %prep
 %setup -q
-%{?with_kerberos5:%patch100 -p1}
 %patch0 -p1
 %patch2 -p1
 %patch3 -p1

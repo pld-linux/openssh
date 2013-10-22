@@ -48,15 +48,15 @@ This patch is up to date with respect to Debian openssh 1:4.7p1-10.
 +			else
 +				error("Host key %s blacklisted (see "
 +				    "ssh-vulnkey(1))", fp);
-+			xfree(fp);
++			free(fp);
 +			if (!options.permit_blacklisted_keys) {
 +				sensitive_data.host_keys[i] = NULL;
 +				continue;
 +			}
 +		}
+ 		pubkey = key_load_public(options.host_key_files[i], NULL);
  		sensitive_data.host_keys[i] = key;
- 		if (key == NULL) {
- 			error("Could not load host key: %s",
+ 		sensitive_data.host_pubkeys[i] = pubkey;
 --- openssh-4.7p1.orig/servconf.c
 +++ openssh-4.7p1/servconf.c
 @@ -96,6 +96,7 @@
@@ -146,7 +146,7 @@ This patch is up to date with respect to Debian openssh 1:4.7p1-10.
  # test driver for the loginrec code - not built by default
  logintest: logintest.o $(LIBCOMPAT) libssh.a loginrec.o
  	$(LD) -o $@ logintest.o $(LDFLAGS) loginrec.o -lopenbsd-compat -lssh $(LIBS)
-@@ -271,6 +271,7 @@
+@@ -271,6 +274,7 @@
  	$(INSTALL) -m 0755 $(STRIP_OPT) ssh-pkcs11-helper$(EXEEXT) $(DESTDIR)$(SSH_PKCS11_HELPER)$(EXEEXT)
  	$(INSTALL) -m 0755 $(STRIP_OPT) sftp$(EXEEXT) $(DESTDIR)$(bindir)/sftp$(EXEEXT)
  	$(INSTALL) -m 0755 $(STRIP_OPT) sftp-server$(EXEEXT) $(DESTDIR)$(SFTP_SERVER)$(EXEEXT)
@@ -154,7 +154,7 @@ This patch is up to date with respect to Debian openssh 1:4.7p1-10.
  	$(INSTALL) -m 644 ssh.1.out $(DESTDIR)$(mandir)/$(mansubdir)1/ssh.1
  	$(INSTALL) -m 644 scp.1.out $(DESTDIR)$(mandir)/$(mansubdir)1/scp.1
  	$(INSTALL) -m 644 ssh-add.1.out $(DESTDIR)$(mandir)/$(mansubdir)1/ssh-add.1
-@@ -289,6 +289,7 @@
+@@ -289,6 +293,7 @@
  	$(INSTALL) -m 644 sftp.1.out $(DESTDIR)$(mandir)/$(mansubdir)1/sftp.1
  	$(INSTALL) -m 644 sftp-server.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/sftp-server.8
  	$(INSTALL) -m 644 ssh-keysign.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-keysign.8
@@ -211,7 +211,7 @@ This patch is up to date with respect to Debian openssh 1:4.7p1-10.
 +		else
 +			logit("Public key %s blacklisted (see "
 +			    "ssh-vulnkey(1))", fp);
-+		xfree(fp);
++		free(fp);
 +		if (!options.permit_blacklisted_keys)
 +			return 0;
 +	}
@@ -429,7 +429,7 @@ This patch is up to date with respect to Debian openssh 1:4.7p1-10.
  #include "auth.h"
  #include "canohost.h"
  #ifdef GSSAPI
-@@ -147,6 +147,19 @@
+@@ -147,6 +148,19 @@
  	int len;
  	char *fp;
  
@@ -441,7 +441,7 @@ This patch is up to date with respect to Debian openssh 1:4.7p1-10.
 +		else
 +			logit("Public key %s blacklisted (see "
 +			    "ssh-vulnkey(1))", fp);
-+		xfree(fp);
++		free(fp);
 +		if (!options.permit_blacklisted_keys)
 +			return 0;
 +	}
@@ -565,12 +565,12 @@ This patch is up to date with respect to Debian openssh 1:4.7p1-10.
 +
 +out:
 +	if (dgst_packed)
-+		xfree(dgst_packed);
++		free(dgst_packed);
 +	if (dgst_hex)
-+		xfree(dgst_hex);
++		free(dgst_hex);
 +	if (fd >= 0)
 +		close(fd);
-+	xfree(blacklist_file);
++	free(blacklist_file);
 +	return ret;
 +}
 --- openssh-4.7p1.orig/ssh-vulnkey.c
@@ -658,7 +658,7 @@ This patch is up to date with respect to Debian openssh 1:4.7p1-10.
 +	fp = key_fingerprint(key, SSH_FP_MD5, SSH_FP_HEX);
 +	if (!quiet)
 +		printf("%s: %u %s %s\n", msg, key_size(key), fp, comment);
-+	xfree(fp);
++	free(fp);
 +}
 +
 +int
@@ -677,7 +677,7 @@ This patch is up to date with respect to Debian openssh 1:4.7p1-10.
 +		ret = 0;
 +	} else
 +		describe_key("Not blacklisted", key, comment);
-+	xfree(blacklist_file);
++	free(blacklist_file);
 +
 +	return ret;
 +}
@@ -791,7 +791,7 @@ This patch is up to date with respect to Debian openssh 1:4.7p1-10.
 +			found = 1;
 +		}
 +		if (comment)
-+			xfree(comment);
++			free(comment);
 +	}
 +
 +	return ret;
@@ -931,7 +931,7 @@ This patch is up to date with respect to Debian openssh 1:4.7p1-10.
 +			else
 +				logit("Public key %s blacklisted (see "
 +				    "ssh-vulnkey(1))", fp);
-+			xfree(fp);
++			free(fp);
 +			if (!options.permit_blacklisted_keys)
 +				continue;
 +		}
@@ -960,7 +960,7 @@ This patch is up to date with respect to Debian openssh 1:4.7p1-10.
  #include "auth.h"
  #include "pathnames.h"
  #include "uidswap.h"
-@@ -608,6 +608,20 @@
+@@ -608,6 +609,20 @@
  {
  	u_int success, i;
  	char *file;
@@ -974,7 +974,7 @@ This patch is up to date with respect to Debian openssh 1:4.7p1-10.
 +		else
 +			logit("Public key %s blacklisted (see "
 +					"ssh-vulnkey(1))", fp);
-+		xfree(fp);
++		free(fp);
 +		if (!options.permit_blacklisted_keys)
 +			return 0;
 +	}

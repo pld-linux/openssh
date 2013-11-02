@@ -56,6 +56,17 @@
  # override default of no subsystems
  Subsystem	sftp	/usr/libexec/sftp-server
  
+@@ -119,6 +130,10 @@
+ # override default of no subsystems
+ Subsystem	sftp	/usr/libexec/sftp-server
+ 
++# Uncomment this if you want to use .local domain
++#Host *.local
++#	CheckHostIP no
++
+ # Example of overriding settings on a per-user basis
+ #Match User anoncvs
+ #	X11Forwarding no
 --- openssh-4.6p1/ssh_config~	2006-06-13 05:01:10.000000000 +0200
 +++ openssh-4.6p1/ssh_config	2007-10-13 02:00:16.000000000 +0200
 @@ -20,12 +20,15 @@

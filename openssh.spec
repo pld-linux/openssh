@@ -61,6 +61,7 @@ Patch4:		%{name}-ldap.patch
 Patch5:		%{name}-ldap-fixes.patch
 Patch8:		ldap.conf.patch
 Patch6:		%{name}-config.patch
+Patch7:		ldap-helper-sigpipe.patch
 
 # High Performance SSH/SCP - HPN-SSH - http://www.psc.edu/networking/projects/hpn-ssh/
 # http://www.psc.edu/networking/projects/hpn-ssh/openssh-5.2p1-hpn13v6.diff.gz
@@ -534,6 +535,7 @@ openldap-a.
 %patch5 -p1
 %patch8 -p1
 %patch6 -p1
+%patch7 -p1
 
 %{?with_hpn:%patch9 -p1}
 %patch10 -p1

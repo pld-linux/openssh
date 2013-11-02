@@ -1,0 +1,94 @@
+ignore SIGPIPE from ldap-helper. ssh server does not read whole input if matching key is found
+
+with latest ldap patch from fedora openssh package repo
+(84822b5decc2ddd8415a3167b9ff9f0a368929a3), i encountered bug that if there are
+lots of keys for user and matching key is found near the beginning, the
+ssh-ldap-helper gets sigpipe because apparently sshd server does not read out
+whole output. and that killed by signal is propagated so that whole key auth
+fails.
+
+i'm not sure in which side the fixing should be made, should ldap-helper ignore
+SIGPIPE? should ssh authorizedkeyscommand always read up whole input?
+
+in my case user had only 51 keys outputing ~35k of text:
+# /usr/lib/openssh/ssh-ldap-helper -s git | wc
+     51     251   35685
+
+i think it's quite easy to reproduce:
+- print out matchin key early
+- produce more lines of output
+
+so, here's strace of ssh-ldap-helper being called from ssh-ldap-wrapper:
+
+execve("/usr/lib/openssh/ssh-ldap-helper", ["/usr/lib/openssh/ssh-ldap-helper", "-s", "git"], [/* 13 vars */]) = 0
+access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)
+open("/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
+open("/usr/lib/libldap-2.4.so.2", O_RDONLY|O_CLOEXEC) = 3
+open("/usr/lib/liblber-2.4.so.2", O_RDONLY|O_CLOEXEC) = 3
+open("/lib/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
+open("/usr/lib/libsasl2.so.3", O_RDONLY|O_CLOEXEC) = 3
+open("/lib/libresolv.so.2", O_RDONLY|O_CLOEXEC) = 3
+open("/lib/libssl.so.1.0.0", O_RDONLY|O_CLOEXEC) = 3
+open("/lib/libcrypto.so.1.0.0", O_RDONLY|O_CLOEXEC) = 3
+open("/lib/libcrypt.so.1", O_RDONLY|O_CLOEXEC) = 3
+open("/lib/libpam.so.0", O_RDONLY|O_CLOEXEC) = 3
+open("/lib/libaudit.so.1", O_RDONLY|O_CLOEXEC) = 3
+open("/lib/libdl.so.2", O_RDONLY|O_CLOEXEC) = 3
+open("/lib/libz.so.1", O_RDONLY|O_CLOEXEC) = 3
+open("/lib/libfreebl3.so", O_RDONLY|O_CLOEXEC) = 3
+open("/dev/null", O_RDWR|O_LARGEFILE)   = 4
+open("/etc/ldap.conf", O_RDONLY|O_LARGEFILE) = 4
+open("/etc/resolv.conf", O_RDONLY|O_CLOEXEC) = 4
+open("/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 4
+open("/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 4
+open("/lib/libnss_files.so.2", O_RDONLY|O_CLOEXEC) = 4
+open("/etc/host.conf", O_RDONLY|O_CLOEXEC) = 4
+open("/etc/hosts", O_RDONLY|O_CLOEXEC)  = 4
+open("/etc/openldap/ldap.conf", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/tmp/ldaprc", O_RDONLY)           = -1 ENOENT (No such file or directory)
+open("/tmp/.ldaprc", O_RDONLY)          = -1 ENOENT (No such file or directory)
+stat64("/etc/resolv.conf", {st_mode=S_IFREG|0644, st_size=247, ...}) = 0
+open("/etc/resolv.conf", O_RDONLY|O_CLOEXEC) = 4
+open("/etc/hosts", O_RDONLY|O_CLOEXEC)  = 4
+open("/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 4
+open("/lib/libnss_dns.so.2", O_RDONLY|O_CLOEXEC) = 4
+--- SIGPIPE {si_signo=SIGPIPE, si_code=SI_USER, si_pid=615, si_uid=99} ---
++++ killed by SIGPIPE +++
+
+at the same time in the log:
+
+Nov  2 18:20:44 gitolite3 sshd[605]: debug1: matching key found: file /usr/lib/openssh/ssh-ldap-wrapper, line 1 DSA 96:a8:6c:5b:42:ad:b4:f3:01:fc:19:38:da:63:0b:37
+Nov  2 18:20:44 gitolite3 sshd[605]: error: AuthorizedKeysCommand /usr/lib/openssh/ssh-ldap-wrapper returned status 141
+Nov  2 18:20:44 gitolite3 sshd[605]: debug1: restore_uid: 0/0
+Nov  2 18:20:44 gitolite3 sshd[605]: debug1: temporarily_use_uid: 264/264 (e=0/0)
+Nov  2 18:20:44 gitolite3 sshd[605]: debug1: trying public key file /home/services/git/.ssh/authorized_keys
+Nov  2 18:20:44 gitolite3 sshd[605]: debug1: fd 8 clearing O_NONBLOCK
+Nov  2 18:20:44 gitolite3 sshd[605]: debug1: restore_uid: 0/0
+Nov  2 18:20:44 gitolite3 sshd[605]: Failed publickey for git from 127.0.0.1 port 34574 ssh2: DSA 96:a8:6c:5b:42:ad:b4:f3:01:fc:19:38:da:63:0b:37
+Nov  2 18:20:44 gitolite3 sshd[605]: debug1: userauth-request for user git service ssh-connection method keyboard-interactive [preauth]
+Nov  2 18:20:44 gitolite3 sshd[605]: debug1: attempt 2 failures 1 [preauth]
+Nov  2 18:20:44 gitolite3 sshd[605]: debug1: keyboard-interactive devs  [preauth]
+Nov  2 18:20:44 gitolite3 sshd[605]: debug1: auth2_challenge: user=git devs= [preauth]
+Nov  2 18:20:44 gitolite3 sshd[605]: debug1: kbdint_alloc: devices 'pam' [preauth]
+Nov  2 18:20:44 gitolite3 sshd[605]: debug1: auth2_challenge_start: trying authentication method 'pam' [preauth]
+
+there's quick workaround too (without patching),
+instead of "exec ssh-ldap-helper", run it, and "exit 0" from the wrapper
+script. i don't like this solution, but it makes the problem go away:
+
+# cat /usr/lib/openssh/ssh-ldap-wrapper
+#!/bin/sh
+/usr/lib/openssh/ssh-ldap-helper -s "$1"
+exit 0
+
+--- openssh-6.3p1/ldap-helper.c~	2013-11-02 17:14:48.000000000 +0200
++++ openssh-6.3p1/ldap-helper.c	2013-11-02 18:39:15.740402594 +0200
+@@ -137,6 +137,8 @@
+ 	ldap_checkconfig();
+ 	ldap_do_connect();
+ 
++	signal(SIGPIPE, SIG_IGN);
++
+ 	if (config_single_user) {
+ 		process_user (config_single_user, outfile);
+ 	} else {

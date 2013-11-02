@@ -57,8 +57,8 @@ Patch0:		%{name}-no_libnsl.patch
 Patch2:		%{name}-pam_misc.patch
 Patch3:		%{name}-sigpipe.patch
 # http://pkgs.fedoraproject.org/gitweb/?p=openssh.git;a=tree
-Patch4:		%{name}-5.9p1-ldap.patch
-Patch5:		%{name}-5.9p1-ldap-fixes.patch
+Patch4:		%{name}-ldap.patch
+Patch5:		%{name}-ldap-fixes.patch
 Patch8:		ldap.conf.patch
 Patch6:		%{name}-config.patch
 

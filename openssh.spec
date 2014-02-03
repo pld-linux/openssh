@@ -33,13 +33,13 @@ Summary(pt_BR.UTF-8):	Implementação livre do SSH
 Summary(ru.UTF-8):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
-Version:	6.4p1
-Release:	3
+Version:	6.5p1
+Release:	0.1
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
 Source0:	ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
-# Source0-md5:	a62b88b884df0b09b8a8c5789ac9e51b
+# Source0-md5:	a084e7272b8cbd25afe0f5dce4802fef
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 # Source1-md5:	66943d481cc422512b537bcc2c7400d1
 Source2:	%{name}d.init
@@ -541,8 +541,10 @@ openldap-a.
 %{?with_hpn:%patch9 -p1}
 %patch10 -p1
 %patch11 -p1
-%patch12 -p1
-%patch13 -p1
+# do we really need to drag this old/obsolete patch?
+#%patch12 -p1
+# code changed in upstream, needs baggins verification
+#%patch13 -p1
 %patch14 -p1
 %{!?with_ldap:%patch15 -p1}
 
@@ -767,9 +769,9 @@ fi
 %defattr(644,root,root,755)
 %doc TODO README OVERVIEW CREDITS Change*
 %attr(755,root,root) %{_bindir}/ssh-key*
-%attr(755,root,root) %{_bindir}/ssh-vulnkey*
+#%attr(755,root,root) %{_bindir}/ssh-vulnkey*
 %{_mandir}/man1/ssh-key*.1*
-%{_mandir}/man1/ssh-vulnkey*.1*
+#%{_mandir}/man1/ssh-vulnkey*.1*
 %dir %{_sysconfdir}
 %dir %{_libexecdir}
 

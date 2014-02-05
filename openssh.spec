@@ -543,8 +543,7 @@ openldap-a.
 %patch11 -p1
 # do we really need to drag this old/obsolete patch?
 #%patch12 -p1
-# code changed in upstream, needs baggins verification
-#%patch13 -p1
+%patch13 -p1
 %patch14 -p1
 %{!?with_ldap:%patch15 -p1}
 

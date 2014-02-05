@@ -26,11 +26,11 @@ diff -up openssh-5.8p1/auth-krb5.c.kuserok openssh-5.8p1/auth-krb5.c
  	if (problem)
  		goto out;
  
--	if (!krb5_kuserok(authctxt->krb5_ctx, authctxt->krb5_user, client)) {
-+	if (!ssh_krb5_kuserok(authctxt->krb5_ctx, authctxt->krb5_user, client)) {
+-	if (!krb5_kuserok(authctxt->krb5_ctx, authctxt->krb5_user,
++	if (!ssh_krb5_kuserok(authctxt->krb5_ctx, authctxt->krb5_user,
+ 	    authctxt->pw->pw_name)) {
  		problem = -1;
  		goto out;
- 	}
 diff -up openssh-5.8p1/gss-serv-krb5.c.kuserok openssh-5.8p1/gss-serv-krb5.c
 --- openssh-5.8p1/gss-serv-krb5.c.kuserok	2006-09-01 07:38:36.000000000 +0200
 +++ openssh-5.8p1/gss-serv-krb5.c	2011-02-14 09:15:12.000000000 +0100
@@ -43,7 +43,7 @@ diff -up openssh-5.8p1/gss-serv-krb5.c.kuserok openssh-5.8p1/gss-serv-krb5.c
  /* Initialise the krb5 library, for the stuff that GSSAPI won't do */
  
 @@ -97,7 +98,7 @@ ssh_gssapi_krb5_userok(ssh_gssapi_client
- 		    krb5_get_err_text(krb_context, retval));
+ 		krb5_free_error_message(krb_context, errmsg);
  		return 0;
  	}
 -	if (krb5_kuserok(krb_context, princ, name)) {
@@ -61,10 +61,10 @@ diff -up openssh-5.8p1/servconf.c.kuserok openssh-5.8p1/servconf.c
 +	options->use_kuserok = -1;
  	options->adm_forced_command = NULL;
  	options->chroot_directory = NULL;
- 	options->zero_knowledge_password_authentication = -1;
+ 	options->authorized_keys_command = NULL;
 @@ -291,6 +292,8 @@ fill_default_server_options(ServerOption
  	if (use_privsep == -1)
- 		use_privsep = 1;
+ 		use_privsep = PRIVSEP_NOSANDBOX;
  
 +	if (options->use_kuserok == -1)
 +		options->use_kuserok = 1;
@@ -111,8 +111,8 @@ diff -up openssh-5.8p1/servconf.c.kuserok openssh-5.8p1/servconf.c
  	M_CP_INTOPT(rekey_interval);
 +	M_CP_INTOPT(use_kuserok);
  
- 	M_CP_STROPT(banner);
- 	if (preauth)
+ 	/* M_CP_STROPT and M_CP_STRARRAYOPT should not appear before here */
+ #define M_CP_STROPT(n) do {\
 @@ -1764,6 +1774,7 @@ dump_config(ServerOptions *o)
  	dump_cfg_fmtint(sUseDNS, o->use_dns);
  	dump_cfg_fmtint(sAllowTcpForwarding, o->allow_tcp_forwarding);
@@ -153,7 +153,7 @@ diff -up openssh-5.8p1/sshd_config.5.kuserok openssh-5.8p1/sshd_config.5
 +.Cm KerberosUseKuserok ,
  .Cm MaxAuthTries ,
  .Cm MaxSessions ,
- .Cm PubkeyAuthentication ,
+ .Cm PasswordAuthentication ,
 diff -up openssh-5.8p1/sshd_config.kuserok openssh-5.8p1/sshd_config
 --- openssh-5.8p1/sshd_config.kuserok	2011-02-14 09:15:12.000000000 +0100
 +++ openssh-5.8p1/sshd_config	2011-02-14 09:15:12.000000000 +0100

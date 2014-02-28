@@ -34,7 +34,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	6.5p1
-Release:	0.1
+Release:	1
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -68,9 +68,7 @@ Patch7:		ldap-helper-sigpipe.patch
 Patch9:		%{name}-5.2p1-hpn13v6.diff
 Patch10:	%{name}-include.patch
 Patch11:	%{name}-chroot.patch
-# http://people.debian.org/~cjwatson/%{name}-blacklist.diff
-Patch12:	%{name}-blacklist.diff
-Patch13:	%{name}-kuserok.patch
+
 Patch14:	%{name}-bind.patch
 Patch15:	%{name}-disable_ldap.patch
 URL:		http://www.openssh.com/portable.html
@@ -100,7 +98,6 @@ Requires:	pam >= 0.79.0
 %else
 Requires:	filesystem >= 3.0-11
 Requires:	pam >= %{pam_ver}
-Suggests:	openssh-blacklist
 Suggests:	xorg-app-xauth
 %endif
 Obsoletes:	ssh
@@ -541,9 +538,7 @@ openldap-a.
 %{?with_hpn:%patch9 -p1}
 %patch10 -p1
 %patch11 -p1
-# do we really need to drag this old/obsolete patch?
-#%patch12 -p1
-%patch13 -p1
+
 %patch14 -p1
 %{!?with_ldap:%patch15 -p1}
 

@@ -24,5 +24,9 @@ if [ ! -f /etc/ssh/ssh_host_ecdsa_key -o ! -s /etc/ssh/ssh_host_ecdsa_key ]; the
 	chmod 600 /etc/ssh/ssh_host_ecdsa_key
 	[ -x /sbin/restorecon ] && /sbin/restorecon /etc/ssh/ssh_host_ecdsa_key
 fi # ecdsa
-
+if [ ! -f /etc/ssh/ssh_host_ed25519_key -o ! -s /etc/ssh/ssh_host_ed25519_key ]; then
+	/usr/bin/ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N '' >&2
+	chmod 600 /etc/ssh/ssh_host_ed25519_key
+	[ -x /sbin/restorecon ] && /sbin/restorecon /etc/ssh/ssh_host_ed25519_key
+fi # ed25519
 exit 0

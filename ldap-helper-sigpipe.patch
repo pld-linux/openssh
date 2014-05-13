@@ -81,8 +81,16 @@ script. i don't like this solution, but it makes the problem go away:
 /usr/lib/openssh/ssh-ldap-helper -s "$1"
 exit 0
 
---- openssh-6.3p1/ldap-helper.c~	2013-11-02 17:14:48.000000000 +0200
-+++ openssh-6.3p1/ldap-helper.c	2013-11-02 18:39:15.740402594 +0200
+--- openssh-6.6p1/ldap-helper.c~	2014-05-13 17:04:22.258162978 +0300
++++ openssh-6.6p1/ldap-helper.c	2014-05-13 17:14:08.398824417 +0300
+@@ -31,6 +31,7 @@
+ #include "ldapbody.h"
+ #include <string.h>
+ #include <unistd.h>
++#include <signal.h>
+ 
+ static int config_debug = 0;
+ int config_exclusive_config_file = 0;
 @@ -137,6 +137,8 @@
  	ldap_checkconfig();
  	ldap_do_connect();

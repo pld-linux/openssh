@@ -575,7 +575,9 @@ CPPFLAGS="-DCHROOT"
 	--with-pam \
 	--with-pid-dir=%{_localstatedir}/run \
 	--with-privsep-path=%{_privsepdir} \
+%if "%{pld_release}" != "ac"
 	--with-sandbox=seccomp_filter \
+%endif
 	%{?with_selinux:--with-selinux} \
 	--with-tcp-wrappers \
 %if "%{pld_release}" == "ac"

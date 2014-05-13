@@ -67,6 +67,7 @@ Patch8:		ldap-helper-sigpipe.patch
 Patch9:		%{name}-5.2p1-hpn13v6.diff
 Patch10:	%{name}-include.patch
 Patch11:	%{name}-chroot.patch
+Patch12:	limits.h.patch
 
 Patch14:	%{name}-bind.patch
 Patch15:	%{name}-disable_ldap.patch
@@ -537,6 +538,7 @@ openldap-a.
 %{?with_hpn:%patch9 -p1}
 %patch10 -p1
 %patch11 -p1
+%patch12 -p1
 
 %patch14 -p1
 %{!?with_ldap:%patch15 -p1}

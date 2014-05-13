@@ -543,7 +543,7 @@ openldap-a.
 
 %if "%{pld_release}" == "ac"
 # fix for missing x11.pc
-%{__sed} -i -e '/pkg-config/s/ x11//' contrib/Makefile
+%{__sed} -i -e 's/\(`$(PKG_CONFIG) --libs gtk+-2.0\) x11`/\1` -lX11/' contrib/Makefile
 %endif
 
 # hack since arc4random from openbsd-compat needs symbols from libssh and vice versa

@@ -33,13 +33,13 @@ Summary(pt_BR.UTF-8):	Implementação livre do SSH
 Summary(ru.UTF-8):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
-Version:	6.6p1
-Release:	4
+Version:	6.7p1
+Release:	1
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
 Source0:	ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
-# Source0-md5:	3e9800e6bca1fbac0eea4d41baa7f239
+# Source0-md5:	3246aa79317b1d23cae783a3bf8275d6
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 # Source1-md5:	66943d481cc422512b537bcc2c7400d1
 Source2:	%{name}d.init
@@ -81,9 +81,8 @@ BuildRequires:	automake
 %{?with_kerberos5:BuildRequires:	heimdal-devel >= 0.7}
 %{?with_libedit:BuildRequires:	libedit-devel}
 %{?with_selinux:BuildRequires:	libselinux-devel}
-BuildRequires:	libwrap-devel
 %{?with_ldap:BuildRequires:	openldap-devel}
-BuildRequires:	openssl-devel >= 0.9.7d
+BuildRequires:	openssl-devel >= 0.9.8f
 BuildRequires:	pam-devel
 %{?with_gtk:BuildRequires:	pkgconfig}
 BuildRequires:	rpm >= 4.4.9-56
@@ -578,7 +577,6 @@ CPPFLAGS="%{rpmcppflags} -DCHROOT -std=gnu99"
 	--with-sandbox=seccomp_filter \
 %endif
 	%{?with_selinux:--with-selinux} \
-	--with-tcp-wrappers \
 %if "%{pld_release}" == "ac"
 	--with-xauth=/usr/X11R6/bin/xauth
 %else

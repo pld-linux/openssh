@@ -64,21 +64,21 @@
  					 * poke the client this often to
 --- ./session.c.org	2008-05-05 16:22:11.935003283 +0200
 +++ ./session.c	2008-05-05 16:32:50.025507650 +0200
-@@ -1345,6 +1345,10 @@ void
- do_setusercontext(struct passwd *pw)
- {
- 	char *chroot_path, *tmp;
+@@ -1492,6 +1492,10 @@ do_setusercontext(struct passwd *pw)
+ #ifdef USE_LIBIAF
+ 	int doing_chroot = 0;
+ #endif
 +#ifdef CHROOT
 +	char *user_dir;
 +	char *new_root;
 +#endif /* CHROOT */
  
- #ifdef WITH_SELINUX
- 	/* Cache selinux status for later use */
-@@ -1425,8 +1429,28 @@ do_setusercontext(struct passwd *pw)
- 			/* Make sure we don't attempt to chroot again */
- 			free(options.chroot_directory);
- 			options.chroot_directory = NULL;
+ 	platform_setusercontext(pw);
+ 
+@@ -1534,6 +1538,25 @@ do_setusercontext(struct passwd *pw)
+ #ifdef USE_LIBIAF
+ 			doing_chroot = 1;
+ #endif
 +#ifdef CHROOT
 +		} else if (options.use_chroot) {
 +			user_dir = xstrdup(pw->pw_dir);
@@ -100,10 +100,7 @@
 +#endif /* CHROOT */
  		}
  
-+
  #ifdef HAVE_LOGIN_CAP
- 		if (setusercontext(lc, pw, pw->pw_uid, LOGIN_SETUSER) < 0) {
- 			perror("unable to set user context (setuser)");
 --- openssh-3.7.1p2/sshd_config	2003-09-02 14:51:18.000000000 +0200
 +++ openssh-3.7.1p2.pius/sshd_config	2003-10-07 20:49:08.000000000 +0200
 @@ -91,6 +91,10 @@

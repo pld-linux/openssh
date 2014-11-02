@@ -20,7 +20,7 @@
 %if "%{pld_release}" == "ac"
 %define		pam_ver	0.79.0
 %else
-%define		pam_ver	1:1.1.5-5
+%define		pam_ver	1:1.1.8-5
 %endif
 Summary:	OpenSSH free Secure Shell (SSH) implementation
 Summary(de.UTF-8):	OpenSSH - freie Implementation der Secure Shell (SSH)
@@ -34,7 +34,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	6.7p1
-Release:	2
+Release:	3
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking

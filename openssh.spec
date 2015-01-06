@@ -29,7 +29,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	5.8p1
-Release:	6
+Release:	7
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -527,9 +527,6 @@ install -p %{SOURCE2} sshd.init
 %{__sed} -i -e '/pkg-config/s/ x11//' contrib/Makefile
 # not present in ac, no point searching it
 %{__sed} -i -e '/pam_keyinit.so/d' sshd.pam
-
-# openssl on ac does not have OPENSSL_HAS_ECC
-%{__sed} -i -e '/ecdsa/d' sshd.init
 %endif
 
 %build

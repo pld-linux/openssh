@@ -615,23 +615,8 @@ install -d $RPM_BUILD_ROOT/etc/{profile.d,X11/xinit/xinitrc.d}
 
 bzip2 -dc %{SOURCE1} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
 
-cp -p %{SOURCE3} sshd.pam
-install -p %{SOURCE2} sshd.init
-
-%if "%{pld_release}" == "ac"
-# not present in ac, no point searching it
-%{__sed} -i -e '/pam_keyinit.so/d' sshd.pam
-# openssl on ac does not have OPENSSL_HAS_ECC
-%{__sed} -i -e '/ecdsa/d' sshd.init
-%endif
-
-%if %{without audit}
-# remove recording user's login uid to the process attribute
-%{__sed} -i -e '/pam_loginuid.so/d' sshd.pam
-%endif
-
-install -p sshd.init $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
-cp -p sshd.pam $RPM_BUILD_ROOT/etc/pam.d/sshd
+install -p %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
+cp -p %{SOURCE3} $RPM_BUILD_ROOT/etc/pam.d/sshd
 cp -p %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/sshd
 cp -p %{SOURCE5} $RPM_BUILD_ROOT/etc/profile.d
 ln -sf /etc/profile.d/ssh-agent.sh $RPM_BUILD_ROOT/etc/X11/xinit/xinitrc.d/ssh-agent.sh
@@ -673,6 +658,18 @@ touch $RPM_BUILD_ROOT/etc/security/blacklist.sshd
 cat << 'EOF' > $RPM_BUILD_ROOT/etc/env.d/SSH_ASKPASS
 #SSH_ASKPASS="%{_libexecdir}/ssh-askpass"
 EOF
+
+%if "%{pld_release}" == "ac"
+# not present in ac, no point searching it
+%{__sed} -i -e '/pam_keyinit.so/d' $RPM_BUILD_ROOT/etc/pam.d/sshd
+# openssl on ac does not have OPENSSL_HAS_ECC
+%{__sed} -i -e '/ecdsa/d' $RPM_BUILD_ROOT%{_libexecdir}/sshd-keygen
+%endif
+
+%if %{without audit}
+# remove recording user's login uid to the process attribute
+%{__sed} -i -e '/pam_loginuid.so/d' $RPM_BUILD_ROOT/etc/pam.d/sshd
+%endif
 
 %{__rm} $RPM_BUILD_ROOT%{_mandir}/README.openssh-non-english-man-pages
 %{?with_ldap:%{__rm} $RPM_BUILD_ROOT%{_sysconfdir}/ldap.conf}

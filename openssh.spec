@@ -634,16 +634,17 @@ install -p sshd.init $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
 cp -p sshd.pam $RPM_BUILD_ROOT/etc/pam.d/sshd
 cp -p %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/sshd
 cp -p %{SOURCE5} $RPM_BUILD_ROOT/etc/profile.d
-ln -sf	/etc/profile.d/ssh-agent.sh $RPM_BUILD_ROOT/etc/X11/xinit/xinitrc.d/ssh-agent.sh
+ln -sf /etc/profile.d/ssh-agent.sh $RPM_BUILD_ROOT/etc/X11/xinit/xinitrc.d/ssh-agent.sh
 cp -p %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}
 cp -p %{SOURCE7} $RPM_BUILD_ROOT%{schemadir}
 cp -p %{SOURCE8} $RPM_BUILD_ROOT/etc/init/sshd.conf
 
-%{__sed} -e 's|@@LIBEXECDIR@@|%{_libexecdir}|g' %{SOURCE9} >$RPM_BUILD_ROOT%{systemdunitdir}/sshd.service
-cp -p %{SOURCE10} $RPM_BUILD_ROOT%{_libexecdir}/sshd-keygen
+cp -p %{SOURCE9} %{SOURCE11} %{SOURCE12} $RPM_BUILD_ROOT%{systemdunitdir}
+install -p %{SOURCE10} $RPM_BUILD_ROOT%{_libexecdir}/sshd-keygen
 
-cp -p %{SOURCE11} $RPM_BUILD_ROOT%{systemdunitdir}
-cp -p %{SOURCE12} $RPM_BUILD_ROOT%{systemdunitdir}
+%{__sed} -e 's|@@LIBEXECDIR@@|%{_libexecdir}|g' \
+	$RPM_BUILD_ROOT%{systemdunitdir}/sshd.service
+	$RPM_BUILD_ROOT%{_libexecdir}/sshd-keygen
 
 %if %{with gnome}
 install -p contrib/gnome-ssh-askpass1 $RPM_BUILD_ROOT%{_libexecdir}/ssh/ssh-askpass

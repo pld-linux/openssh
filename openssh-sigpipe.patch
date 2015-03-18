@@ -37,8 +37,8 @@ diff -urN openssh-3.9p1.org/ssh.0 openssh-3.9p1/ssh.0
  .Sh SYNOPSIS
  .Nm ssh
  .Bk -words
--.Op Fl 1246AaCfgKkMNnqsTtVvXxYy
-+.Op Fl 1246AaBCfgKkMNnqsTtVvXxYy
+-.Op Fl 1246AaCfGgKkMNnqsTtVvXxYy
++.Op Fl 1246AaBCfGgKkMNnqsTtVvXxYy
  .Op Fl b Ar bind_address
  .Op Fl c Ar cipher_spec
  .Op Fl D Oo Ar bind_address : Oc Ns Ar port
@@ -69,8 +69,8 @@ diff -urN openssh-3.9p1.org/ssh.0 openssh-3.9p1/ssh.0
  usage(void)
  {
  	fprintf(stderr,
--"usage: ssh [-1246AaCfgKkMNnqsTtVvXxYy] [-b bind_address] [-c cipher_spec]\n"
-+"usage: ssh [-1246AaBCfgKkMNnqsTtVvXxYy] [-b bind_address] [-c cipher_spec]\n"
+-"usage: ssh [-1246AaCfGgKkMNnqsTtVvXxYy] [-b bind_address] [-c cipher_spec]\n"
++"usage: ssh [-1246AaBCfGgKkMNnqsTtVvXxYy] [-b bind_address] [-c cipher_spec]\n"
  "           [-D [bind_address:]port] [-E log_file] [-e escape_char]\n"
  "           [-F configfile] [-I pkcs11] [-i identity_file]\n"
  "           [-L [bind_address:]port:host:hostport] [-Q protocol_feature]\n"
@@ -78,8 +78,8 @@ diff -urN openssh-3.9p1.org/ssh.0 openssh-3.9p1/ssh.0
  
   again:
  	while ((opt = getopt(ac, av, "1246ab:c:e:fgi:kl:m:no:p:qstvx"
--	    "ACD:E:F:I:KL:MNO:PQ:R:S:TVw:W:XYy")) != -1) {
-+	    "ABCD:E:F:I:KL:MNO:PQ:R:S:TVw:W:XYy")) != -1) {
+-	    "ACD:E:F:GI:KL:MNO:PQ:R:S:TVw:W:XYy")) != -1) {
++	    "ABCD:E:F:GI:KL:MNO:PQ:R:S:TVw:W:XYy")) != -1) {
  		switch (opt) {
  		case '1':
  			options.protocol = SSH_PROTO_1;

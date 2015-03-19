@@ -559,8 +559,7 @@ cp /usr/share/automake/config.sub .
 %{__aclocal}
 %{__autoconf}
 %{__autoheader}
-CPPFLAGS="%{rpmcppflags} -DCHROOT -std=gnu99 -fno-tree-dominator-opts"
-CFLAGS="%{rpmcflags} -fno-tree-dominator-opts"
+CPPFLAGS="%{rpmcppflags} -DCHROOT -std=gnu99"
 %configure \
 	PERL=%{__perl} \
 	--disable-strip \

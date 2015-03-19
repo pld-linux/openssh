@@ -90,6 +90,8 @@ BuildRequires:	pam-devel
 BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	rpmbuild(macros) >= 1.627
 BuildRequires:	sed >= 4.0
+# libseccomp based sandbox requires NO_NEW_PRIVS prctl flag
+%{?with_tests:BuildRequires:	uname(release) >= 3.5}
 BuildRequires:	zlib-devel >= 1.2.3
 Requires:	zlib >= 1.2.3
 %if "%{pld_release}" == "ac"

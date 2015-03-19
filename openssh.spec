@@ -34,7 +34,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	6.8p1
-Release:	1
+Release:	2
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -70,6 +70,7 @@ Patch11:	%{name}-chroot.patch
 
 Patch14:	%{name}-bind.patch
 Patch15:	%{name}-disable_ldap.patch
+Patch16:	libseccomp-sandbox.patch
 URL:		http://www.openssh.com/portable.html
 BuildRequires:	%{__perl}
 %{?with_tests:BuildRequires:	%{name}-server}
@@ -80,6 +81,7 @@ BuildRequires:	automake
 %{?with_gtk:BuildRequires:	gtk+2-devel}
 %{?with_kerberos5:BuildRequires:	heimdal-devel >= 0.7}
 %{?with_libedit:BuildRequires:	libedit-devel}
+BuildRequires:	libseccomp-devel
 %{?with_selinux:BuildRequires:	libselinux-devel}
 %{?with_ldap:BuildRequires:	openldap-devel}
 BuildRequires:	openssl-devel >= 0.9.8f
@@ -539,6 +541,7 @@ openldap-a.
 
 %patch14 -p1
 %{!?with_ldap:%patch15 -p1}
+%patch16 -p1
 
 %if "%{pld_release}" == "ac"
 # fix for missing x11.pc
@@ -556,7 +559,8 @@ cp /usr/share/automake/config.sub .
 %{__aclocal}
 %{__autoconf}
 %{__autoheader}
-CPPFLAGS="%{rpmcppflags} -DCHROOT -std=gnu99"
+CPPFLAGS="%{rpmcppflags} -DCHROOT -std=gnu99 -fno-tree-dominator-opts"
+CFLAGS="%{rpmcflags} -fno-tree-dominator-opts"
 %configure \
 	PERL=%{__perl} \
 	--disable-strip \
@@ -574,7 +578,7 @@ CPPFLAGS="%{rpmcppflags} -DCHROOT -std=gnu99"
 	--with-pid-dir=%{_localstatedir}/run \
 	--with-privsep-path=%{_privsepdir} \
 %if "%{pld_release}" != "ac"
-	--with-sandbox=seccomp_filter \
+	--with-sandbox=libseccomp_filter \
 %endif
 	%{?with_selinux:--with-selinux} \
 %if "%{pld_release}" == "ac"

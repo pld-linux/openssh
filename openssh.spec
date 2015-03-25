@@ -578,6 +578,7 @@ CPPFLAGS="%{rpmcppflags} -DCHROOT -std=gnu99"
 	--with-pam \
 	--with-pid-dir=%{_localstatedir}/run \
 	--with-privsep-path=%{_privsepdir} \
+	--with-privsep-user=sshd \
 %if "%{pld_release}" != "ac"
 	--with-sandbox=libseccomp_filter \
 %endif

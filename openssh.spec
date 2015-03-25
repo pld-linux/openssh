@@ -92,7 +92,7 @@ BuildRequires:	sed >= 4.0
 # libseccomp based sandbox requires NO_NEW_PRIVS prctl flag
 %{?with_tests:BuildRequires:	uname(release) >= 3.5}
 BuildRequires:	zlib-devel >= 1.2.3
-%if %{with tests} && 0%(id -u sshd 2>/dev/null; echo $?)
+%if %{with tests} && 0%(id -u sshd >/dev/null 2>&1; echo $?)
 BuildRequires:	%{name}-server
 %endif
 Requires:	zlib >= 1.2.3

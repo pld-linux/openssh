@@ -73,7 +73,6 @@ Patch15:	%{name}-disable_ldap.patch
 Patch16:	libseccomp-sandbox.patch
 URL:		http://www.openssh.com/portable.html
 BuildRequires:	%{__perl}
-%{?with_tests:BuildRequires:	%{name}-server}
 %{?with_audit:BuildRequires:	audit-libs-devel}
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
@@ -93,6 +92,9 @@ BuildRequires:	sed >= 4.0
 # libseccomp based sandbox requires NO_NEW_PRIVS prctl flag
 %{?with_tests:BuildRequires:	uname(release) >= 3.5}
 BuildRequires:	zlib-devel >= 1.2.3
+%if %{with tests} && 0%(id -u sshd 2>/dev/null; echo $?)
+BuildRequires:	%{name}-server
+%endif
 Requires:	zlib >= 1.2.3
 %if "%{pld_release}" == "ac"
 Requires:	filesystem >= 2.0-1

@@ -51,7 +51,7 @@ ssh_gen_keys() {
 
 start() {
 	# Check if the service is already running?
-	if [ -f /var/lock/subsys/sshd ]; then
+	if status >/dev/null; then
 		msg_already_running "OpenSSH"
 		return
 	fi

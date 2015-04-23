@@ -34,7 +34,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	6.8p1
-Release:	3
+Release:	4
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -48,7 +48,6 @@ Source4:	%{name}.sysconfig
 Source5:	ssh-agent.sh
 Source6:	ssh-agent.conf
 Source7:	%{name}-lpk.schema
-Source8:	%{name}d.upstart
 Source9:	sshd.service
 Source10:	sshd-keygen
 Source11:	sshd.socket
@@ -437,20 +436,6 @@ among the servers in the network.
 Backend LDAP dla OpenSSH to metoda rozprowadzania autoryzowanych
 tokenów między serwerami w sieci.
 
-%package server-upstart
-Summary:	Upstart job description for OpenSSH server
-Summary(pl.UTF-8):	Opis zadania Upstart dla serwera OpenSSH
-Group:		Daemons
-Requires:	%{name}-server = %{epoch}:%{version}-%{release}
-Requires:	upstart >= 0.6
-Conflicts:	syslog-ng < 3.2.4-1
-
-%description server-upstart
-Upstart job description for OpenSSH.
-
-%description server-upstart -l pl.UTF-8
-Opis zadania Upstart dla OpenSSH.
-
 %package gnome-askpass
 Summary:	OpenSSH GNOME passphrase dialog
 Summary(de.UTF-8):	OpenSSH GNOME Passwort-Dialog
@@ -609,7 +594,7 @@ cd contrib
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{init,pam.d,rc.d/init.d,sysconfig,security,env.d}} \
+install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{pam.d,rc.d/init.d,sysconfig,security,env.d}} \
 	$RPM_BUILD_ROOT{%{_libexecdir}/ssh,%{schemadir},%{systemdunitdir}}
 install -d $RPM_BUILD_ROOT/etc/{profile.d,X11/xinit/xinitrc.d}
 
@@ -625,7 +610,6 @@ cp -p %{SOURCE5} $RPM_BUILD_ROOT/etc/profile.d
 ln -sf /etc/profile.d/ssh-agent.sh $RPM_BUILD_ROOT/etc/X11/xinit/xinitrc.d/ssh-agent.sh
 cp -p %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}
 cp -p %{SOURCE7} $RPM_BUILD_ROOT%{schemadir}
-cp -p %{SOURCE8} $RPM_BUILD_ROOT/etc/init/sshd.conf
 
 cp -p %{SOURCE9} %{SOURCE11} %{SOURCE12} $RPM_BUILD_ROOT%{systemdunitdir}
 install -p %{SOURCE10} $RPM_BUILD_ROOT%{_libexecdir}/sshd-keygen
@@ -748,12 +732,6 @@ if [ -x /bin/systemd_booted ] && /bin/systemd_booted; then
 EOF
 fi
 
-%post server-upstart
-%upstart_post sshd
-
-%postun server-upstart
-%upstart_postun sshd
-
 %post -n openldap-schema-openssh-lpk
 %openldap_schema_register %{schemadir}/openssh-lpk.schema
 %service -q ldap restart
@@ -857,10 +835,4 @@ fi
 %files -n openldap-schema-openssh-lpk
 %defattr(644,root,root,755)
 %{schemadir}/openssh-lpk.schema
-%endif
-
-%if "%{pld_release}" != "ti"
-%files server-upstart
-%defattr(644,root,root,755)
-%config(noreplace) %verify(not md5 mtime size) /etc/init/sshd.conf
 %endif

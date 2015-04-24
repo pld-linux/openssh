@@ -11,11 +11,16 @@
 %bcond_without	libedit		# without libedit (editline/history support in sftp client)
 %bcond_without	kerberos5	# without kerberos5 support
 %bcond_without	selinux		# build without SELinux support
+%bcond_without	libseccomp	# use libseccomp for seccomp privsep (requires 3.5 kernel)
 %bcond_with	hpn		# High Performance SSH/SCP - HPN-SSH including Cipher NONE (broken too often)
 %bcond_without	tests
 
 # gtk2-based gnome-askpass means no gnome1-based
 %{?with_gtk:%undefine with_gnome}
+
+%if "%{pld_release}" != "ac"
+%define	sandbox %{!?with_libseccomp:seccomp_filter}%{?with_seccomp:libseccomp_filter}
+%endif
 
 %if "%{pld_release}" == "ac"
 %define		pam_ver	0.79.0
@@ -34,7 +39,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	6.8p1
-Release:	4
+Release:	5
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -88,8 +93,6 @@ BuildRequires:	pam-devel
 BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	rpmbuild(macros) >= 1.627
 BuildRequires:	sed >= 4.0
-# libseccomp based sandbox requires NO_NEW_PRIVS prctl flag
-%{?with_tests:BuildRequires:	uname(release) >= 3.5}
 BuildRequires:	zlib-devel >= 1.2.3
 %if %{with tests} && 0%(id -u sshd >/dev/null 2>&1; echo $?)
 BuildRequires:	%{name}-server
@@ -103,6 +106,7 @@ Requires:	filesystem >= 3.0-11
 Requires:	pam >= %{pam_ver}
 Suggests:	xorg-app-xauth
 %endif
+%{?with_libseccomp:Requires:	uname(release) >= 3.5}
 Obsoletes:	ssh
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -530,7 +534,7 @@ openldap-a.
 
 %patch14 -p1
 %{!?with_ldap:%patch15 -p1}
-%patch16 -p1
+%{?with_libseccomp:%patch16 -p1}
 
 %if "%{pld_release}" == "ac"
 # fix for missing x11.pc
@@ -566,8 +570,8 @@ CPPFLAGS="%{rpmcppflags} -DCHROOT -std=gnu99"
 	--with-pid-dir=%{_localstatedir}/run \
 	--with-privsep-path=%{_privsepdir} \
 	--with-privsep-user=sshd \
-%if "%{pld_release}" != "ac"
-	--with-sandbox=libseccomp_filter \
+%if "%{?sandbox}" != ""
+	--with-sandbox=%{sandbox} \
 %endif
 	%{?with_selinux:--with-selinux} \
 %if "%{pld_release}" == "ac"

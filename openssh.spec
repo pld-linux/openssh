@@ -547,6 +547,9 @@ sed -i -e 's#-lssh -lopenbsd-compat#-lssh -lopenbsd-compat -lssh#g' Makefile*
 grep -rl /usr/libexec/openssh/ssh-ldap-helper . | xargs \
 %{__sed} -i -e 's,/usr/libexec/openssh/ssh-ldap-helper,%{_libexecdir}/ssh-ldap-helper,'
 
+# prevent being ovewritten by aclocal calls
+mv aclocal.m4 acinclude.m4
+
 %build
 cp /usr/share/automake/config.sub .
 %{__aclocal}

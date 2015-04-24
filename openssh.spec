@@ -97,6 +97,10 @@ BuildRequires:	zlib-devel >= 1.2.3
 %if %{with tests} && 0%(id -u sshd >/dev/null 2>&1; echo $?)
 BuildRequires:	%{name}-server
 %endif
+%if %{with tests} && %{with libseccomp}
+# libseccomp based sandbox requires NO_NEW_PRIVS prctl flag
+BuildRequires:	uname(release) >= 3.5
+%endif
 Requires:	zlib >= 1.2.3
 %if "%{pld_release}" == "ac"
 Requires:	filesystem >= 2.0-1

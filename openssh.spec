@@ -587,7 +587,7 @@ echo '#define LOGIN_PROGRAM		   "/bin/login"' >>config.h
 
 %{__make}
 
-%{?with_tests:%{__make} tests}
+%{?with_tests:%{__make} -j1 tests}
 
 cd contrib
 %if %{with gnome}

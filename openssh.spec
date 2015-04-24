@@ -20,6 +20,10 @@
 
 %define	sandbox %{?with_libseccomp:lib}seccomp_filter
 
+%ifarch x32
+%{!?with_libseccomp:%error openssh seccomp implementation is broken! do not disable libseccomp on x32}
+%endif
+
 %if "%{pld_release}" == "ac"
 %define		pam_ver	0.79.0
 %else

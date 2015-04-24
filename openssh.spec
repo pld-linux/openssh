@@ -18,9 +18,7 @@
 # gtk2-based gnome-askpass means no gnome1-based
 %{?with_gtk:%undefine with_gnome}
 
-%if "%{pld_release}" != "ac"
 %define	sandbox %{?with_libseccomp:lib}seccomp_filter
-%endif
 
 %if "%{pld_release}" == "ac"
 %define		pam_ver	0.79.0
@@ -577,11 +575,11 @@ CPPFLAGS="%{rpmcppflags} -DCHROOT -std=gnu99"
 	--with-pid-dir=%{_localstatedir}/run \
 	--with-privsep-path=%{_privsepdir} \
 	--with-privsep-user=sshd \
-	--with-sandbox=%{sandbox} \
 	%{?with_selinux:--with-selinux} \
 %if "%{pld_release}" == "ac"
 	--with-xauth=/usr/X11R6/bin/xauth
 %else
+	--with-sandbox=%{sandbox} \
 	--with-xauth=%{_bindir}/xauth
 %endif
 

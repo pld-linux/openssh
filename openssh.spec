@@ -577,9 +577,7 @@ CPPFLAGS="%{rpmcppflags} -DCHROOT -std=gnu99"
 	--with-pid-dir=%{_localstatedir}/run \
 	--with-privsep-path=%{_privsepdir} \
 	--with-privsep-user=sshd \
-%if "%{?sandbox}" != ""
 	--with-sandbox=%{sandbox} \
-%endif
 	%{?with_selinux:--with-selinux} \
 %if "%{pld_release}" == "ac"
 	--with-xauth=/usr/X11R6/bin/xauth

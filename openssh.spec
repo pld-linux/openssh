@@ -41,7 +41,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	6.8p1
-Release:	7
+Release:	8
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -626,6 +626,7 @@ cp -p %{SOURCE9} %{SOURCE11} %{SOURCE12} $RPM_BUILD_ROOT%{systemdunitdir}
 install -p %{SOURCE10} $RPM_BUILD_ROOT%{_libexecdir}/sshd-keygen
 
 %{__sed} -e 's|@@LIBEXECDIR@@|%{_libexecdir}|g' \
+	$RPM_BUILD_ROOT/etc/rc.d/init.d/sshd \
 	$RPM_BUILD_ROOT%{systemdunitdir}/sshd.service \
 	$RPM_BUILD_ROOT%{_libexecdir}/sshd-keygen
 

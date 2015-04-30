@@ -41,7 +41,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	6.8p1
-Release:	9
+Release:	10
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -112,7 +112,6 @@ Requires:	filesystem >= 3.0-11
 Requires:	pam >= %{pam_ver}
 Suggests:	xorg-app-xauth
 %endif
-%{?with_libseccomp:Requires:	uname(release) >= 3.5}
 Obsoletes:	ssh
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -361,6 +360,7 @@ Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	pam >= %{pam_ver}
 Requires:	rc-scripts >= 0.4.3.0
 Requires:	systemd-units >= 38
+%{?with_libseccomp:Requires:	uname(release) >= 3.5}
 Requires:	util-linux
 %{?with_ldap:Suggests:	%{name}-server-ldap}
 Suggests:	/bin/login

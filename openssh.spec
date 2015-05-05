@@ -18,6 +18,11 @@
 # gtk2-based gnome-askpass means no gnome1-based
 %{?with_gtk:%undefine with_gnome}
 
+%ifnarch x32
+# libseccomp requires 3.5 kernel, avoid such requirement where possible (non-x32 arches)
+%undefine	with_libseccomp
+%endif
+
 %define	sandbox %{?with_libseccomp:lib}seccomp_filter
 
 %ifarch x32
@@ -41,7 +46,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	6.8p1
-Release:	10
+Release:	11
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -73,7 +78,6 @@ Patch8:		ldap-helper-sigpipe.patch
 Patch9:		%{name}-5.2p1-hpn13v6.diff
 Patch10:	%{name}-include.patch
 Patch11:	%{name}-chroot.patch
-
 Patch14:	%{name}-bind.patch
 Patch15:	%{name}-disable_ldap.patch
 Patch16:	libseccomp-sandbox.patch

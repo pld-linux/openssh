@@ -1302,7 +1302,7 @@ diff -up openssh-6.2p2/ldapconf.c.ldap openssh-6.2p2/ldapconf.c
 +		len = snprintf (options.uri, MAXURILEN, "ldap%s://%s:%d",
 +		    (options.ssl == 0) ? "" : "s", options.host, options.port);
 +		options.uri[MAXURILEN - 1] = 0;
-+		options.uri = xrealloc (options.uri, len + 1, 1);
++		options.uri = xreallocarray (options.uri, len + 1, 1);
 +	}
 +	if (options.binddn == NULL)
 +	    options.binddn = "";

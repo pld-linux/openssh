@@ -65,6 +65,7 @@ Source10:	sshd-keygen
 Source11:	sshd.socket
 Source12:	sshd@.service
 Patch0:		%{name}-no_libnsl.patch
+Patch1:		%{name}-tests-reuseport.patch
 Patch2:		%{name}-pam_misc.patch
 Patch3:		%{name}-sigpipe.patch
 # http://pkgs.fedoraproject.org/gitweb/?p=openssh.git;a=tree
@@ -530,6 +531,7 @@ openldap-a.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1

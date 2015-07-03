@@ -1,0 +1,11 @@
+--- openssh-6.9p1/regress/netcat.c.orig	2015-07-01 04:35:31.000000000 +0200
++++ openssh-6.9p1/regress/netcat.c	2015-07-03 17:23:33.544777525 +0200
+@@ -775,7 +775,7 @@
+ #ifdef SO_REUSEPORT
+ 		ret = setsockopt(s, SOL_SOCKET, SO_REUSEPORT, &x, sizeof(x));
+ 		if (ret == -1)
+-			err(1, "setsockopt");
++			warn("setsockopt SO_REUSEPORT");
+ #endif
+ 		set_common_sockopts(s);
+ 

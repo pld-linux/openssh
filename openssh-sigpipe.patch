@@ -42,17 +42,18 @@ diff -urN openssh-3.9p1.org/ssh.0 openssh-3.9p1/ssh.0
  .Op Fl b Ar bind_address
  .Op Fl c Ar cipher_spec
  .Op Fl D Oo Ar bind_address : Oc Ns Ar port
-@@ -425,6 +425,10 @@
- on the local machine as the source address
+@@ -138,6 +138,11 @@ on the local machine as the source addre
  of the connection.
  Only useful on systems with more than one address.
+ .Pp
 +.It Fl B
 +Enables processing of SIGPIPE. Useful when using ssh output as input for
 +another process, for example in a shell script. Be careful - it may break
 +port/X11 forwarding when used.
++.Pp
  .It Fl C
  Requests compression of all data (including stdin, stdout, stderr, and
- data for forwarded X11 and TCP/IP connections).
+ data for forwarded X11, TCP and
 --- openssh-4.0p1/ssh.c.orig	2005-03-02 02:04:33.000000000 +0100
 +++ openssh-4.0p1/ssh.c	2005-03-10 15:11:10.000000000 +0100
 @@ -135,6 +135,9 @@

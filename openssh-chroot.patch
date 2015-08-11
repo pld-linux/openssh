@@ -116,9 +116,9 @@
  # http://securitytracker.com/alerts/2004/Sep/1011143.html
 --- openssh-4.4p1/sshd_config.0.orig	2006-09-26 13:03:48.000000000 +0200
 +++ openssh-4.4p1/sshd_config.0	2006-10-05 10:11:41.615971000 +0200
-@@ -451,6 +451,16 @@
-              To disable TCP keepalive messages, the value should be set to
-              ``no''.
+@@ -921,6 +921,16 @@ DESCRIPTION
+              TrustedUserCAKeys.  For more details on certificates, see the
+              CERTIFICATES section in ssh-keygen(1).
  
 +     UseChroot
 +             Specifies whether to use chroot-jail environment with ssh/sftp,
@@ -130,9 +130,9 @@
 +             For this to work properly you have to create special chroot-jail
 +             environment in a /path/to/chroot directory.
 +
-      UseDNS  Specifies whether sshd(8) should look up the remote host name and
-              check that the resolved host name for the remote IP address maps
-              back to the very same IP address.  The default is ``yes''.
+      UseDNS  Specifies whether sshd(8) should look up the remote host name,
+              and to check that the resolved host name for the remote IP
+              address maps back to the very same IP address.
 --- openssh-3.8p1/sshd_config.5.orig	2004-02-18 04:31:24.000000000 +0100
 +++ openssh-3.8p1/sshd_config.5	2004-02-25 21:17:23.000000000 +0100
 @@ -552,6 +552,16 @@

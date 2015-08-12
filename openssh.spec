@@ -716,7 +716,7 @@ if [ "$1" = "0" ]; then
 fi
 %systemd_reload
 
-%triggerpostun server -- %{name}-server < %{epoch}:7.0p1-2
+%triggerpostun server -- %{name}-server < 2:7.0p1-2
 %banner %{name}-server -e << EOF
 !!!!!!!!!!!!!!!!!!!!!!! WARNING !!!!!!!!!!!!!!!!!!!
 ! Starting from openssh 7.0 DSA keys are disabled !

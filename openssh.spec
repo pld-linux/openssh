@@ -46,7 +46,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	7.0p1
-Release:	1
+Release:	2
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -715,6 +715,16 @@ if [ "$1" = "0" ]; then
 	%userremove sshd
 fi
 %systemd_reload
+
+%triggerpostun server -- %{name}-server < %{epoch}:7.0p1-2
+%banner %{name}-server -e << EOF
+!!!!!!!!!!!!!!!!!!!!!!! WARNING !!!!!!!!!!!!!!!!!!!
+! Starting from openssh 7.0 DSA keys are disabled !
+! on server and client side. You will NOT be able !
+! to use DSA keys for authentication. Please read !
+! about PubkeyAcceptedKeyTypes in man ssh_config. !
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+EOF
 
 %triggerpostun server -- %{name}-server < 6.2p1-1
 cp -f %{_sysconfdir}/sshd_config{,.rpmorig}

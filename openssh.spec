@@ -29,7 +29,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	5.8p1
-Release:	8
+Release:	9
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -70,7 +70,7 @@ BuildRequires:	automake
 %{?with_selinux:BuildRequires:	libselinux-devel}
 BuildRequires:	libwrap-devel
 %{?with_ldap:BuildRequires:	openldap-devel}
-BuildRequires:	openssl-devel >= 0.9.7d
+BuildRequires:	openssl-devel >= 1.0.2
 BuildRequires:	pam-devel
 %{?with_gtk:BuildRequires:	pkgconfig}
 BuildRequires:	rpm >= 4.4.9-56
@@ -349,6 +349,7 @@ Requires(postun):	/usr/sbin/userdel
 Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/useradd
 Requires:	%{name} = %{epoch}:%{version}-%{release}
+Requires:	openssl >= 1.0.2
 Requires:	pam >= %{pam_ver}
 Requires:	rc-scripts >= 0.4.3.0
 Requires:	util-linux

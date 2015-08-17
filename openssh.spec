@@ -529,6 +529,9 @@ install -p %{SOURCE2} sshd.init
 %{__sed} -i -e '/pam_keyinit.so/d' sshd.pam
 %endif
 
+# OSSH_PATH_ENTROPY_PROG gets undefined if aclocal gets overwritten
+mv aclocal.m4 acinclude.m4
+
 %build
 cp /usr/share/automake/config.sub .
 %{__aclocal}

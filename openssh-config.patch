@@ -22,7 +22,7 @@
 +PermitEmptyPasswords no
 +
 +# Allow DSA keys
-+#PubkeyAcceptedKeyTypes +ssh-dss
++PubkeyAcceptedKeyTypes +ssh-dss
  
  # Change to no to disable s/key passwords
  #ChallengeResponseAuthentication yes
@@ -89,7 +89,7 @@
  #   BatchMode no
  #   CheckHostIP yes
  #   AddressFamily any
-@@ -42,3 +45,19 @@
+@@ -42,3 +45,21 @@
  #   VisualHostKey no
  #   ProxyCommand ssh -q -W %h:%p gateway.example.com
  #   RekeyLimit 1G 1h
@@ -107,6 +107,8 @@
 +	ServerAliveInterval 60
 +	ServerAliveCountMax 10
 +	TCPKeepAlive no
++	# Allow DSA keys
++	PubkeyAcceptedKeyTypes +ssh-dss
 +# Send locale-related environment variables, also pass some GIT vars
 +	SendEnv LANG LC_* LANGUAGE XMODIFIERS TZ GIT_AUTHOR_NAME GIT_AUTHOR_EMAIL GIT_COMMITTER_NAME GIT_COMMITTER_EMAIL
 +	HashKnownHosts yes

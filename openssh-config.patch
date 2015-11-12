@@ -109,6 +109,7 @@
 +	TCPKeepAlive no
 +	# Allow DSA keys
 +#	PubkeyAcceptedKeyTypes +ssh-dss
++#	HostkeyAlgorithms +ssh-dss
 +# Send locale-related environment variables, also pass some GIT vars
 +	SendEnv LANG LC_* LANGUAGE XMODIFIERS TZ GIT_AUTHOR_NAME GIT_AUTHOR_EMAIL GIT_COMMITTER_NAME GIT_COMMITTER_EMAIL
 +	HashKnownHosts yes

@@ -15,7 +15,6 @@ ssh_gen_key() {
 }
 
 # generate new keys with empty passwords if they do not exist
-ssh_gen_key rsa1 /etc/ssh/ssh_host_key
 ssh_gen_key rsa /etc/ssh/ssh_host_rsa_key
 ssh_gen_key dsa /etc/ssh/ssh_host_dsa_key
 ssh_gen_key ecdsa /etc/ssh/ssh_host_ecdsa_key

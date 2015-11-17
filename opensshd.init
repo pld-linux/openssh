@@ -56,7 +56,7 @@ start() {
 
 	checkconfig
 
-	if [ ! -s /etc/ssh/ssh_host_key ]; then
+	if [ "$(echo /etc/ssh/ssh_host*key)" = "/etc/ssh/ssh_host*key" ]; then
 		msg_not_running "OpenSSH"
 		nls "No SSH host key found! You must run \"%s init\" first." "$0"
 		exit 1

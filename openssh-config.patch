@@ -89,7 +89,7 @@
  #   BatchMode no
  #   CheckHostIP yes
  #   AddressFamily any
-@@ -42,3 +45,21 @@
+@@ -42,3 +45,22 @@
  #   VisualHostKey no
  #   ProxyCommand ssh -q -W %h:%p gateway.example.com
  #   RekeyLimit 1G 1h

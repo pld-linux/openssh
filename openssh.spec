@@ -45,13 +45,13 @@ Summary(pt_BR.UTF-8):	Implementação livre do SSH
 Summary(ru.UTF-8):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
-Version:	7.1p2
-Release:	3
+Version:	7.2p1
+Release:	1
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
 Source0:	ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
-# Source0-md5:	4d8547670e2a220d5ef805ad9e47acf2
+# Source0-md5:	b984775f0cfff1f7ff18b8797fce8a28
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 # Source1-md5:	66943d481cc422512b537bcc2c7400d1
 Source2:	%{name}d.init
@@ -64,7 +64,6 @@ Source9:	sshd.service
 Source10:	sshd-keygen
 Source11:	sshd.socket
 Source12:	sshd@.service
-Patch0:		%{name}-no_libnsl.patch
 Patch1:		%{name}-tests-reuseport.patch
 Patch2:		%{name}-pam_misc.patch
 Patch3:		%{name}-sigpipe.patch
@@ -530,7 +529,6 @@ openldap-a.
 
 %prep
 %setup -q
-%patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
@@ -654,9 +652,6 @@ ln -s %{_libexecdir}/ssh/ssh-askpass $RPM_BUILD_ROOT%{_libexecdir}/ssh-askpass
 
 install -p contrib/ssh-copy-id $RPM_BUILD_ROOT%{_bindir}
 cp -p contrib/ssh-copy-id.1 $RPM_BUILD_ROOT%{_mandir}/man1
-
-%{__rm} $RPM_BUILD_ROOT%{_mandir}/man1/slogin.1
-echo ".so ssh.1" > $RPM_BUILD_ROOT%{_mandir}/man1/slogin.1
 
 touch $RPM_BUILD_ROOT/etc/security/blacklist.sshd
 
@@ -783,7 +778,6 @@ fi
 %files clients
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/ssh
-%attr(755,root,root) %{_bindir}/slogin
 %attr(755,root,root) %{_bindir}/sftp
 %attr(755,root,root) %{_bindir}/ssh-agent
 %attr(755,root,root) %{_bindir}/ssh-add
@@ -793,7 +787,6 @@ fi
 %config(noreplace,missingok) %verify(not md5 mtime size) /etc/env.d/SSH_ASKPASS
 %{_mandir}/man1/scp.1*
 %{_mandir}/man1/ssh.1*
-%{_mandir}/man1/slogin.1*
 %{_mandir}/man1/sftp.1*
 %{_mandir}/man1/ssh-agent.1*
 %{_mandir}/man1/ssh-add.1*

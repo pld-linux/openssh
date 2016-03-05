@@ -1984,10 +1984,9 @@ diff -up openssh-6.2p1/ldapmisc.h.ldap openssh-6.2p1/ldapmisc.h
 +
 +#endif /* LDAPMISC_H */
 +
-diff -up openssh-6.2p1/Makefile.in.ldap openssh-6.2p1/Makefile.in
---- openssh-6.2p1/Makefile.in.ldap	2013-03-25 21:27:15.850247822 +0100
-+++ openssh-6.2p1/Makefile.in	2013-03-25 21:27:57.356518817 +0100
-@@ -25,6 +25,8 @@ SSH_PROGRAM=@bindir@/ssh
+--- openssh-7.2p1/Makefile.in.orig	2016-02-26 04:40:04.000000000 +0100
++++ openssh-7.2p1/Makefile.in	2016-03-04 19:44:30.903306337 +0100
+@@ -25,6 +25,8 @@
  ASKPASS_PROGRAM=$(libexecdir)/ssh-askpass
  SFTP_SERVER=$(libexecdir)/sftp-server
  SSH_KEYSIGN=$(libexecdir)/ssh-keysign
@@ -1996,7 +1995,7 @@ diff -up openssh-6.2p1/Makefile.in.ldap openssh-6.2p1/Makefile.in
  SSH_PKCS11_HELPER=$(libexecdir)/ssh-pkcs11-helper
  PRIVSEP_PATH=@PRIVSEP_PATH@
  SSH_PRIVSEP_USER=@SSH_PRIVSEP_USER@
-@@ -60,8 +62,9 @@ XAUTH_PATH=@XAUTH_PATH@
+@@ -61,8 +63,9 @@
  LDFLAGS=-L. -Lopenbsd-compat/ @LDFLAGS@
  EXEEXT=@EXEEXT@
  MANFMT=@MANFMT@
@@ -2005,11 +2004,11 @@ diff -up openssh-6.2p1/Makefile.in.ldap openssh-6.2p1/Makefile.in
 -TARGETS=ssh$(EXEEXT) sshd$(EXEEXT) ssh-add$(EXEEXT) ssh-keygen$(EXEEXT) ssh-keyscan${EXEEXT} ssh-keysign${EXEEXT} ssh-pkcs11-helper$(EXEEXT) ssh-agent$(EXEEXT) scp$(EXEEXT) sftp-server$(EXEEXT) sftp$(EXEEXT)
 +TARGETS=ssh$(EXEEXT) sshd$(EXEEXT) ssh-add$(EXEEXT) ssh-keygen$(EXEEXT) ssh-keyscan${EXEEXT} ssh-keysign${EXEEXT} ssh-pkcs11-helper$(EXEEXT) ssh-agent$(EXEEXT) scp$(EXEEXT) sftp-server$(EXEEXT) sftp$(EXEEXT) ssh-ldap-helper$(EXEEXT)
  
- LIBSSH_OBJS=authfd.o authfile.o bufaux.o bufbn.o buffer.o \
- 	canohost.o channels.o cipher.o cipher-aes.o \
-@@ -95,8 +98,8 @@ SSHDOBJS=sshd.o auth-rhosts.o auth-passw
- 	sandbox-null.o sandbox-rlimit.o sandbox-systrace.o sandbox-darwin.o \
- 	sandbox-seccomp-filter.o
+ LIBOPENSSH_OBJS=\
+ 	ssh_api.o \
+@@ -112,8 +115,8 @@
+ 	sandbox-seccomp-filter.o sandbox-capsicum.o sandbox-pledge.o \
+ 	sandbox-solaris.o
  
 -MANPAGES	= moduli.5.out scp.1.out ssh-add.1.out ssh-agent.1.out ssh-keygen.1.out ssh-keyscan.1.out ssh.1.out sshd.8.out sftp-server.8.out sftp.1.out ssh-keysign.8.out ssh-pkcs11-helper.8.out sshd_config.5.out ssh_config.5.out
 -MANPAGES_IN	= moduli.5 scp.1 ssh-add.1 ssh-agent.1 ssh-keygen.1 ssh-keyscan.1 ssh.1 sshd.8 sftp-server.8 sftp.1 ssh-keysign.8 ssh-pkcs11-helper.8 sshd_config.5 ssh_config.5
@@ -2018,17 +2017,17 @@ diff -up openssh-6.2p1/Makefile.in.ldap openssh-6.2p1/Makefile.in
  MANTYPE		= @MANTYPE@
  
  CONFIGFILES=sshd_config.out ssh_config.out moduli.out
-@@ -164,6 +167,9 @@ ssh-keysign$(EXEEXT): $(LIBCOMPAT) libss
+@@ -184,6 +187,9 @@
  ssh-pkcs11-helper$(EXEEXT): $(LIBCOMPAT) libssh.a ssh-pkcs11-helper.o ssh-pkcs11.o
  	$(LD) -o $@ ssh-pkcs11-helper.o ssh-pkcs11.o $(LDFLAGS) -lssh -lopenbsd-compat -lssh -lopenbsd-compat $(LIBS)
  
 +ssh-ldap-helper$(EXEEXT): $(LIBCOMPAT) libssh.a ldapconf.o ldapbody.o ldapmisc.o ldap-helper.o
 +	$(LD) -o $@ ldapconf.o ldapbody.o ldapmisc.o ldap-helper.o $(LDFLAGS) -lssh -lopenbsd-compat -lfipscheck $(LIBS)
 +
- ssh-keyscan$(EXEEXT): $(LIBCOMPAT) libssh.a ssh-keyscan.o roaming_dummy.o
- 	$(LD) -o $@ ssh-keyscan.o roaming_dummy.o $(LDFLAGS) -lssh -lopenbsd-compat -lssh $(LIBS)
+ ssh-keyscan$(EXEEXT): $(LIBCOMPAT) libssh.a ssh-keyscan.o
+ 	$(LD) -o $@ ssh-keyscan.o $(LDFLAGS) -lssh -lopenbsd-compat -lssh $(LIBS)
  
-@@ -266,6 +272,10 @@ install-files:
+@@ -311,6 +317,10 @@
  	$(INSTALL) -m 0755 $(STRIP_OPT) sshd$(EXEEXT) $(DESTDIR)$(sbindir)/sshd$(EXEEXT)
  	$(INSTALL) -m 4711 $(STRIP_OPT) ssh-keysign$(EXEEXT) $(DESTDIR)$(SSH_KEYSIGN)$(EXEEXT)
  	$(INSTALL) -m 0755 $(STRIP_OPT) ssh-pkcs11-helper$(EXEEXT) $(DESTDIR)$(SSH_PKCS11_HELPER)$(EXEEXT)
@@ -2039,7 +2038,7 @@ diff -up openssh-6.2p1/Makefile.in.ldap openssh-6.2p1/Makefile.in
  	$(INSTALL) -m 0755 $(STRIP_OPT) sftp$(EXEEXT) $(DESTDIR)$(bindir)/sftp$(EXEEXT)
  	$(INSTALL) -m 0755 $(STRIP_OPT) sftp-server$(EXEEXT) $(DESTDIR)$(SFTP_SERVER)$(EXEEXT)
  	$(INSTALL) -m 644 ssh.1.out $(DESTDIR)$(mandir)/$(mansubdir)1/ssh.1
-@@ -282,6 +292,10 @@ install-files:
+@@ -327,6 +337,10 @@
  	$(INSTALL) -m 644 sftp-server.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/sftp-server.8
  	$(INSTALL) -m 644 ssh-keysign.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-keysign.8
  	$(INSTALL) -m 644 ssh-pkcs11-helper.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-pkcs11-helper.8
@@ -2047,10 +2046,10 @@ diff -up openssh-6.2p1/Makefile.in.ldap openssh-6.2p1/Makefile.in
 +		$(INSTALL) -m 644 ssh-ldap-helper.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-ldap-helper.8 ; \
 +		$(INSTALL) -m 644 ssh-ldap.conf.5.out $(DESTDIR)$(mandir)/$(mansubdir)5/ssh-ldap.conf.5 ; \
 +	fi
- 	-rm -f $(DESTDIR)$(bindir)/slogin
- 	ln -s ./ssh$(EXEEXT) $(DESTDIR)$(bindir)/slogin
- 	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)1/slogin.1
-@@ -311,6 +325,13 @@ install-sysconf:
+ 
+ install-sysconf:
+ 	if [ ! -d $(DESTDIR)$(sysconfdir) ]; then \
+@@ -352,6 +366,13 @@
  	else \
  		echo "$(DESTDIR)$(sysconfdir)/moduli already exists, install will not overwrite"; \
  	fi
@@ -2064,7 +2063,7 @@ diff -up openssh-6.2p1/Makefile.in.ldap openssh-6.2p1/Makefile.in
  
  host-key: ssh-keygen$(EXEEXT)
  	@if [ -z "$(DESTDIR)" ] ; then \
-@@ -368,6 +389,8 @@ uninstall:
+@@ -392,6 +413,8 @@
  	-rm -r $(DESTDIR)$(SFTP_SERVER)$(EXEEXT)
  	-rm -f $(DESTDIR)$(SSH_KEYSIGN)$(EXEEXT)
  	-rm -f $(DESTDIR)$(SSH_PKCS11_HELPER)$(EXEEXT)
@@ -2073,14 +2072,14 @@ diff -up openssh-6.2p1/Makefile.in.ldap openssh-6.2p1/Makefile.in
  	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)1/ssh.1
  	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)1/scp.1
  	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)1/ssh-add.1
-@@ -379,6 +402,7 @@ uninstall:
+@@ -403,6 +426,7 @@
  	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)8/sftp-server.8
  	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-keysign.8
  	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-pkcs11-helper.8
 +	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-ldap-helper.8
- 	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)1/slogin.1
  
- regress/modpipe$(EXEEXT): $(srcdir)/regress/modpipe.c
+ regress-prep:
+ 	[ -d `pwd`/regress ] || mkdir -p `pwd`/regress
 diff -up openssh-6.2p1/openssh-lpk-openldap.schema.ldap openssh-6.2p1/openssh-lpk-openldap.schema
 --- openssh-6.2p1/openssh-lpk-openldap.schema.ldap	2013-03-25 21:27:15.894248110 +0100
 +++ openssh-6.2p1/openssh-lpk-openldap.schema	2013-03-25 21:27:15.894248110 +0100

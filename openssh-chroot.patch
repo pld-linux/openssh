@@ -62,12 +62,12 @@
  	int	use_dns;
  	int	client_alive_interval;	/*
  					 * poke the client this often to
---- ./session.c.org	2008-05-05 16:22:11.935003283 +0200
-+++ ./session.c	2008-05-05 16:32:50.025507650 +0200
+--- openssh-7.2p1/session.c.orig	2016-03-05 10:24:44.227756638 +0100
++++ openssh-7.2p1/session.c	2016-03-05 10:24:50.237756386 +0100
 @@ -1492,6 +1492,10 @@ do_setusercontext(struct passwd *pw)
- #ifdef USE_LIBIAF
- 	int doing_chroot = 0;
- #endif
+ do_setusercontext(struct passwd *pw)
+ {
+ 	char *chroot_path, *tmp;
 +#ifdef CHROOT
 +	char *user_dir;
 +	char *new_root;
@@ -75,28 +75,32 @@
  
  	platform_setusercontext(pw);
  
-@@ -1534,6 +1538,25 @@ do_setusercontext(struct passwd *pw)
- #ifdef USE_LIBIAF
- 			doing_chroot = 1;
- #endif
+@@ -1532,6 +1536,29 @@ do_setusercontext(struct passwd *pw)
+ 			free(options.chroot_directory);
+ 			options.chroot_directory = NULL;
+ 			in_chroot = 1;
 +#ifdef CHROOT
-+		} else if (options.use_chroot) {
++		} else if (!in_chroot && options.use_chroot) {
 +			user_dir = xstrdup(pw->pw_dir);
 +			new_root = user_dir + 1;
 +
-+			while((new_root = strchr(new_root, '.')) != NULL) {
++			while ((new_root = strchr(new_root, '.')) != NULL) {
 +				new_root--;
-+				if(strncmp(new_root, "/./", 3) == 0) {
++				if (strncmp(new_root, "/./", 3) == 0) {
 +					*new_root = '\0';
 +					new_root += 2;
 +
-+					if(chroot(user_dir) != 0)
++					if (chroot(user_dir) != 0)
 +						fatal("Couldn't chroot to user directory %s", user_dir);
-+					pw->pw_dir = new_root;
++					/* NOTE: session->pw comes from pwcopy(), so replace pw_dir this way (incompatible with plain getpwnam() or getpwnam_r()) */
++					free(pw->pw_dir);
++					pw->pw_dir = xstrdup(new_root);
++					in_chroot = 1;
 +					break;
 +				}
 +				new_root += 2;
 +			}
++			free(user_dir);
 +#endif /* CHROOT */
  		}
  

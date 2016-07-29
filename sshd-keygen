@@ -11,7 +11,7 @@ ssh_gen_key() {
 
 	/usr/bin/ssh-keygen -t $type -f $keyfile -N '' >&2
 	chmod 600 $keyfile
-	[ -x /sbin/restorecon ] && /sbin/restorecon $keyfile
+	[ ! -x /sbin/restorecon ] || /sbin/restorecon $keyfile
 }
 
 # generate new keys with empty passwords if they do not exist

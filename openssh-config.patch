@@ -15,7 +15,7 @@
  #PermitEmptyPasswords no
 +
 +# Allow DSA keys
-+PubkeyAcceptedKeyTypes +ssh-dss
++## PubkeyAcceptedKeyTypes +ssh-dss
  
  # Change to no to disable s/key passwords
  #ChallengeResponseAuthentication yes

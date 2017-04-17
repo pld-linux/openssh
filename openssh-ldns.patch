@@ -1,0 +1,20 @@
+--- openssh-7.5p1/configure.ac.orig	2017-04-17 10:38:47.458291317 +0200
++++ openssh-7.5p1/configure.ac	2017-04-17 11:03:41.491607590 +0200
+@@ -1479,15 +1479,15 @@
+ 	ldns=""
+ 	if test "x$withval" = "xyes" ; then
+ 		AC_PATH_TOOL([LDNSCONFIG], [ldns-config], [no])
+-		if test "x$PKGCONFIG" = "xno"; then
++		if test "x$LDNSCONFIG" = "xno"; then
+ 			CPPFLAGS="$CPPFLAGS -I${withval}/include"
+ 			LDFLAGS="$LDFLAGS -L${withval}/lib"
+ 			LIBS="-lldns $LIBS"
+-			ldns=yes
+ 		else
+ 			LIBS="$LIBS `$LDNSCONFIG --libs`"
+ 			CPPFLAGS="$CPPFLAGS `$LDNSCONFIG --cflags`"
+ 		fi
++		ldns=yes
+ 	elif test "x$withval" != "xno" ; then
+ 			CPPFLAGS="$CPPFLAGS -I${withval}/include"
+ 			LDFLAGS="$LDFLAGS -L${withval}/lib"

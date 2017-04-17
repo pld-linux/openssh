@@ -5,15 +5,16 @@
 #
 # Conditional build:
 %bcond_without	audit		# sshd audit support
-%bcond_with	gnome		# with gnome-askpass (GNOME 1.x) utility
-%bcond_without	gtk		# without GTK+ (2.x)
-%bcond_without	ldap		# with ldap support
-%bcond_without	libedit		# without libedit (editline/history support in sftp client)
-%bcond_without	kerberos5	# without kerberos5 support
-%bcond_without	selinux		# build without SELinux support
+%bcond_with	gnome		# gnome-askpass (GNOME 1.x) utility
+%bcond_without	gtk		# gnome-askpass (GTK+ 2.x) utility
+%bcond_without	ldap		# LDAP support
+%bcond_with	ldns		# DNSSEC support via libldns
+%bcond_without	libedit		# libedit (editline/history support in sftp client)
+%bcond_without	kerberos5	# Kerberos5 support
+%bcond_without	selinux		# SELinux support
 %bcond_without	libseccomp	# use libseccomp for seccomp privsep (requires 3.5 kernel)
 %bcond_with	hpn		# High Performance SSH/SCP - HPN-SSH including Cipher NONE (broken too often)
-%bcond_without	tests
+%bcond_without	tests		# test suite
 
 # gtk2-based gnome-askpass means no gnome1-based
 %{?with_gtk:%undefine with_gnome}
@@ -64,6 +65,7 @@ Source9:	sshd.service
 Source10:	sshd-keygen
 Source11:	sshd.socket
 Source12:	sshd@.service
+Patch0:		%{name}-ldns.patch
 Patch1:		%{name}-tests-reuseport.patch
 Patch2:		%{name}-pam_misc.patch
 Patch3:		%{name}-sigpipe.patch
@@ -89,6 +91,7 @@ BuildRequires:	automake
 %{?with_gnome:BuildRequires:	gnome-libs-devel}
 %{?with_gtk:BuildRequires:	gtk+2-devel}
 %{?with_kerberos5:BuildRequires:	heimdal-devel >= 0.7}
+%{?with_ldns:BuildRequires:	ldns-devel}
 %{?with_libedit:BuildRequires:	libedit-devel}
 BuildRequires:	libseccomp-devel
 %{?with_selinux:BuildRequires:	libselinux-devel}
@@ -529,6 +532,7 @@ openldap-a.
 
 %prep
 %setup -q
+%patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
@@ -558,7 +562,7 @@ grep -rl /usr/libexec/openssh/ssh-ldap-helper . | xargs \
 %{__sed} -i -e 's,/usr/libexec/openssh/ssh-ldap-helper,%{_libexecdir}/ssh-ldap-helper,'
 
 # prevent being ovewritten by aclocal calls
-mv aclocal.m4 acinclude.m4
+%{__mv} aclocal.m4 acinclude.m4
 
 %build
 cp /usr/share/automake/config.sub .
@@ -576,6 +580,7 @@ CPPFLAGS="%{rpmcppflags} -DCHROOT -std=gnu99"
 	--with-ipaddr-display \
 	%{?with_kerberos5:--with-kerberos5=/usr} \
 	--with-ldap%{!?with_ldap:=no} \
+	%{?with_ldns:--with-ldns} \
 	%{?with_libedit:--with-libedit} \
 	--with-mantype=man \
 	--with-md5-passwords \

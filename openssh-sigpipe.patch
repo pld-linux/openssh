@@ -33,12 +33,12 @@ diff -urN openssh-3.9p1.org/ssh.0 openssh-3.9p1/ssh.0
       -b bind_address
 --- openssh-5.6p1/ssh.1~	2010-08-24 14:05:48.000000000 +0300
 +++ openssh-5.6p1/ssh.1	2010-08-24 14:06:57.879253682 +0300
-@@ -44,7 +44,7 @@
+@@ -43,7 +43,7 @@
  .Sh SYNOPSIS
  .Nm ssh
  .Bk -words
--.Op Fl 1246AaCfGgKkMNnqsTtVvXxYy
-+.Op Fl 1246AaBCfGgKkMNnqsTtVvXxYy
+-.Op Fl 46AaCfGgKkMNnqsTtVvXxYy
++.Op Fl 46AaBCfGgKkMNnqsTtVvXxYy
  .Op Fl b Ar bind_address
  .Op Fl c Ar cipher_spec
  .Op Fl D Oo Ar bind_address : Oc Ns Ar port
@@ -66,15 +66,15 @@ diff -urN openssh-3.9p1.org/ssh.0 openssh-3.9p1/ssh.0
  /* # of replies received for global requests */
  static int client_global_request_id = 0;
  
-@@ -199,7 +199,7 @@ static void
+@@ -200,7 +200,7 @@ static void
  usage(void)
  {
  	fprintf(stderr,
--"usage: ssh [-1246AaCfGgKkMNnqsTtVvXxYy] [-b bind_address] [-c cipher_spec]\n"
-+"usage: ssh [-1246AaBCfGgKkMNnqsTtVvXxYy] [-b bind_address] [-c cipher_spec]\n"
+-"usage: ssh [-46AaCfGgKkMNnqsTtVvXxYy] [-b bind_address] [-c cipher_spec]\n"
++"usage: ssh [-46AaBCfGgKkMNnqsTtVvXxYy] [-b bind_address] [-c cipher_spec]\n"
  "           [-D [bind_address:]port] [-E log_file] [-e escape_char]\n"
  "           [-F configfile] [-I pkcs11] [-i identity_file]\n"
- "           [-L [bind_address:]port:host:hostport] [-Q protocol_feature]\n"
+ "           [-J [user@]host[:port]] [-L address] [-l login_name] [-m mac_spec]\n"
 @@ -330,7 +330,7 @@ main(int ac, char **av)
  
   again:

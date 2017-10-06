@@ -65,13 +65,11 @@
  #	X11Forwarding no
 --- openssh-4.6p1/ssh_config~	2006-06-13 05:01:10.000000000 +0200
 +++ openssh-4.6p1/ssh_config	2007-10-13 02:00:16.000000000 +0200
-@@ -20,12 +20,15 @@
+@@ -20,10 +20,13 @@
  # Host *
  #   ForwardAgent no
  #   ForwardX11 no
 +#   ForwardX11Trusted no
- #   RhostsRSAAuthentication no
- #   RSAAuthentication yes
  #   PasswordAuthentication yes
  #   HostbasedAuthentication no
  #   GSSAPIAuthentication no

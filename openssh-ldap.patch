@@ -1996,9 +1996,9 @@ diff -up openssh-6.2p1/ldapmisc.h.ldap openssh-6.2p1/ldapmisc.h
  PRIVSEP_PATH=@PRIVSEP_PATH@
  SSH_PRIVSEP_USER=@SSH_PRIVSEP_USER@
 @@ -61,8 +63,9 @@
- LDFLAGS=-L. -Lopenbsd-compat/ @LDFLAGS@
  EXEEXT=@EXEEXT@
  MANFMT=@MANFMT@
+ MKDIR_P=@MKDIR_P@
 +INSTALL_SSH_LDAP_HELPER=@INSTALL_SSH_LDAP_HELPER@
  
 -TARGETS=ssh$(EXEEXT) sshd$(EXEEXT) ssh-add$(EXEEXT) ssh-keygen$(EXEEXT) ssh-keyscan${EXEEXT} ssh-keysign${EXEEXT} ssh-pkcs11-helper$(EXEEXT) ssh-agent$(EXEEXT) scp$(EXEEXT) sftp-server$(EXEEXT) sftp$(EXEEXT)

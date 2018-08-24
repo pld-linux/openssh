@@ -64,10 +64,10 @@
  					 * poke the client this often to
 --- openssh-7.2p1/session.c.orig	2016-03-05 10:24:44.227756638 +0100
 +++ openssh-7.2p1/session.c	2016-03-05 10:24:50.237756386 +0100
-@@ -1492,6 +1492,10 @@ do_setusercontext(struct passwd *pw)
+@@ -1381,6 +1381,10 @@ void
  do_setusercontext(struct passwd *pw)
  {
- 	char *chroot_path, *tmp;
+ 	char uidstr[32], *chroot_path, *tmp;
 +#ifdef CHROOT
 +	char *user_dir;
 +	char *new_root;

@@ -19,17 +19,6 @@
 # gtk2-based gnome-askpass means no gnome1-based
 %{?with_gtk:%undefine with_gnome}
 
-%ifnarch x32
-# libseccomp requires 3.5 kernel, avoid such requirement where possible (non-x32 arches)
-%undefine	with_libseccomp
-%endif
-
-%define	sandbox %{?with_libseccomp:lib}seccomp_filter
-
-%ifarch x32
-%{!?with_libseccomp:%error openssh seccomp implementation is broken! do not disable libseccomp on x32}
-%endif
-
 %if "%{pld_release}" == "ac"
 %define		pam_ver	0.79.0
 %else
@@ -47,7 +36,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	7.8p1
-Release:	1
+Release:	2
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -82,7 +71,6 @@ Patch10:	%{name}-include.patch
 Patch11:	%{name}-chroot.patch
 Patch14:	%{name}-bind.patch
 Patch15:	%{name}-disable_ldap.patch
-Patch16:	libseccomp-sandbox.patch
 URL:		http://www.openssh.com/portable.html
 BuildRequires:	%{__perl}
 %{?with_audit:BuildRequires:	audit-libs-devel}
@@ -548,7 +536,6 @@ openldap-a.
 
 %patch14 -p1
 %{!?with_ldap:%patch15 -p1}
-%{?with_libseccomp:%patch16 -p1}
 
 %if "%{pld_release}" == "ac"
 # fix for missing x11.pc
@@ -592,7 +579,7 @@ CPPFLAGS="%{rpmcppflags} -DCHROOT -std=gnu99"
 %if "%{pld_release}" == "ac"
 	--with-xauth=/usr/X11R6/bin/xauth
 %else
-	--with-sandbox=%{sandbox} \
+	--with-sandbox=seccomp_filter \
 	--with-xauth=%{_bindir}/xauth
 %endif
 

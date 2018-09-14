@@ -1,0 +1,12 @@
+--- openssh-portable/sandbox-seccomp-filter.c.org	2018-09-14 10:56:00.557388954 +0200
++++ openssh-portable/sandbox-seccomp-filter.c	2018-09-14 11:13:00.051826982 +0200
+@@ -166,6 +166,9 @@ static const struct sock_filter preauth_
+ #ifdef __NR_exit_group
+ 	SC_ALLOW(__NR_exit_group),
+ #endif
++#ifdef	__NR_futex
++	SC_ALLOW(__NR_futex),
++#endif
+ #ifdef __NR_geteuid
+ 	SC_ALLOW(__NR_geteuid),
+ #endif

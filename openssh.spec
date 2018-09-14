@@ -36,7 +36,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	7.8p1
-Release:	3
+Release:	4
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -54,7 +54,7 @@ Source9:	sshd.service
 Source10:	sshd-keygen
 Source11:	sshd.socket
 Source12:	sshd@.service
-
+Patch0:		openssl.patch
 Patch1:		%{name}-tests-reuseport.patch
 Patch2:		%{name}-pam_misc.patch
 Patch3:		%{name}-sigpipe.patch
@@ -69,6 +69,8 @@ Patch8:		ldap-helper-sigpipe.patch
 Patch9:		%{name}-5.2p1-hpn13v6.diff
 Patch10:	%{name}-include.patch
 Patch11:	%{name}-chroot.patch
+Patch12:	openssh-bug-2905.patch
+
 Patch14:	%{name}-bind.patch
 Patch15:	%{name}-disable_ldap.patch
 URL:		http://www.openssh.com/portable.html
@@ -520,7 +522,7 @@ openldap-a.
 
 %prep
 %setup -q
-
+%patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
@@ -533,6 +535,7 @@ openldap-a.
 %{?with_hpn:%patch9 -p1}
 %patch10 -p1
 %patch11 -p1
+%patch12 -p1
 
 %patch14 -p1
 %{!?with_ldap:%patch15 -p1}

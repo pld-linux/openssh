@@ -590,7 +590,8 @@ echo '#define LOGIN_PROGRAM		   "/bin/login"' >>config.h
 
 %if %{with tests}
 %{__make} -j1 tests \
-	TEST_SSH_PORT=$((4242 + ${RANDOM:-$$} % 1000))
+	TEST_SSH_PORT=$((4242 + ${RANDOM:-$$} % 1000)) \
+	TEST_SSH_TRACE="yes"
 %endif
 
 cd contrib

@@ -85,7 +85,7 @@ BuildRequires:	automake
 BuildRequires:	libseccomp-devel
 %{?with_selinux:BuildRequires:	libselinux-devel}
 %{?with_ldap:BuildRequires:	openldap-devel}
-BuildRequires:	openssl-devel >= 1.0.1
+BuildRequires:	openssl-devel >= 1.1.0g
 BuildRequires:	pam-devel
 %{?with_gtk:BuildRequires:	pkgconfig}
 BuildRequires:	rpm >= 4.4.9-56

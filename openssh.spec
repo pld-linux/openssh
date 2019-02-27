@@ -822,7 +822,7 @@ fi
 %{_mandir}/man5/moduli.5*
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/sshd_config
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/sshd
-%attr(640,root,root) %{_sysconfdir}/moduli
+%{_sysconfdir}/moduli
 %attr(754,root,root) /etc/rc.d/init.d/sshd
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/sshd
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/security/blacklist.sshd

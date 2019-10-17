@@ -4,6 +4,6 @@ After=syslog.target auditd.service
 
 [Service]
 EnvironmentFile=/etc/sysconfig/sshd
-ExecStartPre=/usr/sbin/sshd-keygen
+ExecStartPre=@@LIBEXECDIR@@/sshd-keygen
 ExecStart=-/usr/sbin/sshd -i $OPTIONS
 StandardInput=socket

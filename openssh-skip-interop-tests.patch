@@ -1,0 +1,20 @@
+diff -urN openssh-8.1p1.orig/regress/Makefile openssh-8.1p1/regress/Makefile
+--- openssh-8.1p1.orig/regress/Makefile	2019-10-17 20:31:40.094507942 +0200
++++ openssh-8.1p1/regress/Makefile	2019-10-17 20:30:38.567986269 +0200
+@@ -225,8 +225,14 @@
+ t-exec-interop:	${INTEROP_TESTS:=.sh}
+ 	@if [ "x$?" = "x" ]; then exit 0; fi; \
+ 	for TEST in ""$?; do \
+-		echo "run test $${TEST}" ... 1>&2; \
+-		(env SUDO="${SUDO}" TEST_ENV=${TEST_ENV} ${TEST_SHELL} ${.CURDIR}/test-exec.sh ${.OBJDIR} ${.CURDIR}/$${TEST}) || exit $$?; \
++		skip=no; \
++		for t in ""$${SKIP_LTESTS}; do \
++			if [ "x$${t}.sh" = "x$${TEST}" ]; then skip=yes; fi; \
++		done; \
++		if [ "x$${skip}" = "xno" ]; then \
++			echo "run test $${TEST}" ... 1>&2; \
++			(env SUDO="${SUDO}" TEST_ENV=${TEST_ENV} ${TEST_SHELL} ${.CURDIR}/test-exec.sh ${.OBJDIR} ${.CURDIR}/$${TEST}) || exit $$?; \
++		fi; \
+ 	done
+ 
+ t-extra:	${EXTRA_TESTS:=.sh}

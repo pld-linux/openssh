@@ -15,6 +15,7 @@
 %bcond_without	libseccomp	# use libseccomp for seccomp privsep (requires 3.5 kernel)
 %bcond_with	hpn		# High Performance SSH/SCP - HPN-SSH including Cipher NONE (broken too often)
 %bcond_without	tests		# test suite
+%bcond_with	tests_conch	# run conch interoperability tests
 
 # gtk2-based gnome-askpass means no gnome1-based
 %{?with_gtk:%undefine with_gnome}
@@ -70,6 +71,7 @@ Patch9:		%{name}-5.2p1-hpn13v6.diff
 Patch10:	%{name}-include.patch
 Patch11:	%{name}-chroot.patch
 Patch12:	openssh-bug-2905.patch
+Patch13:	%{name}-skip-interop-tests.patch
 
 Patch14:	%{name}-bind.patch
 Patch15:	%{name}-disable_ldap.patch
@@ -89,6 +91,9 @@ BuildRequires:	libseccomp-devel
 BuildRequires:	openssl-devel >= 1.1.0g
 BuildRequires:	pam-devel
 %{?with_gtk:BuildRequires:	pkgconfig}
+%if %{with tests} && %{with tests_conch}
+BuildRequires:	python-TwistedConch
+%endif
 BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	rpmbuild(macros) >= 1.627
 BuildRequires:	sed >= 4.0
@@ -536,6 +541,7 @@ openldap-a.
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
+%patch13 -p1
 
 %patch14 -p1
 %{!?with_ldap:%patch15 -p1}
@@ -593,7 +599,10 @@ echo '#define LOGIN_PROGRAM		   "/bin/login"' >>config.h
 %if %{with tests}
 %{__make} -j1 tests \
 	TEST_SSH_PORT=$((4242 + ${RANDOM:-$$} % 1000)) \
-	TEST_SSH_TRACE="yes"
+	TEST_SSH_TRACE="yes" \
+%if %{without tests_conch}
+	SKIP_LTESTS="conch-ciphers"
+%endif
 %endif
 
 cd contrib

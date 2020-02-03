@@ -1,18 +1,18 @@
-From ccd3b247d59d3bde16c3bef0ea888213fbd6da86 Mon Sep 17 00:00:00 2001
-From: Damien Miller <djm@mindrot.org>
-Date: Mon, 3 Feb 2020 19:40:12 +1100
-Subject: [PATCH] add clock_gettime64(2) to sandbox allowed syscalls
-
-bz3093
----
- sandbox-seccomp-filter.c | 3 +++
- 1 file changed, 3 insertions(+)
-
 diff --git a/sandbox-seccomp-filter.c b/sandbox-seccomp-filter.c
-index 0914e48ba..f80981faf 100644
+index b5cda70b..f80981fa 100644
 --- a/sandbox-seccomp-filter.c
 +++ b/sandbox-seccomp-filter.c
-@@ -188,6 +188,9 @@ static const struct sock_filter preauth_insns[] = {
+@@ -177,6 +177,9 @@ static const struct sock_filter preauth_insns[] = {
+ #ifdef __NR_shmdt
+ 	SC_DENY(__NR_shmdt, EACCES),
+ #endif
++#ifdef __NR_ipc
++	SC_DENY(__NR_ipc, EACCES),
++#endif
+ 
+ 	/* Syscalls to permit */
+ #ifdef __NR_brk
+@@ -185,6 +188,9 @@ static const struct sock_filter preauth_insns[] = {
  #ifdef __NR_clock_gettime
  	SC_ALLOW(__NR_clock_gettime),
  #endif
@@ -21,4 +21,20 @@ index 0914e48ba..f80981faf 100644
 +#endif
  #ifdef __NR_close
  	SC_ALLOW(__NR_close),
+ #endif
+@@ -242,6 +248,15 @@ static const struct sock_filter preauth_insns[] = {
+ #ifdef __NR_nanosleep
+ 	SC_ALLOW(__NR_nanosleep),
+ #endif
++#ifdef __NR_clock_nanosleep
++	SC_ALLOW(__NR_clock_nanosleep),
++#endif
++#ifdef __NR_clock_nanosleep_time64
++	SC_ALLOW(__NR_clock_nanosleep_time64),
++#endif
++#ifdef __NR_clock_gettime64
++	SC_ALLOW(__NR_clock_gettime64),
++#endif
+ #ifdef __NR__newselect
+ 	SC_ALLOW(__NR__newselect),
  #endif

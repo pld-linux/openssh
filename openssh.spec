@@ -37,7 +37,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	8.1p1
-Release:	2
+Release:	3
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -72,9 +72,9 @@ Patch10:	%{name}-include.patch
 Patch11:	%{name}-chroot.patch
 Patch12:	openssh-bug-2905.patch
 Patch13:	%{name}-skip-interop-tests.patch
-
 Patch14:	%{name}-bind.patch
 Patch15:	%{name}-disable_ldap.patch
+Patch16:	ossh-bug-3093.patch
 URL:		http://www.openssh.com/portable.html
 BuildRequires:	%{__perl}
 %{?with_audit:BuildRequires:	audit-libs-devel}
@@ -550,6 +550,8 @@ openldap-a.
 # fix for missing x11.pc
 %{__sed} -i -e 's/\(`$(PKG_CONFIG) --libs gtk+-2.0\) x11`/\1` -lX11/' contrib/Makefile
 %endif
+
+%patch16 -p1
 
 # hack since arc4random from openbsd-compat needs symbols from libssh and vice versa
 sed -i -e 's#-lssh -lopenbsd-compat#-lssh -lopenbsd-compat -lssh -lopenbsd-compat#g' Makefile*

@@ -10,13 +10,13 @@
  /*
   * Flag to indicate that we have received a window change signal which has
   * not yet been processed.  This will cause a message indicating the new
-@@ -1236,6 +1239,8 @@
- 		signal(SIGQUIT, signal_handler);
- 	if (signal(SIGTERM, SIG_IGN) != SIG_IGN)
- 		signal(SIGTERM, signal_handler);
+@@ -1317,6 +1317,8 @@ client_loop(struct ssh *ssh, int have_pt
+ 		ssh_signal(SIGQUIT, signal_handler);
+ 	if (ssh_signal(SIGTERM, SIG_IGN) != SIG_IGN)
+ 		ssh_signal(SIGTERM, signal_handler);
 +	if (enable_sigpipe)
 +		signal(SIGPIPE, signal_handler);
- 	signal(SIGWINCH, window_change_handler);
+ 	ssh_signal(SIGWINCH, window_change_handler);
  
  	if (have_pty)
 diff -urN openssh-3.9p1.org/ssh.0 openssh-3.9p1/ssh.0

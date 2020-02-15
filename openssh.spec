@@ -36,13 +36,13 @@ Summary(pt_BR.UTF-8):	Implementação livre do SSH
 Summary(ru.UTF-8):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
-Version:	8.1p1
-Release:	4
+Version:	8.2p1
+Release:	1
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
 Source0:	http://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
-# Source0-md5:	513694343631a99841e815306806edf0
+# Source0-md5:	3076e6413e8dbe56d33848c1054ac091
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 # Source1-md5:	66943d481cc422512b537bcc2c7400d1
 Source2:	%{name}d.init
@@ -68,13 +68,12 @@ Patch8:		ldap-helper-sigpipe.patch
 # High Performance SSH/SCP - HPN-SSH - http://www.psc.edu/networking/projects/hpn-ssh/
 # http://www.psc.edu/networking/projects/hpn-ssh/openssh-5.2p1-hpn13v6.diff.gz
 Patch9:		%{name}-5.2p1-hpn13v6.diff
-Patch10:	%{name}-include.patch
+
 Patch11:	%{name}-chroot.patch
 Patch12:	openssh-bug-2905.patch
 Patch13:	%{name}-skip-interop-tests.patch
 Patch14:	%{name}-bind.patch
 Patch15:	%{name}-disable_ldap.patch
-Patch16:	ossh-bug-3093.patch
 URL:		http://www.openssh.com/portable.html
 BuildRequires:	%{__perl}
 %{?with_audit:BuildRequires:	audit-libs-devel}
@@ -85,6 +84,7 @@ BuildRequires:	automake
 %{?with_kerberos5:BuildRequires:	heimdal-devel >= 0.7}
 %{?with_ldns:BuildRequires:	ldns-devel}
 %{?with_libedit:BuildRequires:	libedit-devel}
+BuildRequires:	libfido2-devel
 BuildRequires:	libseccomp-devel
 %{?with_selinux:BuildRequires:	libselinux-devel}
 %{?with_ldap:BuildRequires:	openldap-devel}
@@ -538,7 +538,7 @@ openldap-a.
 %patch8 -p1
 
 %{?with_hpn:%patch9 -p1}
-%patch10 -p1
+
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
@@ -550,8 +550,6 @@ openldap-a.
 # fix for missing x11.pc
 %{__sed} -i -e 's/\(`$(PKG_CONFIG) --libs gtk+-2.0\) x11`/\1` -lX11/' contrib/Makefile
 %endif
-
-%patch16 -p1
 
 # hack since arc4random from openbsd-compat needs symbols from libssh and vice versa
 sed -i -e 's#-lssh -lopenbsd-compat#-lssh -lopenbsd-compat -lssh -lopenbsd-compat#g' Makefile*
@@ -586,6 +584,7 @@ CPPFLAGS="%{rpmcppflags} -DCHROOT -std=gnu99"
 	--with-pid-dir=%{_localstatedir}/run \
 	--with-privsep-path=%{_privsepdir} \
 	--with-privsep-user=sshd \
+	--with-security-key-builtin \
 	%{?with_selinux:--with-selinux} \
 %if "%{pld_release}" == "ac"
 	--with-xauth=/usr/X11R6/bin/xauth
@@ -794,6 +793,7 @@ fi
 %attr(755,root,root) %{_bindir}/ssh-add
 %attr(755,root,root) %{_bindir}/ssh-copy-id
 %attr(755,root,root) %{_bindir}/scp
+%attr(755,root,root) %{_libexecdir}/ssh-sk-helper
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ssh_config
 %config(noreplace,missingok) %verify(not md5 mtime size) /etc/env.d/SSH_ASKPASS
 %{_mandir}/man1/scp.1*
@@ -803,6 +803,7 @@ fi
 %{_mandir}/man1/ssh-add.1*
 %{_mandir}/man1/ssh-copy-id.1*
 %{_mandir}/man5/ssh_config.5*
+%{_mandir}/man8/ssh-sk-helper.8*
 %lang(it) %{_mandir}/it/man1/ssh.1*
 %lang(it) %{_mandir}/it/man5/ssh_config.5*
 %lang(pl) %{_mandir}/pl/man1/scp.1*

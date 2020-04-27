@@ -2,11 +2,11 @@ diff -durN openssh-6.5p1.orig/Makefile.in openssh-6.5p1/Makefile.in
 --- openssh-6.5p1.orig/Makefile.in	2014-03-06 12:51:06.000000000 +0100
 +++ openssh-6.5p1/Makefile.in	2014-03-06 12:52:02.000000000 +0100
 @@ -64,7 +64,7 @@
- MANFMT=@MANFMT@
- INSTALL_SSH_LDAP_HELPER=@INSTALL_SSH_LDAP_HELPER@
  
--TARGETS=ssh$(EXEEXT) sshd$(EXEEXT) ssh-add$(EXEEXT) ssh-keygen$(EXEEXT) ssh-keyscan${EXEEXT} ssh-keysign${EXEEXT} ssh-pkcs11-helper$(EXEEXT) ssh-agent$(EXEEXT) scp$(EXEEXT) sftp-server$(EXEEXT) sftp$(EXEEXT) ssh-ldap-helper$(EXEEXT)
+ .SUFFIXES: .lo
+ 
+-TARGETS=ssh$(EXEEXT) sshd$(EXEEXT) ssh-add$(EXEEXT) ssh-keygen$(EXEEXT) ssh-keyscan${EXEEXT} ssh-keysign${EXEEXT} ssh-pkcs11-helper$(EXEEXT) ssh-agent$(EXEEXT) scp$(EXEEXT) sftp-server$(EXEEXT) sftp$(EXEEXT) ssh-sk-helper$(EXEEXT) ssh-ldap-helper$(EXEEXT)
 +TARGETS=ssh$(EXEEXT) sshd$(EXEEXT) ssh-add$(EXEEXT) ssh-keygen$(EXEEXT) ssh-keyscan${EXEEXT} ssh-keysign${EXEEXT} ssh-pkcs11-helper$(EXEEXT) ssh-agent$(EXEEXT) scp$(EXEEXT) sftp-server$(EXEEXT) sftp$(EXEEXT)
  
- LIBSSH_OBJS=authfd.o authfile.o bufaux.o bufbn.o buffer.o \
- 	canohost.o channels.o cipher.o cipher-aes.o \
+ XMSS_OBJS=\
+ 	ssh-xmss.o \

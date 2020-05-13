@@ -37,7 +37,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	8.2p1
-Release:	4
+Release:	5
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -266,6 +266,7 @@ Summary(ru.UTF-8):	OpenSSH - клиенты протокола Secure Shell
 Summary(uk.UTF-8):	OpenSSH - клієнти протоколу Secure Shell
 Group:		Applications/Networking
 Requires:	%{name}
+Suggests:	%{name}-clients-helper-fido = %{epoch}:%{version}-%{release}
 Provides:	ssh-clients
 Obsoletes:	ssh-clients
 %requires_eq_to	openssl	openssl-devel
@@ -338,6 +339,18 @@ xinitrc scripts for starting SSH agent.
 
 %description clients-agent-xinitrc -l pl.UTF-8
 Skrypty xinitrc do uruchamiania agenta SSH.
+
+%package clients-helper-fido
+Summary:	OpenSSH helper for FIDO authenticator
+Summary(pl.UTF-8):	OpenSSH helper obsługujący klucz autoryzujący FIDO
+Group:		Applications/Networking
+Requires:	%{name}-clients = %{epoch}:%{version}-%{release}
+
+%description clients-helper-fido
+OpenSSH helper for FIDO authenticator.
+
+%description clients-helper-fido -l pl.UTF-8
+OpenSSH helper obsługujący klucz autoryzujący FIDO.
 
 %package server
 Summary:	OpenSSH Secure Shell protocol server (sshd)
@@ -793,7 +806,6 @@ fi
 %attr(755,root,root) %{_bindir}/ssh-add
 %attr(755,root,root) %{_bindir}/ssh-copy-id
 %attr(755,root,root) %{_bindir}/scp
-%attr(755,root,root) %{_libexecdir}/ssh-sk-helper
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ssh_config
 %config(noreplace,missingok) %verify(not md5 mtime size) /etc/env.d/SSH_ASKPASS
 %{_mandir}/man1/scp.1*
@@ -803,7 +815,6 @@ fi
 %{_mandir}/man1/ssh-add.1*
 %{_mandir}/man1/ssh-copy-id.1*
 %{_mandir}/man5/ssh_config.5*
-%{_mandir}/man8/ssh-sk-helper.8*
 %lang(it) %{_mandir}/it/man1/ssh.1*
 %lang(it) %{_mandir}/it/man5/ssh_config.5*
 %lang(pl) %{_mandir}/pl/man1/scp.1*
@@ -821,6 +832,11 @@ fi
 %files clients-agent-xinitrc
 %defattr(644,root,root,755)
 %attr(755,root,root) /etc/X11/xinit/xinitrc.d/ssh-agent.sh
+
+%files clients-helper-fido
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libexecdir}/ssh-sk-helper
+%{_mandir}/man8/ssh-sk-helper.8*
 
 %files server
 %defattr(644,root,root,755)

@@ -36,13 +36,13 @@ Summary(pt_BR.UTF-8):	Implementação livre do SSH
 Summary(ru.UTF-8):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
-Version:	8.3p1
+Version:	8.4p1
 Release:	1
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
 Source0:	http://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
-# Source0-md5:	68d7527bf2672153ca47402f6489a1af
+# Source0-md5:	8f897870404c088e4aa7d1c1c58b526b
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 # Source1-md5:	66943d481cc422512b537bcc2c7400d1
 Source2:	%{name}d.init
@@ -84,7 +84,7 @@ BuildRequires:	automake
 %{?with_kerberos5:BuildRequires:	heimdal-devel >= 0.7}
 %{?with_ldns:BuildRequires:	ldns-devel}
 %{?with_libedit:BuildRequires:	libedit-devel}
-BuildRequires:	libfido2-devel
+BuildRequires:	libfido2-devel >= 1.5.0
 BuildRequires:	libseccomp-devel
 %{?with_selinux:BuildRequires:	libselinux-devel}
 %{?with_ldap:BuildRequires:	openldap-devel}

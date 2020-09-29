@@ -345,6 +345,7 @@ Summary:	OpenSSH helper for FIDO authenticator
 Summary(pl.UTF-8):	OpenSSH helper obsługujący klucz autoryzujący FIDO
 Group:		Applications/Networking
 Requires:	%{name}-clients = %{epoch}:%{version}-%{release}
+Requires:	libfido2 >= 1.5.0
 
 %description clients-helper-fido
 OpenSSH helper for FIDO authenticator.

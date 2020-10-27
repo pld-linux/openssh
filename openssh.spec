@@ -37,7 +37,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	8.4p1
-Release:	2
+Release:	2.1
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -85,7 +85,7 @@ BuildRequires:	automake
 %{?with_ldns:BuildRequires:	ldns-devel}
 %{?with_libedit:BuildRequires:	libedit-devel}
 BuildRequires:	libfido2-devel >= 1.5.0
-BuildRequires:	libseccomp-devel
+%{?with_libseccomp:BuildRequires:	libseccomp-devel}
 %{?with_selinux:BuildRequires:	libselinux-devel}
 %{?with_ldap:BuildRequires:	openldap-devel}
 BuildRequires:	openssl-devel >= 1.1.0g
@@ -603,7 +603,11 @@ CPPFLAGS="%{rpmcppflags} -DCHROOT -std=gnu99"
 %if "%{pld_release}" == "ac"
 	--with-xauth=/usr/X11R6/bin/xauth
 %else
+%if %{with libseccomp}
 	--with-sandbox=seccomp_filter \
+%else
+	--with-sandbox=rlimit \
+%endif
 	--with-xauth=%{_bindir}/xauth
 %endif
 

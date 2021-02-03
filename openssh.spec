@@ -74,6 +74,7 @@ Patch12:	openssh-bug-2905.patch
 Patch13:	%{name}-skip-interop-tests.patch
 Patch14:	%{name}-bind.patch
 Patch15:	%{name}-disable_ldap.patch
+Patch16:	allow_pselect6_time64.patch
 URL:		http://www.openssh.com/portable.html
 BuildRequires:	%{__perl}
 %{?with_audit:BuildRequires:	audit-libs-devel}
@@ -559,6 +560,7 @@ openldap-a.
 
 %patch14 -p1
 %{!?with_ldap:%patch15 -p1}
+%patch16 -p1
 
 %if "%{pld_release}" == "ac"
 # fix for missing x11.pc

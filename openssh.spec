@@ -96,7 +96,7 @@ BuildRequires:	pam-devel
 BuildRequires:	python-TwistedConch
 %endif
 BuildRequires:	rpm >= 4.4.9-56
-BuildRequires:	rpmbuild(macros) >= 1.627
+BuildRequires:	rpmbuild(macros) >= 1.752
 BuildRequires:	sed >= 4.0
 BuildRequires:	zlib-devel >= 1.2.3
 %if %{with tests} && 0%(id -u sshd >/dev/null 2>&1; echo $?)
@@ -529,9 +529,7 @@ Summary(pl.UTF-8):	Schemat klucza publicznego LDAP dla OpenSSH
 Group:		Networking/Daemons
 Requires(post,postun):	sed >= 4.0
 Requires:	openldap-servers
-%if "%{_rpmversion}" >= "5"
-BuildArch:	noarch
-%endif
+%{?noarchpackage}
 
 %description -n openldap-schema-openssh-lpk
 This package contains OpenSSH LDAP Public Key schema for openldap.

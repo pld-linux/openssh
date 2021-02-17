@@ -575,7 +575,6 @@ grep -rl /usr/libexec/openssh/ssh-ldap-helper . | xargs \
 %{__mv} aclocal.m4 acinclude.m4
 
 %build
-cp /usr/share/automake/config.sub .
 %{__aclocal}
 %{__autoconf}
 %{__autoheader}

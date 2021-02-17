@@ -41,7 +41,7 @@ Release:	3
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
-Source0:	http://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
+Source0:	https://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
 # Source0-md5:	8f897870404c088e4aa7d1c1c58b526b
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 # Source1-md5:	66943d481cc422512b537bcc2c7400d1

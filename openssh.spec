@@ -37,7 +37,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	8.4p1
-Release:	4
+Release:	5
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -68,7 +68,7 @@ Patch8:		ldap-helper-sigpipe.patch
 # High Performance SSH/SCP - HPN-SSH - http://www.psc.edu/networking/projects/hpn-ssh/
 # http://www.psc.edu/networking/projects/hpn-ssh/openssh-5.2p1-hpn13v6.diff.gz
 Patch9:		%{name}-5.2p1-hpn13v6.diff
-
+Patch10:	x32.patch
 Patch11:	%{name}-chroot.patch
 Patch12:	openssh-bug-2905.patch
 Patch13:	%{name}-skip-interop-tests.patch
@@ -552,6 +552,7 @@ openldap-a.
 
 %{?with_hpn:%patch9 -p1}
 
+%patch10 -p1
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1

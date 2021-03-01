@@ -1,0 +1,34 @@
+commit e3f27006f15abacb7e89fda3f5e9a0bd420b7e38
+Author: Damien Miller <djm@mindrot.org>
+Date:   Fri Nov 13 14:20:43 2020 +1100
+
+    Revert "detect Linux/X32 systems"
+    
+    This reverts commit 5b56bd0affea7b02b540bdbc4d1d271b0e4fc885.
+    
+    The approach used was incorrect; discussion in bz#3085
+
+diff --git a/configure.ac b/configure.ac
+index d3f4f570..842c255e 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -532,8 +532,6 @@ SPP_MSG="no"
+ # the --with-solaris-privs option and --with-sandbox=solaris).
+ SOLARIS_PRIVS="no"
+ 
+-AC_CHECK_SIZEOF([size_t])
+-
+ # Check for some target-specific stuff
+ case "$host" in
+ *-*-aix*)
+@@ -878,10 +876,6 @@ main() { if (NSVersionOfRunTimeLibrary("System") >= (60 << 16))
+ 	case "$host" in
+ 	x86_64-*)
+ 		seccomp_audit_arch=AUDIT_ARCH_X86_64
+-		# X32: AMD64 instructions in 32bit address space.
+-		if test "x$ac_cv_sizeof_size_t" = "x4" ; then
+-			seccomp_audit_arch=AUDIT_ARCH_I386
+-		fi
+ 		;;
+ 	i*86-*)
+ 		seccomp_audit_arch=AUDIT_ARCH_I386

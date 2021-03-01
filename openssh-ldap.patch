@@ -1,116 +1,6 @@
-diff -up openssh-6.2p1/configure.ac.ldap openssh-6.2p1/configure.ac
---- openssh-6.2p1/configure.ac.ldap	2013-03-20 02:55:15.000000000 +0100
-+++ openssh-6.2p1/configure.ac	2013-03-25 21:27:15.888248071 +0100
-@@ -1509,6 +1509,106 @@ AC_ARG_WITH([audit],
- 	esac ]
- )
- 
-+# Check whether user wants LDAP support
-+LDAP_MSG="no"
-+INSTALL_SSH_LDAP_HELPER=""
-+AC_ARG_WITH(ldap,
-+	[  --with-ldap[[=PATH]]      Enable LDAP pubkey support (optionally in PATH)],
-+	[
-+		if test "x$withval" != "xno" ; then
-+
-+			INSTALL_SSH_LDAP_HELPER="yes"
-+			CPPFLAGS="$CPPFLAGS -DLDAP_DEPRECATED"
-+
-+			if test "x$withval" != "xyes" ; then
-+				CPPFLAGS="$CPPFLAGS -I${withval}/include"
-+				LDFLAGS="$LDFLAGS -L${withval}/lib"
-+			fi
-+
-+			AC_DEFINE([WITH_LDAP_PUBKEY], 1, [Enable LDAP pubkey support])
-+			LDAP_MSG="yes"
-+
-+			AC_CHECK_HEADERS(lber.h)
-+			AC_CHECK_HEADERS(ldap.h, , AC_MSG_ERROR(could not locate <ldap.h>))
-+			AC_CHECK_HEADERS(ldap_ssl.h)
-+
-+			AC_ARG_WITH(ldap-lib,
-+				[  --with-ldap-lib=type    select ldap library [auto|netscape5|netscape4|netscape3|umich|openldap]])
-+
-+			if test -z "$with_ldap_lib"; then
-+				with_ldap_lib=auto
-+			fi
-+
-+			if test -z "$found_ldap_lib" -a \( $with_ldap_lib = auto -o $with_ldap_lib = umich -o $with_ldap_lib = openldap \); then
-+				AC_CHECK_LIB(lber, main, LIBS="-llber $LIBS" found_ldap_lib=yes)
-+				AC_CHECK_LIB(ldap, main, LIBS="-lldap $LIBS" found_ldap_lib=yes)
-+			fi
-+
-+			if test -z "$found_ldap_lib" -a \( $with_ldap_lib = auto -o $with_ldap_lib = netscape5 \); then
-+				AC_CHECK_LIB(ldap50, main, LIBS="-lldap50 -lssldap50 -lssl3 -lnss3 -lnspr4 -lprldap50 -lplc4 -lplds4 $LIBS" found_ldap_lib=yes)
-+			fi
-+
-+			if test -z "$found_ldap_lib" -a \( $with_ldap_lib = auto -o $with_ldap_lib = netscape4 \); then
-+				AC_CHECK_LIB(ldapssl41, main, LIBS="-lldapssl41 -lplc3 -lplds3 -lnspr3 $LIBS" found_ldap_lib=yes)
-+				if test -z "$found_ldap_lib"; then
-+					AC_CHECK_LIB(ldapssl40, main, LIBS="-lldapssl40 $LIBS" found_ldap_lib=yes)
-+				fi
-+				if test -z "$found_ldap_lib"; then
-+					AC_CHECK_LIB(ldap41, main, LIBS="-lldap41 $LIBS" found_ldap_lib=yes)
-+				fi
-+				if test -z "$found_ldap_lib"; then
-+					AC_CHECK_LIB(ldap40, main, LIBS="-lldap40 $LIBS" found_ldap_lib=yes)
-+				fi
-+			fi
-+
-+			if test -z "$found_ldap_lib" -a \( $with_ldap_lib = auto -o $with_ldap_lib = netscape3 \); then
-+				AC_CHECK_LIB(ldapssl30, main, LIBS="-lldapssl30 $LIBS" found_ldap_lib=yes)
-+			fi
-+
-+			if test -z "$found_ldap_lib"; then
-+				AC_MSG_ERROR(could not locate a valid LDAP library)
-+			fi
-+
-+			AC_MSG_CHECKING([for working LDAP support])
-+			AC_TRY_COMPILE(
-+				[#include <sys/types.h>
-+				 #include <ldap.h>],
-+				[(void)ldap_init(0, 0);],
-+				[AC_MSG_RESULT(yes)],
-+				[
-+				    AC_MSG_RESULT(no) 
-+					AC_MSG_ERROR([** Incomplete or missing ldap libraries **])
-+				])
-+			AC_CHECK_FUNCS( \
-+				ldap_init \
-+				ldap_get_lderrno \
-+				ldap_set_lderrno \
-+				ldap_parse_result \
-+				ldap_memfree \
-+				ldap_controls_free \
-+				ldap_set_option \
-+				ldap_get_option \
-+				ldapssl_init \
-+				ldap_start_tls_s \
-+				ldap_pvt_tls_set_option \
-+				ldap_initialize \
-+			)
-+			AC_CHECK_FUNCS(ldap_set_rebind_proc,
-+				AC_MSG_CHECKING([number arguments of ldap_set_rebind_proc])
-+				AC_TRY_COMPILE(
-+					[#include <lber.h>
-+					#include <ldap.h>],
-+					[ldap_set_rebind_proc(0, 0, 0);],
-+					[ac_cv_ldap_set_rebind_proc=3],
-+					[ac_cv_ldap_set_rebind_proc=2])
-+				AC_MSG_RESULT($ac_cv_ldap_set_rebind_proc)
-+				AC_DEFINE(LDAP_SET_REBIND_PROC_ARGS, $ac_cv_ldap_set_rebind_proc, [number arguments of ldap_set_rebind_proc])
-+			)
-+		fi
-+	]
-+)
-+AC_SUBST(INSTALL_SSH_LDAP_HELPER)
-+
- dnl    Checks for library functions. Please keep in alphabetical order
- AC_CHECK_FUNCS([ \
- 	arc4random \
-diff -up openssh-6.2p1/HOWTO.ldap-keys.ldap openssh-6.2p1/HOWTO.ldap-keys
---- openssh-6.2p1/HOWTO.ldap-keys.ldap	2013-03-25 21:27:15.889248078 +0100
-+++ openssh-6.2p1/HOWTO.ldap-keys	2013-03-25 21:27:15.889248078 +0100
+diff -urNp -x '*.orig' openssh-8.4p1.org/HOWTO.ldap-keys openssh-8.4p1/HOWTO.ldap-keys
+--- openssh-8.4p1.org/HOWTO.ldap-keys	1970-01-01 01:00:00.000000000 +0100
++++ openssh-8.4p1/HOWTO.ldap-keys	2021-03-01 11:29:31.277623165 +0100
 @@ -0,0 +1,108 @@
 +
 +HOW TO START
@@ -220,9 +110,505 @@ diff -up openssh-6.2p1/HOWTO.ldap-keys.ldap openssh-6.2p1/HOWTO.ldap-keys
 +5) Author
 +    Jan F. Chadima <jchadima@redhat.com>
 +
-diff -up openssh-6.2p1/ldapbody.c.ldap openssh-6.2p1/ldapbody.c
---- openssh-6.2p1/ldapbody.c.ldap	2013-03-25 21:27:15.889248078 +0100
-+++ openssh-6.2p1/ldapbody.c	2013-03-25 21:27:15.889248078 +0100
+diff -urNp -x '*.orig' openssh-8.4p1.org/Makefile.in openssh-8.4p1/Makefile.in
+--- openssh-8.4p1.org/Makefile.in	2020-09-27 09:25:01.000000000 +0200
++++ openssh-8.4p1/Makefile.in	2021-03-01 11:29:31.280956671 +0100
+@@ -23,6 +23,8 @@ SSH_PROGRAM=@bindir@/ssh
+ ASKPASS_PROGRAM=$(libexecdir)/ssh-askpass
+ SFTP_SERVER=$(libexecdir)/sftp-server
+ SSH_KEYSIGN=$(libexecdir)/ssh-keysign
++SSH_LDAP_HELPER=$(libexecdir)/ssh-ldap-helper
++SSH_LDAP_WRAPPER=$(libexecdir)/ssh-ldap-wrapper
+ SSH_PKCS11_HELPER=$(libexecdir)/ssh-pkcs11-helper
+ SSH_SK_HELPER=$(libexecdir)/ssh-sk-helper
+ PRIVSEP_PATH=@PRIVSEP_PATH@
+@@ -63,10 +65,11 @@ LDFLAGS_NOPIE=-L. -Lopenbsd-compat/ @LDF
+ EXEEXT=@EXEEXT@
+ MANFMT=@MANFMT@
+ MKDIR_P=@MKDIR_P@
++INSTALL_SSH_LDAP_HELPER=@INSTALL_SSH_LDAP_HELPER@
+ 
+ .SUFFIXES: .lo
+ 
+-TARGETS=ssh$(EXEEXT) sshd$(EXEEXT) ssh-add$(EXEEXT) ssh-keygen$(EXEEXT) ssh-keyscan${EXEEXT} ssh-keysign${EXEEXT} ssh-pkcs11-helper$(EXEEXT) ssh-agent$(EXEEXT) scp$(EXEEXT) sftp-server$(EXEEXT) sftp$(EXEEXT) ssh-sk-helper$(EXEEXT)
++TARGETS=ssh$(EXEEXT) sshd$(EXEEXT) ssh-add$(EXEEXT) ssh-keygen$(EXEEXT) ssh-keyscan${EXEEXT} ssh-keysign${EXEEXT} ssh-pkcs11-helper$(EXEEXT) ssh-agent$(EXEEXT) scp$(EXEEXT) sftp-server$(EXEEXT) sftp$(EXEEXT) ssh-sk-helper$(EXEEXT) ssh-ldap-helper$(EXEEXT)
+ 
+ XMSS_OBJS=\
+ 	ssh-xmss.o \
+@@ -150,8 +153,8 @@ SFTPSERVER_OBJS=sftp-common.o sftp-serve
+ 
+ SFTP_OBJS=	sftp.o sftp-client.o sftp-common.o sftp-glob.o progressmeter.o
+ 
+-MANPAGES	= moduli.5.out scp.1.out ssh-add.1.out ssh-agent.1.out ssh-keygen.1.out ssh-keyscan.1.out ssh.1.out sshd.8.out sftp-server.8.out sftp.1.out ssh-keysign.8.out ssh-pkcs11-helper.8.out ssh-sk-helper.8.out sshd_config.5.out ssh_config.5.out
+-MANPAGES_IN	= moduli.5 scp.1 ssh-add.1 ssh-agent.1 ssh-keygen.1 ssh-keyscan.1 ssh.1 sshd.8 sftp-server.8 sftp.1 ssh-keysign.8 ssh-pkcs11-helper.8 ssh-sk-helper.8 sshd_config.5 ssh_config.5
++MANPAGES	= moduli.5.out scp.1.out ssh-add.1.out ssh-agent.1.out ssh-keygen.1.out ssh-keyscan.1.out ssh.1.out sshd.8.out sftp-server.8.out sftp.1.out ssh-keysign.8.out ssh-pkcs11-helper.8.out ssh-sk-helper.8.out ssh-ldap-helper.8.out sshd_config.5.out ssh_config.5.out ssh-ldap.conf.5.out
++MANPAGES_IN	= moduli.5 scp.1 ssh-add.1 ssh-agent.1 ssh-keygen.1 ssh-keyscan.1 ssh.1 sshd.8 sftp-server.8 sftp.1 ssh-keysign.8 ssh-pkcs11-helper.8 ssh-sk-helper.8 ssh-ldap-helper.8 sshd_config.5 ssh_config.5 ssh-ldap.conf.5
+ MANTYPE		= @MANTYPE@
+ 
+ CONFIGFILES=sshd_config.out ssh_config.out moduli.out
+@@ -230,6 +233,9 @@ ssh-pkcs11-helper$(EXEEXT): $(LIBCOMPAT)
+ ssh-sk-helper$(EXEEXT): $(LIBCOMPAT) libssh.a $(SKHELPER_OBJS)
+ 	$(LD) -o $@ $(SKHELPER_OBJS) $(LDFLAGS) -lssh -lopenbsd-compat -lssh -lopenbsd-compat $(LIBS) $(LIBFIDO2)
+ 
++ssh-ldap-helper$(EXEEXT): $(LIBCOMPAT) libssh.a ldapconf.o ldapbody.o ldapmisc.o ldap-helper.o
++	$(LD) -o $@ ldapconf.o ldapbody.o ldapmisc.o ldap-helper.o $(LDFLAGS) -lssh -lopenbsd-compat -lfipscheck $(LIBS)
++
+ ssh-keyscan$(EXEEXT): $(LIBCOMPAT) libssh.a $(SSHKEYSCAN_OBJS)
+ 	$(LD) -o $@ $(SSHKEYSCAN_OBJS) $(LDFLAGS) -lssh -lopenbsd-compat -lssh $(LIBS)
+ 
+@@ -395,6 +401,10 @@ install-files:
+ 	$(INSTALL) -m 4711 $(STRIP_OPT) ssh-keysign$(EXEEXT) $(DESTDIR)$(SSH_KEYSIGN)$(EXEEXT)
+ 	$(INSTALL) -m 0755 $(STRIP_OPT) ssh-pkcs11-helper$(EXEEXT) $(DESTDIR)$(SSH_PKCS11_HELPER)$(EXEEXT)
+ 	$(INSTALL) -m 0755 $(STRIP_OPT) ssh-sk-helper$(EXEEXT) $(DESTDIR)$(SSH_SK_HELPER)$(EXEEXT)
++	if test ! -z "$(INSTALL_SSH_LDAP_HELPER)" ; then \
++	    $(INSTALL) -m 0700 $(STRIP_OPT) ssh-ldap-helper $(DESTDIR)$(SSH_LDAP_HELPER) ; \
++	    $(INSTALL) -m 0700 ssh-ldap-wrapper $(DESTDIR)$(SSH_LDAP_WRAPPER) ; \
++	fi
+ 	$(INSTALL) -m 0755 $(STRIP_OPT) sftp$(EXEEXT) $(DESTDIR)$(bindir)/sftp$(EXEEXT)
+ 	$(INSTALL) -m 0755 $(STRIP_OPT) sftp-server$(EXEEXT) $(DESTDIR)$(SFTP_SERVER)$(EXEEXT)
+ 	$(INSTALL) -m 644 ssh.1.out $(DESTDIR)$(mandir)/$(mansubdir)1/ssh.1
+@@ -412,6 +422,10 @@ install-files:
+ 	$(INSTALL) -m 644 ssh-keysign.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-keysign.8
+ 	$(INSTALL) -m 644 ssh-pkcs11-helper.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-pkcs11-helper.8
+ 	$(INSTALL) -m 644 ssh-sk-helper.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-sk-helper.8
++	if test ! -z "$(INSTALL_SSH_LDAP_HELPER)" ; then \
++	    $(INSTALL) -m 644 ssh-ldap-helper.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-ldap-helper.8 ; \
++	    $(INSTALL) -m 644 ssh-ldap.conf.5.out $(DESTDIR)$(mandir)/$(mansubdir)5/ssh-ldap.conf.5 ; \
++	fi
+ 
+ install-sysconf:
+ 	$(MKDIR_P) $(DESTDIR)$(sysconfdir)
+@@ -435,6 +449,13 @@ install-sysconf:
+ 	else \
+ 		echo "$(DESTDIR)$(sysconfdir)/moduli already exists, install will not overwrite"; \
+ 	fi
++	if test ! -z "$(INSTALL_SSH_LDAP_HELPER)" ; then \
++		if [ ! -f $(DESTDIR)$(sysconfdir)/ldap.conf ]; then \
++			$(INSTALL) -m 644 ldap.conf $(DESTDIR)$(sysconfdir)/ldap.conf; \
++		else \
++			echo "$(DESTDIR)$(sysconfdir)/ldap.conf already exists, install will not overwrite"; \
++		fi ; \
++	fi
+ 
+ host-key: ssh-keygen$(EXEEXT)
+ 	@if [ -z "$(DESTDIR)" ] ; then \
+@@ -473,6 +494,8 @@ uninstall:
+ 	-rm -f $(DESTDIR)$(SSH_KEYSIGN)$(EXEEXT)
+ 	-rm -f $(DESTDIR)$(SSH_PKCS11_HELPER)$(EXEEXT)
+ 	-rm -f $(DESTDIR)$(SSH_SK_HELPER)$(EXEEXT)
++	-rm -f $(DESTDIR)$(SSH_LDAP_HELPER)$(EXEEXT)
++	-rm -f $(DESTDIR)$(SSH_LDAP_WRAPPER)$(EXEEXT)
+ 	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)1/ssh.1
+ 	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)1/scp.1
+ 	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)1/ssh-add.1
+@@ -485,6 +508,7 @@ uninstall:
+ 	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-keysign.8
+ 	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-pkcs11-helper.8
+ 	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-sk-helper.8
++	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-ldap-helper.8
+ 
+ regress-prep:
+ 	$(MKDIR_P) `pwd`/regress/unittests/test_helper
+diff -urNp -x '*.orig' openssh-8.4p1.org/configure.ac openssh-8.4p1/configure.ac
+--- openssh-8.4p1.org/configure.ac	2021-03-01 11:29:31.004275724 +0100
++++ openssh-8.4p1/configure.ac	2021-03-01 11:29:31.277623165 +0100
+@@ -1763,6 +1763,106 @@ AC_COMPILE_IFELSE(
+ CFLAGS="$SAVED_CFLAGS"
+ AC_SUBST([PICFLAG])
+ 
++# Check whether user wants LDAP support
++LDAP_MSG="no"
++INSTALL_SSH_LDAP_HELPER=""
++AC_ARG_WITH(ldap,
++	[  --with-ldap[[=PATH]]      Enable LDAP pubkey support (optionally in PATH)],
++	[
++		if test "x$withval" != "xno" ; then
++
++			INSTALL_SSH_LDAP_HELPER="yes"
++			CPPFLAGS="$CPPFLAGS -DLDAP_DEPRECATED"
++
++			if test "x$withval" != "xyes" ; then
++				CPPFLAGS="$CPPFLAGS -I${withval}/include"
++				LDFLAGS="$LDFLAGS -L${withval}/lib"
++			fi
++
++			AC_DEFINE([WITH_LDAP_PUBKEY], 1, [Enable LDAP pubkey support])
++			LDAP_MSG="yes"
++
++			AC_CHECK_HEADERS(lber.h)
++			AC_CHECK_HEADERS(ldap.h, , AC_MSG_ERROR(could not locate <ldap.h>))
++			AC_CHECK_HEADERS(ldap_ssl.h)
++
++			AC_ARG_WITH(ldap-lib,
++				[  --with-ldap-lib=type    select ldap library [auto|netscape5|netscape4|netscape3|umich|openldap]])
++
++			if test -z "$with_ldap_lib"; then
++				with_ldap_lib=auto
++			fi
++
++			if test -z "$found_ldap_lib" -a \( $with_ldap_lib = auto -o $with_ldap_lib = umich -o $with_ldap_lib = openldap \); then
++				AC_CHECK_LIB(lber, main, LIBS="-llber $LIBS" found_ldap_lib=yes)
++				AC_CHECK_LIB(ldap, main, LIBS="-lldap $LIBS" found_ldap_lib=yes)
++			fi
++
++			if test -z "$found_ldap_lib" -a \( $with_ldap_lib = auto -o $with_ldap_lib = netscape5 \); then
++				AC_CHECK_LIB(ldap50, main, LIBS="-lldap50 -lssldap50 -lssl3 -lnss3 -lnspr4 -lprldap50 -lplc4 -lplds4 $LIBS" found_ldap_lib=yes)
++			fi
++
++			if test -z "$found_ldap_lib" -a \( $with_ldap_lib = auto -o $with_ldap_lib = netscape4 \); then
++				AC_CHECK_LIB(ldapssl41, main, LIBS="-lldapssl41 -lplc3 -lplds3 -lnspr3 $LIBS" found_ldap_lib=yes)
++				if test -z "$found_ldap_lib"; then
++					AC_CHECK_LIB(ldapssl40, main, LIBS="-lldapssl40 $LIBS" found_ldap_lib=yes)
++				fi
++				if test -z "$found_ldap_lib"; then
++					AC_CHECK_LIB(ldap41, main, LIBS="-lldap41 $LIBS" found_ldap_lib=yes)
++				fi
++				if test -z "$found_ldap_lib"; then
++					AC_CHECK_LIB(ldap40, main, LIBS="-lldap40 $LIBS" found_ldap_lib=yes)
++				fi
++			fi
++
++			if test -z "$found_ldap_lib" -a \( $with_ldap_lib = auto -o $with_ldap_lib = netscape3 \); then
++				AC_CHECK_LIB(ldapssl30, main, LIBS="-lldapssl30 $LIBS" found_ldap_lib=yes)
++			fi
++
++			if test -z "$found_ldap_lib"; then
++				AC_MSG_ERROR(could not locate a valid LDAP library)
++			fi
++
++			AC_MSG_CHECKING([for working LDAP support])
++			AC_TRY_COMPILE(
++				[#include <sys/types.h>
++				 #include <ldap.h>],
++				[(void)ldap_init(0, 0);],
++				[AC_MSG_RESULT(yes)],
++				[
++				    AC_MSG_RESULT(no) 
++					AC_MSG_ERROR([** Incomplete or missing ldap libraries **])
++				])
++			AC_CHECK_FUNCS( \
++				ldap_init \
++				ldap_get_lderrno \
++				ldap_set_lderrno \
++				ldap_parse_result \
++				ldap_memfree \
++				ldap_controls_free \
++				ldap_set_option \
++				ldap_get_option \
++				ldapssl_init \
++				ldap_start_tls_s \
++				ldap_pvt_tls_set_option \
++				ldap_initialize \
++			)
++			AC_CHECK_FUNCS(ldap_set_rebind_proc,
++				AC_MSG_CHECKING([number arguments of ldap_set_rebind_proc])
++				AC_TRY_COMPILE(
++					[#include <lber.h>
++					#include <ldap.h>],
++					[ldap_set_rebind_proc(0, 0, 0);],
++					[ac_cv_ldap_set_rebind_proc=3],
++					[ac_cv_ldap_set_rebind_proc=2])
++				AC_MSG_RESULT($ac_cv_ldap_set_rebind_proc)
++				AC_DEFINE(LDAP_SET_REBIND_PROC_ARGS, $ac_cv_ldap_set_rebind_proc, [number arguments of ldap_set_rebind_proc])
++			)
++		fi
++	]
++)
++AC_SUBST(INSTALL_SSH_LDAP_HELPER)
++
+ dnl    Checks for library functions. Please keep in alphabetical order
+ AC_CHECK_FUNCS([ \
+ 	Blowfish_initstate \
+diff -urNp -x '*.orig' openssh-8.4p1.org/ldap-helper.c openssh-8.4p1/ldap-helper.c
+--- openssh-8.4p1.org/ldap-helper.c	1970-01-01 01:00:00.000000000 +0100
++++ openssh-8.4p1/ldap-helper.c	2021-03-01 11:29:31.280956671 +0100
+@@ -0,0 +1,155 @@
++/* $OpenBSD: ssh-pka-ldap.c,v 1.1 2009/12/03 03:34:42 jfch Exp $ */
++/*
++ * Copyright (c) 2009 Jan F. Chadima.  All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
++ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
++ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
++ * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
++ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
++ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
++ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
++ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
++ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#include "ldapincludes.h"
++#include "log.h"
++#include "misc.h"
++#include "xmalloc.h"
++#include "ldapconf.h"
++#include "ldapbody.h"
++#include <string.h>
++#include <unistd.h>
++
++static int config_debug = 0;
++int config_exclusive_config_file = 0;
++static char *config_file_name = "/etc/ssh/ldap.conf";
++static char *config_single_user = NULL;
++static int config_verbose = SYSLOG_LEVEL_VERBOSE;
++int config_warning_config_file = 0;
++extern char *__progname;
++
++static void
++usage(void)
++{
++	fprintf(stderr, "usage: %s [options]\n",
++	    __progname);
++	fprintf(stderr, "Options:\n");
++	fprintf(stderr, "  -d          Output the log messages to stderr.\n");
++	fprintf(stderr, "  -e          Check the config file for unknown commands.\n");
++	fprintf(stderr, "  -f file     Use alternate config file (default is /etc/ssh/ldap.conf).\n");
++	fprintf(stderr, "  -s user     Do not demonize, send the user's key to stdout.\n");
++	fprintf(stderr, "  -v          Increase verbosity of the debug output (implies -d).\n");
++	fprintf(stderr, "  -w          Warn on unknown commands in the config file.\n");
++	exit(1);
++}
++
++/*
++ * Main program for the ssh pka ldap agent.
++ */
++
++int
++main(int ac, char **av)
++{
++	int opt;
++	FILE *outfile = NULL;
++
++	__progname = ssh_get_progname(av[0]);
++
++	log_init(__progname, SYSLOG_LEVEL_DEBUG3, SYSLOG_FACILITY_AUTH, 0);
++
++	/*
++	 * Initialize option structure to indicate that no values have been
++	 * set.
++	 */
++	initialize_options();
++
++	/* Parse command-line arguments. */
++	while ((opt = getopt(ac, av, "def:s:vw")) != -1) {
++		switch (opt) {
++		case 'd':
++			config_debug = 1;
++			break;
++
++		case 'e':
++			config_exclusive_config_file = 1;
++			config_warning_config_file = 1;
++			break;
++
++		case 'f':
++			config_file_name = optarg;
++			break;
++
++		case 's':
++			config_single_user = optarg;
++			outfile = fdopen (dup (fileno (stdout)), "w");
++			break;
++
++		case 'v':
++			config_debug = 1;
++			if (config_verbose < SYSLOG_LEVEL_DEBUG3)
++			    config_verbose++;
++			break;
++
++		case 'w':
++			config_warning_config_file = 1;
++			break;
++
++		case '?':
++		default:
++			usage();
++			break;
++		}
++	}
++
++	/* Initialize loging */
++	log_init(__progname, config_verbose, SYSLOG_FACILITY_AUTH, config_debug);
++
++	if (ac != optind)
++	    fatal ("illegal extra parameter %s", av[1]);
++
++	/* Ensure that fds 0 and 2 are open or directed to /dev/null */
++	if (config_debug == 0)
++	    sanitise_stdfd();
++
++	/* Read config file */
++	read_config_file(config_file_name);
++	fill_default_options();
++	if (config_verbose == SYSLOG_LEVEL_DEBUG3) {
++		debug3 ("=== Configuration ===");
++		dump_config();
++		debug3 ("=== *** ===");
++	}
++
++	ldap_checkconfig();
++	ldap_do_connect();
++
++	if (config_single_user) {
++		process_user (config_single_user, outfile);
++	} else {
++		usage();
++		fatal ("Not yet implemented");
++/* TODO
++ * open unix socket a run the loop on it
++ */
++	}
++
++	ldap_do_close();
++	return 0;
++}
++
++/* Ugly hack */
++void   *buffer_get_string(struct sshbuf *b, u_int *l) { return NULL; }
++void    buffer_put_string(struct sshbuf *b, const void *f, u_int l) {}
++
+diff -urNp -x '*.orig' openssh-8.4p1.org/ldap-helper.h openssh-8.4p1/ldap-helper.h
+--- openssh-8.4p1.org/ldap-helper.h	1970-01-01 01:00:00.000000000 +0100
++++ openssh-8.4p1/ldap-helper.h	2021-03-01 11:29:31.280956671 +0100
+@@ -0,0 +1,32 @@
++/* $OpenBSD: ldap-helper.h,v 1.1 2009/12/03 03:34:42 jfch Exp $ */
++/*
++ * Copyright (c) 2009 Jan F. Chadima.  All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
++ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
++ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
++ * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
++ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
++ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
++ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
++ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
++ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#ifndef LDAP_HELPER_H
++#define LDAP_HELPER_H
++
++extern int config_exclusive_config_file;
++extern int config_warning_config_file;
++
++#endif /* LDAP_HELPER_H */
+diff -urNp -x '*.orig' openssh-8.4p1.org/ldap.conf openssh-8.4p1/ldap.conf
+--- openssh-8.4p1.org/ldap.conf	1970-01-01 01:00:00.000000000 +0100
++++ openssh-8.4p1/ldap.conf	2021-03-01 11:29:31.280956671 +0100
+@@ -0,0 +1,88 @@
++# $Id: openssh-5.5p1-ldap.patch,v 1.3 2010/07/07 13:48:36 jfch2222 Exp $
++#
++# This is the example configuration file for the OpenSSH
++# LDAP backend
++# 
++# see ssh-ldap.conf(5)
++#
++
++# URI with your LDAP server name. This allows to use
++# Unix Domain Sockets to connect to a local LDAP Server.
++#uri ldap://127.0.0.1/
++#uri ldaps://127.0.0.1/   
++#uri ldapi://%2fvar%2frun%2fldapi_sock/
++# Note: %2f encodes the '/' used as directory separator
++
++# Another way to specify your LDAP server is to provide an
++# host name and the port of our LDAP server. Host name
++# must be resolvable without using LDAP.
++# Multiple hosts may be specified, each separated by a 
++# space. How long nss_ldap takes to failover depends on
++# whether your LDAP client library supports configurable
++# network or connect timeouts (see bind_timelimit).
++#host 127.0.0.1
++
++# The port.
++# Optional: default is 389.
++#port 389
++
++# The distinguished name to bind to the server with.
++# Optional: default is to bind anonymously.
++#binddn cn=openssh_keys,dc=example,dc=org
++
++# The credentials to bind with. 
++# Optional: default is no credential.
++#bindpw TopSecret
++
++# The distinguished name of the search base.
++#base dc=example,dc=org
++
++# The LDAP version to use (defaults to 3
++# if supported by client library)
++#ldap_version 3
++
++# The search scope.
++#scope sub
++#scope one
++#scope base
++
++# Search timelimit
++#timelimit 30
++
++# Bind/connect timelimit
++#bind_timelimit 30
++
++# Reconnect policy: hard (default) will retry connecting to
++# the software with exponential backoff, soft will fail
++# immediately.
++#bind_policy hard
++
++# SSL setup, may be implied by URI also.
++#ssl no
++#ssl on
++#ssl start_tls
++
++# OpenLDAP SSL options
++# Require and verify server certificate (yes/no)
++# Default is to use libldap's default behavior, which can be configured in
++# /etc/openldap/ldap.conf using the TLS_REQCERT setting.  The default for
++# OpenLDAP 2.0 and earlier is "no", for 2.1 and later is "yes".
++#tls_checkpeer hard
++
++# CA certificates for server certificate verification
++# At least one of these are required if tls_checkpeer is "yes"
++#tls_cacertfile /etc/ssl/ca.cert
++#tls_cacertdir /etc/pki/tls/certs
++
++# Seed the PRNG if /dev/urandom is not provided
++#tls_randfile /var/run/egd-pool
++
++# SSL cipher suite
++# See man ciphers for syntax
++#tls_ciphers TLSv1
++
++# Client certificate and key
++# Use these, if your server requires client authentication.
++#tls_cert
++#tls_key
++
+diff -urNp -x '*.orig' openssh-8.4p1.org/ldapbody.c openssh-8.4p1/ldapbody.c
+--- openssh-8.4p1.org/ldapbody.c	1970-01-01 01:00:00.000000000 +0100
++++ openssh-8.4p1/ldapbody.c	2021-03-01 11:29:31.280956671 +0100
 @@ -0,0 +1,494 @@
 +/* $OpenBSD: ldapbody.c,v 1.1 2009/12/03 03:34:42 jfch Exp $ */
 +/*
@@ -718,9 +1104,9 @@ diff -up openssh-6.2p1/ldapbody.c.ldap openssh-6.2p1/ldapbody.c
 +	return;
 +}
 +
-diff -up openssh-6.2p1/ldapbody.h.ldap openssh-6.2p1/ldapbody.h
---- openssh-6.2p1/ldapbody.h.ldap	2013-03-25 21:27:15.889248078 +0100
-+++ openssh-6.2p1/ldapbody.h	2013-03-25 21:27:15.889248078 +0100
+diff -urNp -x '*.orig' openssh-8.4p1.org/ldapbody.h openssh-8.4p1/ldapbody.h
+--- openssh-8.4p1.org/ldapbody.h	1970-01-01 01:00:00.000000000 +0100
++++ openssh-8.4p1/ldapbody.h	2021-03-01 11:29:31.280956671 +0100
 @@ -0,0 +1,37 @@
 +/* $OpenBSD: ldapbody.h,v 1.1 2009/12/03 03:34:42 jfch Exp $ */
 +/*
@@ -759,9 +1145,9 @@ diff -up openssh-6.2p1/ldapbody.h.ldap openssh-6.2p1/ldapbody.h
 +
 +#endif /* LDAPBODY_H */
 +
-diff -up openssh-6.2p2/ldapconf.c.ldap openssh-6.2p2/ldapconf.c
---- openssh-6.2p2/ldapconf.c.ldap	2013-06-07 15:10:05.601942693 +0200
-+++ openssh-6.2p2/ldapconf.c	2013-06-07 15:10:24.928857566 +0200
+diff -urNp -x '*.orig' openssh-8.4p1.org/ldapconf.c openssh-8.4p1/ldapconf.c
+--- openssh-8.4p1.org/ldapconf.c	1970-01-01 01:00:00.000000000 +0100
++++ openssh-8.4p1/ldapconf.c	2021-03-01 11:29:31.280956671 +0100
 @@ -0,0 +1,691 @@
 +/* $OpenBSD: ldapconf.c,v 1.1 2009/12/03 03:34:42 jfch Exp $ */
 +/*
@@ -1454,9 +1840,9 @@ diff -up openssh-6.2p2/ldapconf.c.ldap openssh-6.2p2/ldapconf.c
 +	dump_cfg_string(lAccountClass, options.logdir);
 +}
 +
-diff -up openssh-6.2p2/ldapconf.h.ldap openssh-6.2p2/ldapconf.h
---- openssh-6.2p2/ldapconf.h.ldap	2013-06-07 15:10:05.602942689 +0200
-+++ openssh-6.2p2/ldapconf.h	2013-06-07 15:10:24.928857566 +0200
+diff -urNp -x '*.orig' openssh-8.4p1.org/ldapconf.h openssh-8.4p1/ldapconf.h
+--- openssh-8.4p1.org/ldapconf.h	1970-01-01 01:00:00.000000000 +0100
++++ openssh-8.4p1/ldapconf.h	2021-03-01 11:29:31.280956671 +0100
 @@ -0,0 +1,72 @@
 +/* $OpenBSD: ldapconf.c,v 1.1 2009/12/03 03:34:42 jfch Exp $ */
 +/*
@@ -1530,296 +1916,9 @@ diff -up openssh-6.2p2/ldapconf.h.ldap openssh-6.2p2/ldapconf.h
 +void dump_config(void);
 +
 +#endif /* LDAPCONF_H */
-diff -up openssh-6.2p1/ldap.conf.ldap openssh-6.2p1/ldap.conf
---- openssh-6.2p1/ldap.conf.ldap	2013-03-25 21:27:15.891248091 +0100
-+++ openssh-6.2p1/ldap.conf	2013-03-25 21:27:15.891248091 +0100
-@@ -0,0 +1,88 @@
-+# $Id: openssh-5.5p1-ldap.patch,v 1.3 2010/07/07 13:48:36 jfch2222 Exp $
-+#
-+# This is the example configuration file for the OpenSSH
-+# LDAP backend
-+# 
-+# see ssh-ldap.conf(5)
-+#
-+
-+# URI with your LDAP server name. This allows to use
-+# Unix Domain Sockets to connect to a local LDAP Server.
-+#uri ldap://127.0.0.1/
-+#uri ldaps://127.0.0.1/   
-+#uri ldapi://%2fvar%2frun%2fldapi_sock/
-+# Note: %2f encodes the '/' used as directory separator
-+
-+# Another way to specify your LDAP server is to provide an
-+# host name and the port of our LDAP server. Host name
-+# must be resolvable without using LDAP.
-+# Multiple hosts may be specified, each separated by a 
-+# space. How long nss_ldap takes to failover depends on
-+# whether your LDAP client library supports configurable
-+# network or connect timeouts (see bind_timelimit).
-+#host 127.0.0.1
-+
-+# The port.
-+# Optional: default is 389.
-+#port 389
-+
-+# The distinguished name to bind to the server with.
-+# Optional: default is to bind anonymously.
-+#binddn cn=openssh_keys,dc=example,dc=org
-+
-+# The credentials to bind with. 
-+# Optional: default is no credential.
-+#bindpw TopSecret
-+
-+# The distinguished name of the search base.
-+#base dc=example,dc=org
-+
-+# The LDAP version to use (defaults to 3
-+# if supported by client library)
-+#ldap_version 3
-+
-+# The search scope.
-+#scope sub
-+#scope one
-+#scope base
-+
-+# Search timelimit
-+#timelimit 30
-+
-+# Bind/connect timelimit
-+#bind_timelimit 30
-+
-+# Reconnect policy: hard (default) will retry connecting to
-+# the software with exponential backoff, soft will fail
-+# immediately.
-+#bind_policy hard
-+
-+# SSL setup, may be implied by URI also.
-+#ssl no
-+#ssl on
-+#ssl start_tls
-+
-+# OpenLDAP SSL options
-+# Require and verify server certificate (yes/no)
-+# Default is to use libldap's default behavior, which can be configured in
-+# /etc/openldap/ldap.conf using the TLS_REQCERT setting.  The default for
-+# OpenLDAP 2.0 and earlier is "no", for 2.1 and later is "yes".
-+#tls_checkpeer hard
-+
-+# CA certificates for server certificate verification
-+# At least one of these are required if tls_checkpeer is "yes"
-+#tls_cacertfile /etc/ssl/ca.cert
-+#tls_cacertdir /etc/pki/tls/certs
-+
-+# Seed the PRNG if /dev/urandom is not provided
-+#tls_randfile /var/run/egd-pool
-+
-+# SSL cipher suite
-+# See man ciphers for syntax
-+#tls_ciphers TLSv1
-+
-+# Client certificate and key
-+# Use these, if your server requires client authentication.
-+#tls_cert
-+#tls_key
-+
-diff -up openssh-6.2p1/ldap-helper.c.ldap openssh-6.2p1/ldap-helper.c
---- openssh-6.2p1/ldap-helper.c.ldap	2013-03-25 21:27:15.892248097 +0100
-+++ openssh-6.2p1/ldap-helper.c	2013-03-25 21:27:15.892248097 +0100
-@@ -0,0 +1,155 @@
-+/* $OpenBSD: ssh-pka-ldap.c,v 1.1 2009/12/03 03:34:42 jfch Exp $ */
-+/*
-+ * Copyright (c) 2009 Jan F. Chadima.  All rights reserved.
-+ *
-+ * Redistribution and use in source and binary forms, with or without
-+ * modification, are permitted provided that the following conditions
-+ * are met:
-+ * 1. Redistributions of source code must retain the above copyright
-+ *    notice, this list of conditions and the following disclaimer.
-+ * 2. Redistributions in binary form must reproduce the above copyright
-+ *    notice, this list of conditions and the following disclaimer in the
-+ *    documentation and/or other materials provided with the distribution.
-+ *
-+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
-+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-+ * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
-+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
-+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-+ */
-+
-+#include "ldapincludes.h"
-+#include "log.h"
-+#include "misc.h"
-+#include "xmalloc.h"
-+#include "ldapconf.h"
-+#include "ldapbody.h"
-+#include <string.h>
-+#include <unistd.h>
-+
-+static int config_debug = 0;
-+int config_exclusive_config_file = 0;
-+static char *config_file_name = "/etc/ssh/ldap.conf";
-+static char *config_single_user = NULL;
-+static int config_verbose = SYSLOG_LEVEL_VERBOSE;
-+int config_warning_config_file = 0;
-+extern char *__progname;
-+
-+static void
-+usage(void)
-+{
-+	fprintf(stderr, "usage: %s [options]\n",
-+	    __progname);
-+	fprintf(stderr, "Options:\n");
-+	fprintf(stderr, "  -d          Output the log messages to stderr.\n");
-+	fprintf(stderr, "  -e          Check the config file for unknown commands.\n");
-+	fprintf(stderr, "  -f file     Use alternate config file (default is /etc/ssh/ldap.conf).\n");
-+	fprintf(stderr, "  -s user     Do not demonize, send the user's key to stdout.\n");
-+	fprintf(stderr, "  -v          Increase verbosity of the debug output (implies -d).\n");
-+	fprintf(stderr, "  -w          Warn on unknown commands in the config file.\n");
-+	exit(1);
-+}
-+
-+/*
-+ * Main program for the ssh pka ldap agent.
-+ */
-+
-+int
-+main(int ac, char **av)
-+{
-+	int opt;
-+	FILE *outfile = NULL;
-+
-+	__progname = ssh_get_progname(av[0]);
-+
-+	log_init(__progname, SYSLOG_LEVEL_DEBUG3, SYSLOG_FACILITY_AUTH, 0);
-+
-+	/*
-+	 * Initialize option structure to indicate that no values have been
-+	 * set.
-+	 */
-+	initialize_options();
-+
-+	/* Parse command-line arguments. */
-+	while ((opt = getopt(ac, av, "def:s:vw")) != -1) {
-+		switch (opt) {
-+		case 'd':
-+			config_debug = 1;
-+			break;
-+
-+		case 'e':
-+			config_exclusive_config_file = 1;
-+			config_warning_config_file = 1;
-+			break;
-+
-+		case 'f':
-+			config_file_name = optarg;
-+			break;
-+
-+		case 's':
-+			config_single_user = optarg;
-+			outfile = fdopen (dup (fileno (stdout)), "w");
-+			break;
-+
-+		case 'v':
-+			config_debug = 1;
-+			if (config_verbose < SYSLOG_LEVEL_DEBUG3)
-+			    config_verbose++;
-+			break;
-+
-+		case 'w':
-+			config_warning_config_file = 1;
-+			break;
-+
-+		case '?':
-+		default:
-+			usage();
-+			break;
-+		}
-+	}
-+
-+	/* Initialize loging */
-+	log_init(__progname, config_verbose, SYSLOG_FACILITY_AUTH, config_debug);
-+
-+	if (ac != optind)
-+	    fatal ("illegal extra parameter %s", av[1]);
-+
-+	/* Ensure that fds 0 and 2 are open or directed to /dev/null */
-+	if (config_debug == 0)
-+	    sanitise_stdfd();
-+
-+	/* Read config file */
-+	read_config_file(config_file_name);
-+	fill_default_options();
-+	if (config_verbose == SYSLOG_LEVEL_DEBUG3) {
-+		debug3 ("=== Configuration ===");
-+		dump_config();
-+		debug3 ("=== *** ===");
-+	}
-+
-+	ldap_checkconfig();
-+	ldap_do_connect();
-+
-+	if (config_single_user) {
-+		process_user (config_single_user, outfile);
-+	} else {
-+		usage();
-+		fatal ("Not yet implemented");
-+/* TODO
-+ * open unix socket a run the loop on it
-+ */
-+	}
-+
-+	ldap_do_close();
-+	return 0;
-+}
-+
-+/* Ugly hack */
-+void   *buffer_get_string(struct sshbuf *b, u_int *l) { return NULL; }
-+void    buffer_put_string(struct sshbuf *b, const void *f, u_int l) {}
-+
-diff -up openssh-6.2p1/ldap-helper.h.ldap openssh-6.2p1/ldap-helper.h
---- openssh-6.2p1/ldap-helper.h.ldap	2013-03-25 21:27:15.892248097 +0100
-+++ openssh-6.2p1/ldap-helper.h	2013-03-25 21:27:15.892248097 +0100
-@@ -0,0 +1,32 @@
-+/* $OpenBSD: ldap-helper.h,v 1.1 2009/12/03 03:34:42 jfch Exp $ */
-+/*
-+ * Copyright (c) 2009 Jan F. Chadima.  All rights reserved.
-+ *
-+ * Redistribution and use in source and binary forms, with or without
-+ * modification, are permitted provided that the following conditions
-+ * are met:
-+ * 1. Redistributions of source code must retain the above copyright
-+ *    notice, this list of conditions and the following disclaimer.
-+ * 2. Redistributions in binary form must reproduce the above copyright
-+ *    notice, this list of conditions and the following disclaimer in the
-+ *    documentation and/or other materials provided with the distribution.
-+ *
-+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
-+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-+ * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
-+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
-+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-+ */
-+
-+#ifndef LDAP_HELPER_H
-+#define LDAP_HELPER_H
-+
-+extern int config_exclusive_config_file;
-+extern int config_warning_config_file;
-+
-+#endif /* LDAP_HELPER_H */
-diff -up openssh-6.2p1/ldapincludes.h.ldap openssh-6.2p1/ldapincludes.h
---- openssh-6.2p1/ldapincludes.h.ldap	2013-03-25 21:27:15.892248097 +0100
-+++ openssh-6.2p1/ldapincludes.h	2013-03-25 21:27:15.892248097 +0100
+diff -urNp -x '*.orig' openssh-8.4p1.org/ldapincludes.h openssh-8.4p1/ldapincludes.h
+--- openssh-8.4p1.org/ldapincludes.h	1970-01-01 01:00:00.000000000 +0100
++++ openssh-8.4p1/ldapincludes.h	2021-03-01 11:29:31.280956671 +0100
 @@ -0,0 +1,41 @@
 +/* $OpenBSD: ldapconf.c,v 1.1 2009/12/03 03:34:42 jfch Exp $ */
 +/*
@@ -1862,9 +1961,9 @@ diff -up openssh-6.2p1/ldapincludes.h.ldap openssh-6.2p1/ldapincludes.h
 +#endif
 +
 +#endif /* LDAPINCLUDES_H */
-diff -up openssh-6.2p1/ldapmisc.c.ldap openssh-6.2p1/ldapmisc.c
---- openssh-6.2p1/ldapmisc.c.ldap	2013-03-25 21:27:15.893248104 +0100
-+++ openssh-6.2p1/ldapmisc.c	2013-03-25 21:27:15.893248104 +0100
+diff -urNp -x '*.orig' openssh-8.4p1.org/ldapmisc.c openssh-8.4p1/ldapmisc.c
+--- openssh-8.4p1.org/ldapmisc.c	1970-01-01 01:00:00.000000000 +0100
++++ openssh-8.4p1/ldapmisc.c	2021-03-01 11:29:31.280956671 +0100
 @@ -0,0 +1,79 @@
 +
 +#include "ldapincludes.h"
@@ -1945,9 +2044,9 @@ diff -up openssh-6.2p1/ldapmisc.c.ldap openssh-6.2p1/ldapmisc.c
 +}
 +#endif
 +
-diff -up openssh-6.2p1/ldapmisc.h.ldap openssh-6.2p1/ldapmisc.h
---- openssh-6.2p1/ldapmisc.h.ldap	2013-03-25 21:27:15.893248104 +0100
-+++ openssh-6.2p1/ldapmisc.h	2013-03-25 21:27:15.893248104 +0100
+diff -urNp -x '*.orig' openssh-8.4p1.org/ldapmisc.h openssh-8.4p1/ldapmisc.h
+--- openssh-8.4p1.org/ldapmisc.h	1970-01-01 01:00:00.000000000 +0100
++++ openssh-8.4p1/ldapmisc.h	2021-03-01 11:29:31.280956671 +0100
 @@ -0,0 +1,35 @@
 +/* $OpenBSD: ldapbody.h,v 1.1 2009/12/03 03:34:42 jfch Exp $ */
 +/*
@@ -1984,107 +2083,9 @@ diff -up openssh-6.2p1/ldapmisc.h.ldap openssh-6.2p1/ldapmisc.h
 +
 +#endif /* LDAPMISC_H */
 +
---- openssh-7.2p1/Makefile.in.orig	2016-02-26 04:40:04.000000000 +0100
-+++ openssh-7.2p1/Makefile.in	2016-03-04 19:44:30.903306337 +0100
-@@ -25,6 +25,8 @@
- ASKPASS_PROGRAM=$(libexecdir)/ssh-askpass
- SFTP_SERVER=$(libexecdir)/sftp-server
- SSH_KEYSIGN=$(libexecdir)/ssh-keysign
-+SSH_LDAP_HELPER=$(libexecdir)/ssh-ldap-helper
-+SSH_LDAP_WRAPPER=$(libexecdir)/ssh-ldap-wrapper
- SSH_PKCS11_HELPER=$(libexecdir)/ssh-pkcs11-helper
- PRIVSEP_PATH=@PRIVSEP_PATH@
- SSH_PRIVSEP_USER=@SSH_PRIVSEP_USER@
-@@ -61,10 +63,11 @@
- EXEEXT=@EXEEXT@
- MANFMT=@MANFMT@
- MKDIR_P=@MKDIR_P@
-+INSTALL_SSH_LDAP_HELPER=@INSTALL_SSH_LDAP_HELPER@
-
- .SUFFIXES: .lo
- 
--TARGETS=ssh$(EXEEXT) sshd$(EXEEXT) ssh-add$(EXEEXT) ssh-keygen$(EXEEXT) ssh-keyscan${EXEEXT} ssh-keysign${EXEEXT} ssh-pkcs11-helper$(EXEEXT) ssh-agent$(EXEEXT) scp$(EXEEXT) sftp-server$(EXEEXT) sftp$(EXEEXT) ssh-sk-helper$(EXEEXT)
-+TARGETS=ssh$(EXEEXT) sshd$(EXEEXT) ssh-add$(EXEEXT) ssh-keygen$(EXEEXT) ssh-keyscan${EXEEXT} ssh-keysign${EXEEXT} ssh-pkcs11-helper$(EXEEXT) ssh-agent$(EXEEXT) scp$(EXEEXT) sftp-server$(EXEEXT) sftp$(EXEEXT) ssh-sk-helper$(EXEEXT) ssh-ldap-helper$(EXEEXT)
- 
- LIBOPENSSH_OBJS=\
- 	ssh_api.o \
-@@ -112,8 +115,8 @@
- 	sandbox-seccomp-filter.o sandbox-capsicum.o sandbox-pledge.o \
- 	sandbox-solaris.o
- 
--MANPAGES	= moduli.5.out scp.1.out ssh-add.1.out ssh-agent.1.out ssh-keygen.1.out ssh-keyscan.1.out ssh.1.out sshd.8.out sftp-server.8.out sftp.1.out ssh-keysign.8.out ssh-pkcs11-helper.8.out ssh-sk-helper.8.out sshd_config.5.out ssh_config.5.out
--MANPAGES_IN	= moduli.5 scp.1 ssh-add.1 ssh-agent.1 ssh-keygen.1 ssh-keyscan.1 ssh.1 sshd.8 sftp-server.8 sftp.1 ssh-keysign.8 ssh-pkcs11-helper.8 ssh-sk-helper.8 sshd_config.5 ssh_config.5
-+MANPAGES	= moduli.5.out scp.1.out ssh-add.1.out ssh-agent.1.out ssh-keygen.1.out ssh-keyscan.1.out ssh.1.out sshd.8.out sftp-server.8.out sftp.1.out ssh-keysign.8.out ssh-pkcs11-helper.8.out ssh-sk-helper.8.out ssh-ldap-helper.8.out sshd_config.5.out ssh_config.5.out ssh-ldap.conf.5.out
-+MANPAGES_IN	= moduli.5 scp.1 ssh-add.1 ssh-agent.1 ssh-keygen.1 ssh-keyscan.1 ssh.1 sshd.8 sftp-server.8 sftp.1 ssh-keysign.8 ssh-pkcs11-helper.8 ssh-sk-helper.8 ssh-ldap-helper.8 sshd_config.5 ssh_config.5 ssh-ldap.conf.5
- MANTYPE		= @MANTYPE@
- 
- CONFIGFILES=sshd_config.out ssh_config.out moduli.out
-@@ -235,6 +235,9 @@ ssh-pkcs11-helper$(EXEEXT): $(LIBCOMPAT)
- ssh-sk-helper$(EXEEXT): $(LIBCOMPAT) libssh.a $(SKHELPER_OBJS)
- 	$(LD) -o $@ $(SKHELPER_OBJS) $(LDFLAGS) -lssh -lopenbsd-compat -lssh -lopenbsd-compat $(LIBS) $(LIBFIDO2)
- 
-+ssh-ldap-helper$(EXEEXT): $(LIBCOMPAT) libssh.a ldapconf.o ldapbody.o ldapmisc.o ldap-helper.o
-+	$(LD) -o $@ ldapconf.o ldapbody.o ldapmisc.o ldap-helper.o $(LDFLAGS) -lssh -lopenbsd-compat -lfipscheck $(LIBS)
-+
- ssh-keyscan$(EXEEXT): $(LIBCOMPAT) libssh.a $(SSHKEYSCAN_OBJS)
- 	$(LD) -o $@ $(SSHKEYSCAN_OBJS) $(LDFLAGS) -lssh -lopenbsd-compat -lssh $(LIBS)
- 
-@@ -395,6 +395,10 @@ install-files:
- 	$(INSTALL) -m 4711 $(STRIP_OPT) ssh-keysign$(EXEEXT) $(DESTDIR)$(SSH_KEYSIGN)$(EXEEXT)
- 	$(INSTALL) -m 0755 $(STRIP_OPT) ssh-pkcs11-helper$(EXEEXT) $(DESTDIR)$(SSH_PKCS11_HELPER)$(EXEEXT)
- 	$(INSTALL) -m 0755 $(STRIP_OPT) ssh-sk-helper$(EXEEXT) $(DESTDIR)$(SSH_SK_HELPER)$(EXEEXT)
-+	if test ! -z "$(INSTALL_SSH_LDAP_HELPER)" ; then \
-+	    $(INSTALL) -m 0700 $(STRIP_OPT) ssh-ldap-helper $(DESTDIR)$(SSH_LDAP_HELPER) ; \
-+	    $(INSTALL) -m 0700 ssh-ldap-wrapper $(DESTDIR)$(SSH_LDAP_WRAPPER) ; \
-+	fi
- 	$(INSTALL) -m 0755 $(STRIP_OPT) sftp$(EXEEXT) $(DESTDIR)$(bindir)/sftp$(EXEEXT)
- 	$(INSTALL) -m 0755 $(STRIP_OPT) sftp-server$(EXEEXT) $(DESTDIR)$(SFTP_SERVER)$(EXEEXT)
- 	$(INSTALL) -m 644 ssh.1.out $(DESTDIR)$(mandir)/$(mansubdir)1/ssh.1
-@@ -416,6 +416,10 @@ install-files:
- 	$(INSTALL) -m 644 ssh-keysign.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-keysign.8
- 	$(INSTALL) -m 644 ssh-pkcs11-helper.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-pkcs11-helper.8
- 	$(INSTALL) -m 644 ssh-sk-helper.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-sk-helper.8
-+	if test ! -z "$(INSTALL_SSH_LDAP_HELPER)" ; then \
-+	    $(INSTALL) -m 644 ssh-ldap-helper.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-ldap-helper.8 ; \
-+	    $(INSTALL) -m 644 ssh-ldap.conf.5.out $(DESTDIR)$(mandir)/$(mansubdir)5/ssh-ldap.conf.5 ; \
-+	fi
- 
- install-sysconf:
- 	$(MKDIR_P) $(DESTDIR)$(sysconfdir)
-@@ -352,6 +366,13 @@
- 	else \
- 		echo "$(DESTDIR)$(sysconfdir)/moduli already exists, install will not overwrite"; \
- 	fi
-+	if test ! -z "$(INSTALL_SSH_LDAP_HELPER)" ; then \
-+		if [ ! -f $(DESTDIR)$(sysconfdir)/ldap.conf ]; then \
-+			$(INSTALL) -m 644 ldap.conf $(DESTDIR)$(sysconfdir)/ldap.conf; \
-+		else \
-+			echo "$(DESTDIR)$(sysconfdir)/ldap.conf already exists, install will not overwrite"; \
-+		fi ; \
-+	fi
- 
- host-key: ssh-keygen$(EXEEXT)
- 	@if [ -z "$(DESTDIR)" ] ; then \
-@@ -488,6 +488,8 @@ uninstall:
- 	-rm -f $(DESTDIR)$(SSH_KEYSIGN)$(EXEEXT)
- 	-rm -f $(DESTDIR)$(SSH_PKCS11_HELPER)$(EXEEXT)
- 	-rm -f $(DESTDIR)$(SSH_SK_HELPER)$(EXEEXT)
-+	-rm -f $(DESTDIR)$(SSH_LDAP_HELPER)$(EXEEXT)
-+	-rm -f $(DESTDIR)$(SSH_LDAP_WRAPPER)$(EXEEXT)
- 	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)1/ssh.1
- 	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)1/scp.1
- 	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)1/ssh-add.1
-@@ -502,6 +502,7 @@ uninstall:
- 	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-keysign.8
- 	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-pkcs11-helper.8
- 	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-sk-helper.8
-+	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-ldap-helper.8
- 
- regress-prep:
- 	$(MKDIR_P) `pwd`/regress/unittests/test_helper
-diff -up openssh-6.2p1/openssh-lpk-openldap.schema.ldap openssh-6.2p1/openssh-lpk-openldap.schema
---- openssh-6.2p1/openssh-lpk-openldap.schema.ldap	2013-03-25 21:27:15.894248110 +0100
-+++ openssh-6.2p1/openssh-lpk-openldap.schema	2013-03-25 21:27:15.894248110 +0100
+diff -urNp -x '*.orig' openssh-8.4p1.org/openssh-lpk-openldap.schema openssh-8.4p1/openssh-lpk-openldap.schema
+--- openssh-8.4p1.org/openssh-lpk-openldap.schema	1970-01-01 01:00:00.000000000 +0100
++++ openssh-8.4p1/openssh-lpk-openldap.schema	2021-03-01 11:29:31.280956671 +0100
 @@ -0,0 +1,21 @@
 +#
 +# LDAP Public Key Patch schema for use with openssh-ldappubkey
@@ -2107,9 +2108,9 @@ diff -up openssh-6.2p1/openssh-lpk-openldap.schema.ldap openssh-6.2p1/openssh-lp
 +	DESC 'MANDATORY: OpenSSH LPK objectclass'
 +	MUST ( sshPublicKey $ uid ) 
 +	)
-diff -up openssh-6.2p1/openssh-lpk-sun.schema.ldap openssh-6.2p1/openssh-lpk-sun.schema
---- openssh-6.2p1/openssh-lpk-sun.schema.ldap	2013-03-25 21:27:15.894248110 +0100
-+++ openssh-6.2p1/openssh-lpk-sun.schema	2013-03-25 21:27:15.894248110 +0100
+diff -urNp -x '*.orig' openssh-8.4p1.org/openssh-lpk-sun.schema openssh-8.4p1/openssh-lpk-sun.schema
+--- openssh-8.4p1.org/openssh-lpk-sun.schema	1970-01-01 01:00:00.000000000 +0100
++++ openssh-8.4p1/openssh-lpk-sun.schema	2021-03-01 11:29:31.284290176 +0100
 @@ -0,0 +1,23 @@
 +#
 +# LDAP Public Key Patch schema for use with openssh-ldappubkey
@@ -2134,9 +2135,100 @@ diff -up openssh-6.2p1/openssh-lpk-sun.schema.ldap openssh-6.2p1/openssh-lpk-sun
 +	DESC 'MANDATORY: OpenSSH LPK objectclass'
 +	MUST ( sshPublicKey $ uid ) 
 +	)
-diff -up openssh-6.2p2/ssh-ldap.conf.5.ldap openssh-6.2p2/ssh-ldap.conf.5
---- openssh-6.2p2/ssh-ldap.conf.5.ldap	2013-06-07 15:10:05.604942680 +0200
-+++ openssh-6.2p2/ssh-ldap.conf.5	2013-06-07 15:10:24.928857566 +0200
+diff -urNp -x '*.orig' openssh-8.4p1.org/ssh-ldap-helper.8 openssh-8.4p1/ssh-ldap-helper.8
+--- openssh-8.4p1.org/ssh-ldap-helper.8	1970-01-01 01:00:00.000000000 +0100
++++ openssh-8.4p1/ssh-ldap-helper.8	2021-03-01 11:29:31.284290176 +0100
+@@ -0,0 +1,79 @@
++.\" $OpenBSD: ssh-ldap-helper.8,v 1.1 2010/02/10 23:20:38 markus Exp $
++.\"
++.\" Copyright (c) 2010 Jan F. Chadima.  All rights reserved.
++.\"
++.\" Permission to use, copy, modify, and distribute this software for any
++.\" purpose with or without fee is hereby granted, provided that the above
++.\" copyright notice and this permission notice appear in all copies.
++.\"
++.\" THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
++.\" WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
++.\" MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
++.\" ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
++.\" WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
++.\" ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
++.\" OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
++.\"
++.Dd $Mdocdate: April 29 2010 $
++.Dt SSH-LDAP-HELPER 8
++.Os
++.Sh NAME
++.Nm ssh-ldap-helper
++.Nd sshd helper program for ldap support
++.Sh SYNOPSIS
++.Nm ssh-ldap-helper
++.Op Fl devw
++.Op Fl f Ar file
++.Op Fl s Ar user
++.Sh DESCRIPTION
++.Nm
++is used by
++.Xr sshd 1
++to access keys provided by an LDAP.
++.Nm
++is disabled by default and can only be enabled in the
++sshd configuration file
++.Pa /etc/ssh/sshd_config
++by setting
++.Cm AuthorizedKeysCommand
++to
++.Dq /usr/libexec/ssh-ldap-wrapper .
++.Pp
++.Nm
++is not intended to be invoked by the user, but from
++.Xr sshd 8 via
++.Xr ssh-ldap-wrapper .
++.Pp
++The options are as follows:
++.Bl -tag -width Ds
++.It Fl d
++Set the debug mode; 
++.Nm
++prints all logs to stderr instead of syslog.
++.It Fl e
++Implies \-w;
++.Nm
++halts if it encounters an unknown item in the ldap.conf file.
++.It Fl f
++.Nm
++uses this file as the ldap configuration file instead of /etc/ssh/ldap.conf (default).
++.It Fl s
++.Nm
++prints out the user's keys to stdout and exits.
++.It Fl v
++Implies \-d;
++increases verbosity.
++.It Fl w
++.Nm
++writes warnings about unknown items in the ldap.conf configuration file.
++.El
++.Sh SEE ALSO
++.Xr sshd 8 ,
++.Xr sshd_config 5 ,
++.Xr ssh-ldap.conf 5 ,
++.Sh HISTORY
++.Nm
++first appeared in
++OpenSSH 5.5 + PKA-LDAP .
++.Sh AUTHORS
++.An Jan F. Chadima Aq jchadima@redhat.com
+diff -urNp -x '*.orig' openssh-8.4p1.org/ssh-ldap-wrapper openssh-8.4p1/ssh-ldap-wrapper
+--- openssh-8.4p1.org/ssh-ldap-wrapper	1970-01-01 01:00:00.000000000 +0100
++++ openssh-8.4p1/ssh-ldap-wrapper	2021-03-01 11:29:31.284290176 +0100
+@@ -0,0 +1,4 @@
++#!/bin/sh
++
++exec /usr/libexec/openssh/ssh-ldap-helper -s "$1"
++
+diff -urNp -x '*.orig' openssh-8.4p1.org/ssh-ldap.conf.5 openssh-8.4p1/ssh-ldap.conf.5
+--- openssh-8.4p1.org/ssh-ldap.conf.5	1970-01-01 01:00:00.000000000 +0100
++++ openssh-8.4p1/ssh-ldap.conf.5	2021-03-01 11:29:31.284290176 +0100
 @@ -0,0 +1,379 @@
 +.\" $OpenBSD: ssh-ldap.conf.5,v 1.1 2010/02/10 23:20:38 markus Exp $
 +.\"
@@ -2517,94 +2609,3 @@ diff -up openssh-6.2p2/ssh-ldap.conf.5.ldap openssh-6.2p2/ssh-ldap.conf.5
 +OpenSSH 5.5 + PKA-LDAP .
 +.Sh AUTHORS
 +.An Jan F. Chadima Aq jchadima@redhat.com
-diff -up openssh-6.2p1/ssh-ldap-helper.8.ldap openssh-6.2p1/ssh-ldap-helper.8
---- openssh-6.2p1/ssh-ldap-helper.8.ldap	2013-03-25 21:27:15.895248117 +0100
-+++ openssh-6.2p1/ssh-ldap-helper.8	2013-03-25 21:27:15.895248117 +0100
-@@ -0,0 +1,79 @@
-+.\" $OpenBSD: ssh-ldap-helper.8,v 1.1 2010/02/10 23:20:38 markus Exp $
-+.\"
-+.\" Copyright (c) 2010 Jan F. Chadima.  All rights reserved.
-+.\"
-+.\" Permission to use, copy, modify, and distribute this software for any
-+.\" purpose with or without fee is hereby granted, provided that the above
-+.\" copyright notice and this permission notice appear in all copies.
-+.\"
-+.\" THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-+.\" WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-+.\" MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-+.\" ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-+.\" WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-+.\" ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-+.\" OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-+.\"
-+.Dd $Mdocdate: April 29 2010 $
-+.Dt SSH-LDAP-HELPER 8
-+.Os
-+.Sh NAME
-+.Nm ssh-ldap-helper
-+.Nd sshd helper program for ldap support
-+.Sh SYNOPSIS
-+.Nm ssh-ldap-helper
-+.Op Fl devw
-+.Op Fl f Ar file
-+.Op Fl s Ar user
-+.Sh DESCRIPTION
-+.Nm
-+is used by
-+.Xr sshd 1
-+to access keys provided by an LDAP.
-+.Nm
-+is disabled by default and can only be enabled in the
-+sshd configuration file
-+.Pa /etc/ssh/sshd_config
-+by setting
-+.Cm AuthorizedKeysCommand
-+to
-+.Dq /usr/libexec/ssh-ldap-wrapper .
-+.Pp
-+.Nm
-+is not intended to be invoked by the user, but from
-+.Xr sshd 8 via
-+.Xr ssh-ldap-wrapper .
-+.Pp
-+The options are as follows:
-+.Bl -tag -width Ds
-+.It Fl d
-+Set the debug mode; 
-+.Nm
-+prints all logs to stderr instead of syslog.
-+.It Fl e
-+Implies \-w;
-+.Nm
-+halts if it encounters an unknown item in the ldap.conf file.
-+.It Fl f
-+.Nm
-+uses this file as the ldap configuration file instead of /etc/ssh/ldap.conf (default).
-+.It Fl s
-+.Nm
-+prints out the user's keys to stdout and exits.
-+.It Fl v
-+Implies \-d;
-+increases verbosity.
-+.It Fl w
-+.Nm
-+writes warnings about unknown items in the ldap.conf configuration file.
-+.El
-+.Sh SEE ALSO
-+.Xr sshd 8 ,
-+.Xr sshd_config 5 ,
-+.Xr ssh-ldap.conf 5 ,
-+.Sh HISTORY
-+.Nm
-+first appeared in
-+OpenSSH 5.5 + PKA-LDAP .
-+.Sh AUTHORS
-+.An Jan F. Chadima Aq jchadima@redhat.com
-diff -up openssh-6.2p1/ssh-ldap-wrapper.ldap openssh-6.2p1/ssh-ldap-wrapper
---- openssh-6.2p1/ssh-ldap-wrapper.ldap	2013-03-25 21:27:15.896248124 +0100
-+++ openssh-6.2p1/ssh-ldap-wrapper	2013-03-25 21:27:15.896248124 +0100
-@@ -0,0 +1,4 @@
-+#!/bin/sh
-+
-+exec /usr/libexec/openssh/ssh-ldap-helper -s "$1"
-+

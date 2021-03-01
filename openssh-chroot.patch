@@ -1,6 +1,7 @@
---- openssh-4.4p1/servconf.c.orig	2006-08-18 16:23:15.000000000 +0200
-+++ openssh-4.4p1/servconf.c	2006-10-05 10:11:17.065971000 +0200
-@@ -56,7 +56,9 @@
+diff -urNp -x '*.orig' openssh-8.4p1.org/servconf.c openssh-8.4p1/servconf.c
+--- openssh-8.4p1.org/servconf.c	2020-09-27 09:25:01.000000000 +0200
++++ openssh-8.4p1/servconf.c	2021-03-01 11:30:33.634174889 +0100
+@@ -92,7 +92,9 @@ initialize_server_options(ServerOptions
  
  	/* Portable-specific options */
  	options->use_pam = -1;
@@ -11,7 +12,7 @@
  	/* Standard Options */
  	options->num_ports = 0;
  	options->ports_from_cmdline = 0;
-@@ -131,6 +133,9 @@
+@@ -301,6 +303,9 @@ fill_default_server_options(ServerOption
  	if (options->use_pam == -1)
  		options->use_pam = 0;
  
@@ -19,17 +20,17 @@
 +		options->use_chroot = 0;
 +	
  	/* Standard Options */
- 	if (options->protocol == SSH_PROTO_UNKNOWN)
- 		options->protocol = SSH_PROTO_1|SSH_PROTO_2;
-@@ -270,6 +275,7 @@
+ 	if (options->num_host_key_files == 0) {
+ 		/* fill default hostkeys for protocols */
+@@ -502,6 +507,7 @@ typedef enum {
  	sBadOption,		/* == unknown option */
  	/* Portable-specific options */
  	sUsePAM,
 +	sUseChroot,
  	/* Standard Options */
- 	sPort, sHostKeyFile, sServerKeyBits, sLoginGraceTime, sKeyRegenerationTime,
+ 	sPort, sHostKeyFile, sLoginGraceTime,
  	sPermitRootLogin, sLogFacility, sLogLevel,
-@@ -312,6 +318,11 @@
+@@ -556,6 +562,11 @@ static struct {
  #else
  	{ "usepam", sUnsupported, SSHCFG_GLOBAL },
  #endif
@@ -41,7 +42,7 @@
  	{ "pamauthenticationviakbdint", sDeprecated, SSHCFG_GLOBAL },
  	/* Standard Options */
  	{ "port", sPort, SSHCFG_GLOBAL },
-@@ -662,6 +673,10 @@
+@@ -1319,6 +1330,10 @@ process_server_config_line_depth(ServerO
  		intptr = &options->use_pam;
  		goto parse_flag;
  
@@ -52,19 +53,21 @@
  	/* Standard Options */
  	case sBadOption:
  		return -1;
---- openssh-3.7.1p2/servconf.h	2003-09-02 14:58:22.000000000 +0200
-+++ openssh-3.7.1p2.pius/servconf.h	2003-10-07 20:49:08.000000000 +0200
-@@ -109,6 +109,7 @@
- 	int	max_startups_rate;
- 	int	max_startups;
+diff -urNp -x '*.orig' openssh-8.4p1.org/servconf.h openssh-8.4p1/servconf.h
+--- openssh-8.4p1.org/servconf.h	2020-09-27 09:25:01.000000000 +0200
++++ openssh-8.4p1/servconf.h	2021-03-01 11:30:33.637508395 +0100
+@@ -178,6 +178,7 @@ typedef struct {
+ 	int	max_authtries;
+ 	int	max_sessions;
  	char   *banner;			/* SSH-2 banner message */
 +	int     use_chroot;		/* Enable chrooted enviroment support */
  	int	use_dns;
  	int	client_alive_interval;	/*
  					 * poke the client this often to
---- openssh-7.2p1/session.c.orig	2016-03-05 10:24:44.227756638 +0100
-+++ openssh-7.2p1/session.c	2016-03-05 10:24:50.237756386 +0100
-@@ -1381,6 +1381,10 @@ void
+diff -urNp -x '*.orig' openssh-8.4p1.org/session.c openssh-8.4p1/session.c
+--- openssh-8.4p1.org/session.c	2020-09-27 09:25:01.000000000 +0200
++++ openssh-8.4p1/session.c	2021-03-01 11:30:33.637508395 +0100
+@@ -1367,6 +1367,10 @@ void
  do_setusercontext(struct passwd *pw)
  {
  	char uidstr[32], *chroot_path, *tmp;
@@ -75,7 +78,7 @@
  
  	platform_setusercontext(pw);
  
-@@ -1532,6 +1536,29 @@ do_setusercontext(struct passwd *pw)
+@@ -1409,6 +1413,29 @@ do_setusercontext(struct passwd *pw)
  			free(options.chroot_directory);
  			options.chroot_directory = NULL;
  			in_chroot = 1;
@@ -105,9 +108,10 @@
  		}
  
  #ifdef HAVE_LOGIN_CAP
---- openssh-3.7.1p2/sshd_config	2003-09-02 14:51:18.000000000 +0200
-+++ openssh-3.7.1p2.pius/sshd_config	2003-10-07 20:49:08.000000000 +0200
-@@ -91,6 +91,10 @@
+diff -urNp -x '*.orig' openssh-8.4p1.org/sshd_config openssh-8.4p1/sshd_config
+--- openssh-8.4p1.org/sshd_config	2021-03-01 11:30:33.370827964 +0100
++++ openssh-8.4p1/sshd_config	2021-03-01 11:30:33.637508395 +0100
+@@ -85,6 +85,10 @@ GSSAPIAuthentication yes
  # and ChallengeResponseAuthentication to 'no'.
  UsePAM yes
  
@@ -118,9 +122,10 @@
  #AllowAgentForwarding yes
  # Security advisory:
  # http://securitytracker.com/alerts/2004/Sep/1011143.html
---- openssh-4.4p1/sshd_config.0.orig	2006-09-26 13:03:48.000000000 +0200
-+++ openssh-4.4p1/sshd_config.0	2006-10-05 10:11:41.615971000 +0200
-@@ -921,6 +921,16 @@ DESCRIPTION
+diff -urNp -x '*.orig' openssh-8.4p1.org/sshd_config.0 openssh-8.4p1/sshd_config.0
+--- openssh-8.4p1.org/sshd_config.0	2020-09-27 09:42:11.000000000 +0200
++++ openssh-8.4p1/sshd_config.0	2021-03-01 11:30:33.637508395 +0100
+@@ -1011,6 +1011,16 @@ DESCRIPTION
               TrustedUserCAKeys.  For more details on certificates, see the
               CERTIFICATES section in ssh-keygen(1).
  
@@ -137,9 +142,10 @@
       UseDNS  Specifies whether sshd(8) should look up the remote host name,
               and to check that the resolved host name for the remote IP
               address maps back to the very same IP address.
---- openssh-3.8p1/sshd_config.5.orig	2004-02-18 04:31:24.000000000 +0100
-+++ openssh-3.8p1/sshd_config.5	2004-02-25 21:17:23.000000000 +0100
-@@ -552,6 +552,16 @@
+diff -urNp -x '*.orig' openssh-8.4p1.org/sshd_config.5 openssh-8.4p1/sshd_config.5
+--- openssh-8.4p1.org/sshd_config.5	2020-09-27 09:25:01.000000000 +0200
++++ openssh-8.4p1/sshd_config.5	2021-03-01 11:30:33.637508395 +0100
+@@ -1640,6 +1640,16 @@ Gives the facility code that is used whe
  The possible values are: DAEMON, USER, AUTH, LOCAL0, LOCAL1, LOCAL2,
  LOCAL3, LOCAL4, LOCAL5, LOCAL6, LOCAL7.
  The default is AUTH.

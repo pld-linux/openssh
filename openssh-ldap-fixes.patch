@@ -1,7 +1,19 @@
-diff -ur openssh-5.9p1.org/ldap-helper.c openssh-5.9p1/ldap-helper.c
---- openssh-5.9p1.org/ldap-helper.c	2011-09-11 08:44:20.526555802 +0200
-+++ openssh-5.9p1/ldap-helper.c	2011-09-11 08:43:11.328426660 +0200
-@@ -62,6 +62,8 @@
+diff -urNp -x '*.orig' openssh-8.4p1.org/Makefile.in openssh-8.4p1/Makefile.in
+--- openssh-8.4p1.org/Makefile.in	2021-03-01 11:29:52.615391132 +0100
++++ openssh-8.4p1/Makefile.in	2021-03-01 11:29:52.908739606 +0100
+@@ -234,7 +234,7 @@ ssh-sk-helper$(EXEEXT): $(LIBCOMPAT) lib
+ 	$(LD) -o $@ $(SKHELPER_OBJS) $(LDFLAGS) -lssh -lopenbsd-compat -lssh -lopenbsd-compat $(LIBS) $(LIBFIDO2)
+ 
+ ssh-ldap-helper$(EXEEXT): $(LIBCOMPAT) libssh.a ldapconf.o ldapbody.o ldapmisc.o ldap-helper.o
+-	$(LD) -o $@ ldapconf.o ldapbody.o ldapmisc.o ldap-helper.o $(LDFLAGS) -lssh -lopenbsd-compat -lfipscheck $(LIBS)
++	$(LD) -o $@ ldapconf.o ldapbody.o ldapmisc.o ldap-helper.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS)
+ 
+ ssh-keyscan$(EXEEXT): $(LIBCOMPAT) libssh.a $(SSHKEYSCAN_OBJS)
+ 	$(LD) -o $@ $(SSHKEYSCAN_OBJS) $(LDFLAGS) -lssh -lopenbsd-compat -lssh $(LIBS)
+diff -urNp -x '*.orig' openssh-8.4p1.org/ldap-helper.c openssh-8.4p1/ldap-helper.c
+--- openssh-8.4p1.org/ldap-helper.c	2021-03-01 11:29:52.615391132 +0100
++++ openssh-8.4p1/ldap-helper.c	2021-03-01 11:29:52.908739606 +0100
+@@ -62,6 +62,8 @@ usage(void)
  int
  main(int ac, char **av)
  {
@@ -10,16 +22,3 @@ diff -ur openssh-5.9p1.org/ldap-helper.c openssh-5.9p1/ldap-helper.c
  	int opt;
  	FILE *outfile = NULL;
  
-diff -ur openssh-5.9p1.org/Makefile.in openssh-5.9p1/Makefile.in
---- openssh-5.9p1.org/Makefile.in	2011-09-11 08:44:20.543222823 +0200
-+++ openssh-5.9p1/Makefile.in	2011-09-11 08:43:11.348427083 +0200
-@@ -165,7 +165,7 @@
- 	$(LD) -o $@ ssh-pkcs11-helper.o ssh-pkcs11.o $(LDFLAGS) -lssh -lopenbsd-compat -lssh -lssh -lopenbsd-compat $(LIBS)
- 
- ssh-ldap-helper$(EXEEXT): $(LIBCOMPAT) libssh.a ldapconf.o ldapbody.o ldapmisc.o ldap-helper.o
--	$(LD) -o $@ ldapconf.o ldapbody.o ldapmisc.o ldap-helper.o $(LDFLAGS) -lssh -lopenbsd-compat -lfipscheck $(LIBS)
-+	$(LD) -o $@ ldapconf.o ldapbody.o ldapmisc.o ldap-helper.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS)
- 
- ssh-keyscan$(EXEEXT): $(LIBCOMPAT) libssh.a ssh-keyscan.o roaming_dummy.o
- 	$(LD) -o $@ ssh-keyscan.o roaming_dummy.o $(LDFLAGS) -lssh -lopenbsd-compat -lssh $(LIBS)
-

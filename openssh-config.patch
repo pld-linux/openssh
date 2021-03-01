@@ -1,70 +1,6 @@
---- openssh-4.6p1/sshd_config~	2007-10-13 01:37:17.000000000 +0200
-+++ openssh-4.6p1/sshd_config	2007-10-13 01:47:12.000000000 +0200
-@@ -41,7 +41,7 @@
- # Authentication:
- 
- #LoginGraceTime 2m
--#PermitRootLogin prohibit-password
-+PermitRootLogin no
- #StrictModes yes
- #MaxAuthTries 6
- #MaxSessions 10
-@@ -50,6 +51,9 @@
- # To disable tunneled clear text passwords, change to no here!
- #PasswordAuthentication yes
- #PermitEmptyPasswords no
-+
-+# Allow DSA keys
-+## PubkeyAcceptedKeyTypes +ssh-dss
- 
- # Change to no to disable s/key passwords
- #ChallengeResponseAuthentication yes
-@@ -66,6 +70,7 @@
- # GSSAPI options
- #GSSAPIAuthentication no
- #GSSAPICleanupCredentials yes
-+GSSAPIAuthentication yes
- 
- # Set this to 'yes' to enable PAM authentication, account processing, 
- # and session processing. If this is enabled, PAM authentication will 
-@@ -89,10 +92,12 @@
- # If you just want the PAM account and session checks to run without
- # PAM authentication, then enable this but set PasswordAuthentication
- # and ChallengeResponseAuthentication to 'no'.
--#UsePAM no
-+UsePAM yes
- 
- #AllowAgentForwarding yes
--#AllowTcpForwarding yes
-+# Security advisory:
-+# http://securitytracker.com/alerts/2004/Sep/1011143.html
-+AllowTcpForwarding no
- #GatewayPorts no
- #X11Forwarding no
- #X11DisplayOffset 10
-@@ -106,6 +112,9 @@
- # no default banner path
- #Banner /some/path
- 
-+# Accept locale-related environment variables, also accept some GIT vars
-+AcceptEnv LANG LC_* LANGUAGE XMODIFIERS TZ GIT_AUTHOR_NAME GIT_AUTHOR_EMAIL GIT_COMMITTER_NAME GIT_COMMITTER_EMAIL
-+
- # override default of no subsystems
- Subsystem	sftp	/usr/libexec/sftp-server
- 
-@@ -119,6 +133,10 @@
- # override default of no subsystems
- Subsystem	sftp	/usr/libexec/sftp-server
- 
-+# Uncomment this if you want to use .local domain
-+#Host *.local
-+#	CheckHostIP no
-+
- # Example of overriding settings on a per-user basis
- #Match User anoncvs
- #	X11Forwarding no
---- openssh-4.6p1/ssh_config~	2006-06-13 05:01:10.000000000 +0200
-+++ openssh-4.6p1/ssh_config	2007-10-13 02:00:16.000000000 +0200
+diff -urNp -x '*.orig' openssh-8.4p1.org/ssh_config openssh-8.4p1/ssh_config
+--- openssh-8.4p1.org/ssh_config	2020-09-27 09:25:01.000000000 +0200
++++ openssh-8.4p1/ssh_config	2021-03-01 11:30:15.249892693 +0100
 @@ -20,10 +20,13 @@
  # Host *
  #   ForwardAgent no
@@ -79,7 +15,7 @@
  #   BatchMode no
  #   CheckHostIP yes
  #   AddressFamily any
-@@ -42,3 +45,18 @@
+@@ -44,3 +47,18 @@
  #   ProxyCommand ssh -q -W %h:%p gateway.example.com
  #   RekeyLimit 1G 1h
  #   UserKnownHostsFile ~/.ssh/known_hosts.d/%k
@@ -98,4 +34,65 @@
 +#	HostkeyAlgorithms +ssh-dss
 +# Send locale-related environment variables, also pass some GIT vars
 +	SendEnv LANG LC_* LANGUAGE XMODIFIERS TZ GIT_AUTHOR_NAME GIT_AUTHOR_EMAIL GIT_COMMITTER_NAME GIT_COMMITTER_EMAIL
-+	HashKnownHosts yes
+diff -urNp -x '*.orig' openssh-8.4p1.org/sshd_config openssh-8.4p1/sshd_config
+--- openssh-8.4p1.org/sshd_config	2020-09-27 09:25:01.000000000 +0200
++++ openssh-8.4p1/sshd_config	2021-03-01 11:30:15.249892693 +0100
+@@ -29,7 +29,7 @@
+ # Authentication:
+ 
+ #LoginGraceTime 2m
+-#PermitRootLogin prohibit-password
++PermitRootLogin no
+ #StrictModes yes
+ #MaxAuthTries 6
+ #MaxSessions 10
+@@ -57,6 +57,9 @@ AuthorizedKeysFile	.ssh/authorized_keys
+ #PasswordAuthentication yes
+ #PermitEmptyPasswords no
+ 
++# Allow DSA keys
++## PubkeyAcceptedKeyTypes +ssh-dss
++
+ # Change to no to disable s/key passwords
+ #ChallengeResponseAuthentication yes
+ 
+@@ -69,6 +72,7 @@ AuthorizedKeysFile	.ssh/authorized_keys
+ # GSSAPI options
+ #GSSAPIAuthentication no
+ #GSSAPICleanupCredentials yes
++GSSAPIAuthentication yes
+ 
+ # Set this to 'yes' to enable PAM authentication, account processing,
+ # and session processing. If this is enabled, PAM authentication will
+@@ -79,10 +83,12 @@ AuthorizedKeysFile	.ssh/authorized_keys
+ # If you just want the PAM account and session checks to run without
+ # PAM authentication, then enable this but set PasswordAuthentication
+ # and ChallengeResponseAuthentication to 'no'.
+-#UsePAM no
++UsePAM yes
+ 
+ #AllowAgentForwarding yes
+-#AllowTcpForwarding yes
++# Security advisory:
++# http://securitytracker.com/alerts/2004/Sep/1011143.html
++AllowTcpForwarding no
+ #GatewayPorts no
+ #X11Forwarding no
+ #X11DisplayOffset 10
+@@ -105,9 +111,16 @@ AuthorizedKeysFile	.ssh/authorized_keys
+ # no default banner path
+ #Banner none
+ 
++# Accept locale-related environment variables, also accept some GIT vars
++AcceptEnv LANG LC_* LANGUAGE XMODIFIERS TZ GIT_AUTHOR_NAME GIT_AUTHOR_EMAIL GIT_COMMITTER_NAME GIT_COMMITTER_EMAIL
++
+ # override default of no subsystems
+ Subsystem	sftp	/usr/libexec/sftp-server
+ 
++# Uncomment this if you want to use .local domain
++#Host *.local
++#	CheckHostIP no
++
+ # Example of overriding settings on a per-user basis
+ #Match User anoncvs
+ #	X11Forwarding no

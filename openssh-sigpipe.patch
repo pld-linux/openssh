@@ -1,16 +1,17 @@
---- openssh-4.0p1/clientloop.c.orig	2005-03-01 11:24:33.000000000 +0100
-+++ openssh-4.0p1/clientloop.c	2005-03-10 15:10:05.000000000 +0100
-@@ -104,6 +104,9 @@
-  */
- extern char *host;
+diff -urNp -x '*.orig' openssh-8.4p1.org/clientloop.c openssh-8.4p1/clientloop.c
+--- openssh-8.4p1.org/clientloop.c	2020-09-27 09:25:01.000000000 +0200
++++ openssh-8.4p1/clientloop.c	2021-03-01 11:29:10.909905265 +0100
+@@ -127,6 +127,9 @@ extern int fork_after_authentication_fla
+ /* Control socket */
+ extern int muxserver_sock; /* XXX use mux_client_cleanup() instead */
  
 +/* if we process SIGPIPE */
 +extern int enable_sigpipe;
 +
  /*
-  * Flag to indicate that we have received a window change signal which has
-  * not yet been processed.  This will cause a message indicating the new
-@@ -1317,6 +1317,8 @@ client_loop(struct ssh *ssh, int have_pt
+  * Name of the host we are connecting to.  This is the name given on the
+  * command line, or the Hostname specified for the user-supplied name in a
+@@ -1301,6 +1304,8 @@ client_loop(struct ssh *ssh, int have_pt
  		ssh_signal(SIGQUIT, signal_handler);
  	if (ssh_signal(SIGTERM, SIG_IGN) != SIG_IGN)
  		ssh_signal(SIGTERM, signal_handler);
@@ -19,10 +20,10 @@
  	ssh_signal(SIGWINCH, window_change_handler);
  
  	if (have_pty)
-diff -urN openssh-3.9p1.org/ssh.0 openssh-3.9p1/ssh.0
---- openssh-3.9p1.org/ssh.0	2004-08-17 19:03:29.327565840 +0200
-+++ openssh-3.9p1/ssh.0	2004-08-17 19:03:41.809668272 +0200
-@@ -433,6 +433,8 @@ DESCRIPTION
+diff -urNp -x '*.orig' openssh-8.4p1.org/ssh.0 openssh-8.4p1/ssh.0
+--- openssh-8.4p1.org/ssh.0	2020-09-27 09:42:10.000000000 +0200
++++ openssh-8.4p1/ssh.0	2021-03-01 11:29:10.909905265 +0100
+@@ -446,6 +446,8 @@ DESCRIPTION
       -y      Send log information using the syslog(3) system module.  By
               default this information is sent to stderr.
  
@@ -31,10 +32,11 @@ diff -urN openssh-3.9p1.org/ssh.0 openssh-3.9p1/ssh.0
       ssh may additionally obtain configuration data from a per-user
       configuration file and a system-wide configuration file.  The file format
       and configuration options are described in ssh_config(5).
---- openssh-5.6p1/ssh.1~	2010-08-24 14:05:48.000000000 +0300
-+++ openssh-5.6p1/ssh.1	2010-08-24 14:06:57.879253682 +0300
+diff -urNp -x '*.orig' openssh-8.4p1.org/ssh.1 openssh-8.4p1/ssh.1
+--- openssh-8.4p1.org/ssh.1	2020-09-27 09:25:01.000000000 +0200
++++ openssh-8.4p1/ssh.1	2021-03-01 11:29:10.909905265 +0100
 @@ -42,7 +42,7 @@
- .Nd OpenSSH SSH client (remote login program)
+ .Nd OpenSSH remote login client
  .Sh SYNOPSIS
  .Nm ssh
 -.Op Fl 46AaCfGgKkMNnqsTtVvXxYy
@@ -42,7 +44,7 @@ diff -urN openssh-3.9p1.org/ssh.0 openssh-3.9p1/ssh.0
  .Op Fl B Ar bind_interface
  .Op Fl b Ar bind_address
  .Op Fl c Ar cipher_spec
-@@ -138,6 +138,11 @@ on the local machine as the source addre
+@@ -142,6 +142,11 @@ on the local machine as the source addre
  of the connection.
  Only useful on systems with more than one address.
  .Pp
@@ -54,9 +56,10 @@ diff -urN openssh-3.9p1.org/ssh.0 openssh-3.9p1/ssh.0
  .It Fl C
  Requests compression of all data (including stdin, stdout, stderr, and
  data for forwarded X11, TCP and
---- openssh-4.0p1/ssh.c.orig	2005-03-02 02:04:33.000000000 +0100
-+++ openssh-4.0p1/ssh.c	2005-03-10 15:11:10.000000000 +0100
-@@ -135,6 +135,9 @@
+diff -urNp -x '*.orig' openssh-8.4p1.org/ssh.c openssh-8.4p1/ssh.c
+--- openssh-8.4p1.org/ssh.c	2020-09-27 09:25:01.000000000 +0200
++++ openssh-8.4p1/ssh.c	2021-03-01 11:29:10.909905265 +0100
+@@ -190,6 +190,9 @@ struct sshbuf *command;
  /* Should we execute a command or invoke a subsystem? */
  int subsystem_flag = 0;
  
@@ -64,9 +67,9 @@ diff -urN openssh-3.9p1.org/ssh.0 openssh-3.9p1/ssh.0
 +int enable_sigpipe = 0;
 +
  /* # of replies received for global requests */
- static int client_global_request_id = 0;
+ static int forward_confirms_pending = -1;
  
-@@ -204,7 +204,7 @@ static void
+@@ -203,7 +206,7 @@ static void
  usage(void)
  {
  	fprintf(stderr,
@@ -75,7 +78,7 @@ diff -urN openssh-3.9p1.org/ssh.0 openssh-3.9p1/ssh.0
  "           [-b bind_address] [-c cipher_spec] [-D [bind_address:]port]\n"
  "           [-E log_file] [-e escape_char] [-F configfile] [-I pkcs11]\n"
  "           [-i identity_file] [-J [user@]host[:port]] [-L address]\n"
-@@ -666,7 +666,7 @@ main(int ac, char **av)
+@@ -722,7 +725,7 @@ main(int ac, char **av)
  
   again:
  	while ((opt = getopt(ac, av, "1246ab:c:e:fgi:kl:m:no:p:qstvx"
@@ -84,7 +87,7 @@ diff -urN openssh-3.9p1.org/ssh.0 openssh-3.9p1/ssh.0
  		switch (opt) {
  		case '1':
  			fatal("SSH protocol v.1 is no longer supported");
-@@ -985,6 +985,9 @@ main(int ac, char **av)
+@@ -1066,6 +1069,9 @@ main(int ac, char **av)
  		case 'F':
  			config = optarg;
  			break;
@@ -94,4 +97,3 @@ diff -urN openssh-3.9p1.org/ssh.0 openssh-3.9p1/ssh.0
  		default:
  			usage();
  		}
-

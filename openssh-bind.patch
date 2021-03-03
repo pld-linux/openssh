@@ -1,13 +1,12 @@
---- a/channels.c~	2017-10-02 21:34:26.000000000 +0200
-+++ b/channels.c	2017-10-06 08:39:25.072904075 +0200
-@@ -4444,6 +4444,9 @@ x11_create_display_inet(struct ssh *ssh,
- 				debug2("%s: bind port %d: %.100s", __func__,
- 				    port, strerror(errno));
+--- openssh-8.5p1/channels.c~	2021-03-02 11:31:47.000000000 +0100
++++ openssh-8.5p1/channels.c	2021-03-03 21:43:11.034054979 +0100
+@@ -4579,6 +4579,9 @@ x11_create_display_inet(struct ssh *ssh,
+ 				debug2_f("bind port %d: %.100s", port,
+ 				    strerror(errno));
  				close(sock);
 +				// vserver hack
 +				if (errno == EADDRNOTAVAIL)
-+					continue;
++				    continue;
  				for (n = 0; n < num_socks; n++)
  					close(socks[n]);
  				num_socks = 0;
-

@@ -29,7 +29,7 @@ diff -urNp -x '*.orig' openssh-8.4p1.org/servconf.c openssh-8.4p1/servconf.c
 +	sUseChroot,
  	/* Standard Options */
  	sPort, sHostKeyFile, sLoginGraceTime,
- 	sPermitRootLogin, sLogFacility, sLogLevel,
+ 	sPermitRootLogin, sLogFacility, sLogLevel, sLogVerbose,
 @@ -556,6 +562,11 @@ static struct {
  #else
  	{ "usepam", sUnsupported, SSHCFG_GLOBAL },

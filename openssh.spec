@@ -528,7 +528,7 @@ Summary(pl.UTF-8):	Schemat klucza publicznego LDAP dla OpenSSH
 Group:		Networking/Daemons
 Requires(post,postun):	sed >= 4.0
 Requires:	openldap-servers
-%{?noarchpackage}
+BuildArch:	noarch
 
 %description -n openldap-schema-openssh-lpk
 This package contains OpenSSH LDAP Public Key schema for openldap.

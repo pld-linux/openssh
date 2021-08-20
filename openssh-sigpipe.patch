@@ -60,8 +60,8 @@ diff -urNp -x '*.orig' openssh-8.4p1.org/ssh.c openssh-8.4p1/ssh.c
 --- openssh-8.4p1.org/ssh.c	2020-09-27 09:25:01.000000000 +0200
 +++ openssh-8.4p1/ssh.c	2021-03-01 11:29:10.909905265 +0100
 @@ -190,6 +190,9 @@ struct sshbuf *command;
- /* Should we execute a command or invoke a subsystem? */
- int subsystem_flag = 0;
+ /* command to be executed */
+ struct sshbuf *command;
  
 +/* Enable sigpipe */
 +int enable_sigpipe = 0;

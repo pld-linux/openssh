@@ -54,7 +54,7 @@ diff -urNp -x '*.orig' openssh-8.4p1.org/sshd_config openssh-8.4p1/sshd_config
 +## PubkeyAcceptedKeyTypes +ssh-dss
 +
  # Change to no to disable s/key passwords
- #ChallengeResponseAuthentication yes
+ #KbdInteractiveAuthentication yes
  
 @@ -69,6 +72,7 @@ AuthorizedKeysFile	.ssh/authorized_keys
  # GSSAPI options
@@ -67,7 +67,7 @@ diff -urNp -x '*.orig' openssh-8.4p1.org/sshd_config openssh-8.4p1/sshd_config
 @@ -79,10 +83,12 @@ AuthorizedKeysFile	.ssh/authorized_keys
  # If you just want the PAM account and session checks to run without
  # PAM authentication, then enable this but set PasswordAuthentication
- # and ChallengeResponseAuthentication to 'no'.
+ # and KbdInteractiveAuthentication to 'no'.
 -#UsePAM no
 +UsePAM yes
  

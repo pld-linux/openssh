@@ -1,6 +1,6 @@
-diff -urNp -x '*.orig' openssh-8.4p1.org/ssh_config openssh-8.4p1/ssh_config
---- openssh-8.4p1.org/ssh_config	2020-09-27 09:25:01.000000000 +0200
-+++ openssh-8.4p1/ssh_config	2021-03-01 11:30:15.249892693 +0100
+diff -urNp -x '*.orig' openssh-8.8p1.org/ssh_config openssh-8.8p1/ssh_config
+--- openssh-8.8p1.org/ssh_config	2021-09-26 16:03:19.000000000 +0200
++++ openssh-8.8p1/ssh_config	2021-12-09 20:12:26.796586510 +0100
 @@ -20,10 +20,13 @@
  # Host *
  #   ForwardAgent no
@@ -34,9 +34,9 @@ diff -urNp -x '*.orig' openssh-8.4p1.org/ssh_config openssh-8.4p1/ssh_config
 +#	HostkeyAlgorithms +ssh-dss
 +# Send locale-related environment variables, also pass some GIT vars
 +	SendEnv LANG LC_* LANGUAGE XMODIFIERS TZ GIT_AUTHOR_NAME GIT_AUTHOR_EMAIL GIT_COMMITTER_NAME GIT_COMMITTER_EMAIL
-diff -urNp -x '*.orig' openssh-8.4p1.org/sshd_config openssh-8.4p1/sshd_config
---- openssh-8.4p1.org/sshd_config	2020-09-27 09:25:01.000000000 +0200
-+++ openssh-8.4p1/sshd_config	2021-03-01 11:30:15.249892693 +0100
+diff -urNp -x '*.orig' openssh-8.8p1.org/sshd_config openssh-8.8p1/sshd_config
+--- openssh-8.8p1.org/sshd_config	2021-09-26 16:03:19.000000000 +0200
++++ openssh-8.8p1/sshd_config	2021-12-09 20:12:26.796586510 +0100
 @@ -29,7 +29,7 @@
  # Authentication:
  
@@ -64,7 +64,7 @@ diff -urNp -x '*.orig' openssh-8.4p1.org/sshd_config openssh-8.4p1/sshd_config
  
  # Set this to 'yes' to enable PAM authentication, account processing,
  # and session processing. If this is enabled, PAM authentication will
-@@ -79,10 +83,12 @@ AuthorizedKeysFile	.ssh/authorized_keys
+@@ -79,7 +83,7 @@ AuthorizedKeysFile	.ssh/authorized_keys
  # If you just want the PAM account and session checks to run without
  # PAM authentication, then enable this but set PasswordAuthentication
  # and KbdInteractiveAuthentication to 'no'.
@@ -72,14 +72,8 @@ diff -urNp -x '*.orig' openssh-8.4p1.org/sshd_config openssh-8.4p1/sshd_config
 +UsePAM yes
  
  #AllowAgentForwarding yes
--#AllowTcpForwarding yes
-+# Security advisory:
-+# http://securitytracker.com/alerts/2004/Sep/1011143.html
-+AllowTcpForwarding no
- #GatewayPorts no
- #X11Forwarding no
- #X11DisplayOffset 10
-@@ -105,9 +111,16 @@ AuthorizedKeysFile	.ssh/authorized_keys
+ #AllowTcpForwarding yes
+@@ -105,9 +109,16 @@ AuthorizedKeysFile	.ssh/authorized_keys
  # no default banner path
  #Banner none
  

@@ -1,6 +1,6 @@
-diff -urNp -x '*.orig' openssh-8.4p1.org/servconf.c openssh-8.4p1/servconf.c
---- openssh-8.4p1.org/servconf.c	2020-09-27 09:25:01.000000000 +0200
-+++ openssh-8.4p1/servconf.c	2021-03-01 11:30:33.634174889 +0100
+diff -urNp -x '*.orig' openssh-8.8p1.org/servconf.c openssh-8.8p1/servconf.c
+--- openssh-8.8p1.org/servconf.c	2021-09-26 16:03:19.000000000 +0200
++++ openssh-8.8p1/servconf.c	2021-12-09 20:13:16.486586503 +0100
 @@ -92,7 +92,9 @@ initialize_server_options(ServerOptions
  
  	/* Portable-specific options */
@@ -12,7 +12,7 @@ diff -urNp -x '*.orig' openssh-8.4p1.org/servconf.c openssh-8.4p1/servconf.c
  	/* Standard Options */
  	options->num_ports = 0;
  	options->ports_from_cmdline = 0;
-@@ -301,6 +303,9 @@ fill_default_server_options(ServerOption
+@@ -279,6 +281,9 @@ fill_default_server_options(ServerOption
  	if (options->use_pam == -1)
  		options->use_pam = 0;
  
@@ -22,7 +22,7 @@ diff -urNp -x '*.orig' openssh-8.4p1.org/servconf.c openssh-8.4p1/servconf.c
  	/* Standard Options */
  	if (options->num_host_key_files == 0) {
  		/* fill default hostkeys for protocols */
-@@ -502,6 +507,7 @@ typedef enum {
+@@ -486,6 +491,7 @@ typedef enum {
  	sBadOption,		/* == unknown option */
  	/* Portable-specific options */
  	sUsePAM,
@@ -30,7 +30,7 @@ diff -urNp -x '*.orig' openssh-8.4p1.org/servconf.c openssh-8.4p1/servconf.c
  	/* Standard Options */
  	sPort, sHostKeyFile, sLoginGraceTime,
  	sPermitRootLogin, sLogFacility, sLogLevel, sLogVerbose,
-@@ -556,6 +562,11 @@ static struct {
+@@ -538,6 +544,11 @@ static struct {
  #else
  	{ "usepam", sUnsupported, SSHCFG_GLOBAL },
  #endif
@@ -42,7 +42,7 @@ diff -urNp -x '*.orig' openssh-8.4p1.org/servconf.c openssh-8.4p1/servconf.c
  	{ "pamauthenticationviakbdint", sDeprecated, SSHCFG_GLOBAL },
  	/* Standard Options */
  	{ "port", sPort, SSHCFG_GLOBAL },
-@@ -1319,6 +1330,10 @@ process_server_config_line_depth(ServerO
+@@ -1332,6 +1343,10 @@ process_server_config_line_depth(ServerO
  		intptr = &options->use_pam;
  		goto parse_flag;
  
@@ -53,10 +53,10 @@ diff -urNp -x '*.orig' openssh-8.4p1.org/servconf.c openssh-8.4p1/servconf.c
  	/* Standard Options */
  	case sBadOption:
  		goto out;
-diff -urNp -x '*.orig' openssh-8.4p1.org/servconf.h openssh-8.4p1/servconf.h
---- openssh-8.4p1.org/servconf.h	2020-09-27 09:25:01.000000000 +0200
-+++ openssh-8.4p1/servconf.h	2021-03-01 11:30:33.637508395 +0100
-@@ -178,6 +178,7 @@ typedef struct {
+diff -urNp -x '*.orig' openssh-8.8p1.org/servconf.h openssh-8.8p1/servconf.h
+--- openssh-8.8p1.org/servconf.h	2021-09-26 16:03:19.000000000 +0200
++++ openssh-8.8p1/servconf.h	2021-12-09 20:13:16.486586503 +0100
+@@ -183,6 +183,7 @@ typedef struct {
  	int	max_authtries;
  	int	max_sessions;
  	char   *banner;			/* SSH-2 banner message */
@@ -64,10 +64,10 @@ diff -urNp -x '*.orig' openssh-8.4p1.org/servconf.h openssh-8.4p1/servconf.h
  	int	use_dns;
  	int	client_alive_interval;	/*
  					 * poke the client this often to
-diff -urNp -x '*.orig' openssh-8.4p1.org/session.c openssh-8.4p1/session.c
---- openssh-8.4p1.org/session.c	2020-09-27 09:25:01.000000000 +0200
-+++ openssh-8.4p1/session.c	2021-03-01 11:30:33.637508395 +0100
-@@ -1367,6 +1367,10 @@ void
+diff -urNp -x '*.orig' openssh-8.8p1.org/session.c openssh-8.8p1/session.c
+--- openssh-8.8p1.org/session.c	2021-09-26 16:03:19.000000000 +0200
++++ openssh-8.8p1/session.c	2021-12-09 20:13:16.489919836 +0100
+@@ -1359,6 +1359,10 @@ void
  do_setusercontext(struct passwd *pw)
  {
  	char uidstr[32], *chroot_path, *tmp;
@@ -78,7 +78,7 @@ diff -urNp -x '*.orig' openssh-8.4p1.org/session.c openssh-8.4p1/session.c
  
  	platform_setusercontext(pw);
  
-@@ -1409,6 +1413,29 @@ do_setusercontext(struct passwd *pw)
+@@ -1401,6 +1405,29 @@ do_setusercontext(struct passwd *pw)
  			free(options.chroot_directory);
  			options.chroot_directory = NULL;
  			in_chroot = 1;
@@ -108,9 +108,9 @@ diff -urNp -x '*.orig' openssh-8.4p1.org/session.c openssh-8.4p1/session.c
  		}
  
  #ifdef HAVE_LOGIN_CAP
-diff -urNp -x '*.orig' openssh-8.4p1.org/sshd_config openssh-8.4p1/sshd_config
---- openssh-8.4p1.org/sshd_config	2021-03-01 11:30:33.370827964 +0100
-+++ openssh-8.4p1/sshd_config	2021-03-01 11:30:33.637508395 +0100
+diff -urNp -x '*.orig' openssh-8.8p1.org/sshd_config openssh-8.8p1/sshd_config
+--- openssh-8.8p1.org/sshd_config	2021-12-09 20:13:16.326586503 +0100
++++ openssh-8.8p1/sshd_config	2021-12-09 20:13:16.489919836 +0100
 @@ -85,6 +85,10 @@ GSSAPIAuthentication yes
  # and KbdInteractiveAuthentication to 'no'.
  UsePAM yes
@@ -120,12 +120,12 @@ diff -urNp -x '*.orig' openssh-8.4p1.org/sshd_config openssh-8.4p1/sshd_config
 +#UseChroot yes
 +
  #AllowAgentForwarding yes
- # Security advisory:
- # http://securitytracker.com/alerts/2004/Sep/1011143.html
-diff -urNp -x '*.orig' openssh-8.4p1.org/sshd_config.0 openssh-8.4p1/sshd_config.0
---- openssh-8.4p1.org/sshd_config.0	2020-09-27 09:42:11.000000000 +0200
-+++ openssh-8.4p1/sshd_config.0	2021-03-01 11:30:33.637508395 +0100
-@@ -1011,6 +1011,16 @@ DESCRIPTION
+ #AllowTcpForwarding yes
+ #GatewayPorts no
+diff -urNp -x '*.orig' openssh-8.8p1.org/sshd_config.0 openssh-8.8p1/sshd_config.0
+--- openssh-8.8p1.org/sshd_config.0	2021-09-26 16:06:42.000000000 +0200
++++ openssh-8.8p1/sshd_config.0	2021-12-09 20:13:16.489919836 +0100
+@@ -1053,6 +1053,16 @@ DESCRIPTION
               TrustedUserCAKeys.  For more details on certificates, see the
               CERTIFICATES section in ssh-keygen(1).
  
@@ -142,10 +142,10 @@ diff -urNp -x '*.orig' openssh-8.4p1.org/sshd_config.0 openssh-8.4p1/sshd_config
       UseDNS  Specifies whether sshd(8) should look up the remote host name,
               and to check that the resolved host name for the remote IP
               address maps back to the very same IP address.
-diff -urNp -x '*.orig' openssh-8.4p1.org/sshd_config.5 openssh-8.4p1/sshd_config.5
---- openssh-8.4p1.org/sshd_config.5	2020-09-27 09:25:01.000000000 +0200
-+++ openssh-8.4p1/sshd_config.5	2021-03-01 11:30:33.637508395 +0100
-@@ -1640,6 +1640,16 @@ Gives the facility code that is used whe
+diff -urNp -x '*.orig' openssh-8.8p1.org/sshd_config.5 openssh-8.8p1/sshd_config.5
+--- openssh-8.8p1.org/sshd_config.5	2021-09-26 16:03:19.000000000 +0200
++++ openssh-8.8p1/sshd_config.5	2021-12-09 20:13:16.489919836 +0100
+@@ -1697,6 +1697,16 @@ Gives the facility code that is used whe
  The possible values are: DAEMON, USER, AUTH, LOCAL0, LOCAL1, LOCAL2,
  LOCAL3, LOCAL4, LOCAL5, LOCAL6, LOCAL7.
  The default is AUTH.

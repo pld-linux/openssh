@@ -36,13 +36,13 @@ Summary(pt_BR.UTF-8):	Implementação livre do SSH
 Summary(ru.UTF-8):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
-Version:	8.8p1
-Release:	3
+Version:	8.9p1
+Release:	1
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
 Source0:	https://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
-# Source0-md5:	8ce5f390958baeeab635aafd0ef41453
+# Source0-md5:	f33910174f0af52491277211e2b105bb
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 # Source1-md5:	66943d481cc422512b537bcc2c7400d1
 Source2:	%{name}d.init
@@ -68,7 +68,7 @@ Patch8:		ldap-helper-sigpipe.patch
 # High Performance SSH/SCP - HPN-SSH - http://www.psc.edu/networking/projects/hpn-ssh/
 # http://www.psc.edu/networking/projects/hpn-ssh/openssh-5.2p1-hpn13v6.diff.gz
 Patch9:		%{name}-5.2p1-hpn13v6.diff
-Patch10:	closefrom.patch
+
 Patch11:	%{name}-chroot.patch
 
 Patch13:	%{name}-skip-interop-tests.patch
@@ -550,7 +550,7 @@ openldap-a.
 %patch8 -p1
 
 %{?with_hpn:%patch9 -p1}
-%patch10 -p1
+
 %patch11 -p1
 
 %patch13 -p1

@@ -1,0 +1,87 @@
+--- openssh-8.9p1/regress/misc/sk-dummy/sk-dummy.c.orig	2022-02-23 12:31:11.000000000 +0100
++++ openssh-8.9p1/regress/misc/sk-dummy/sk-dummy.c	2022-03-16 08:49:30.708560186 +0100
+@@ -326,7 +326,7 @@
+ 	BIO *bio = NULL;
+ 	EVP_PKEY *pk = NULL;
+ 	EC_KEY *ec = NULL;
+-	SHA2_CTX ctx;
++	SHA256_CTX ctx;
+ 	uint8_t	apphash[SHA256_DIGEST_LENGTH];
+ 	uint8_t	sighash[SHA256_DIGEST_LENGTH];
+ 	uint8_t countbuf[4];
+@@ -356,9 +356,9 @@
+ 	}
+ 	/* Prepare data to be signed */
+ 	dump("message", message, message_len);
+-	SHA256Init(&ctx);
+-	SHA256Update(&ctx, (const u_char *)application, strlen(application));
+-	SHA256Final(apphash, &ctx);
++	SHA256_Init(&ctx);
++	SHA256_Update(&ctx, (const u_char *)application, strlen(application));
++	SHA256_Final(apphash, &ctx);
+ 	dump("apphash", apphash, sizeof(apphash));
+ 	countbuf[0] = (counter >> 24) & 0xff;
+ 	countbuf[1] = (counter >> 16) & 0xff;
+@@ -366,12 +366,12 @@
+ 	countbuf[3] = counter & 0xff;
+ 	dump("countbuf", countbuf, sizeof(countbuf));
+ 	dump("flags", &flags, sizeof(flags));
+-	SHA256Init(&ctx);
+-	SHA256Update(&ctx, apphash, sizeof(apphash));
+-	SHA256Update(&ctx, &flags, sizeof(flags));
+-	SHA256Update(&ctx, countbuf, sizeof(countbuf));
+-	SHA256Update(&ctx, message, message_len);
+-	SHA256Final(sighash, &ctx);
++	SHA256_Init(&ctx);
++	SHA256_Update(&ctx, apphash, sizeof(apphash));
++	SHA256_Update(&ctx, &flags, sizeof(flags));
++	SHA256_Update(&ctx, countbuf, sizeof(countbuf));
++	SHA256_Update(&ctx, message, message_len);
++	SHA256_Final(sighash, &ctx);
+ 	dump("sighash", sighash, sizeof(sighash));
+ 	/* create and encode signature */
+ 	if ((sig = ECDSA_do_sign(sighash, sizeof(sighash), ec)) == NULL) {
+@@ -417,7 +417,7 @@
+ {
+ 	size_t o;
+ 	int ret = -1;
+-	SHA2_CTX ctx;
++	SHA256_CTX ctx;
+ 	uint8_t	apphash[SHA256_DIGEST_LENGTH];
+ 	uint8_t signbuf[sizeof(apphash) + sizeof(flags) +
+ 	    sizeof(counter) + SHA256_DIGEST_LENGTH];
+@@ -435,9 +435,9 @@
+ 	}
+ 	/* Prepare data to be signed */
+ 	dump("message", message, message_len);
+-	SHA256Init(&ctx);
+-	SHA256Update(&ctx, (const u_char *)application, strlen(application));
+-	SHA256Final(apphash, &ctx);
++	SHA256_Init(&ctx);
++	SHA256_Update(&ctx, (const u_char *)application, strlen(application));
++	SHA256_Final(apphash, &ctx);
+ 	dump("apphash", apphash, sizeof(apphash));
+ 
+ 	memcpy(signbuf, apphash, sizeof(apphash));
+@@ -495,7 +495,7 @@
+ {
+ 	struct sk_sign_response *response = NULL;
+ 	int ret = SSH_SK_ERR_GENERAL;
+-	SHA2_CTX ctx;
++	SHA256_CTX ctx;
+ 	uint8_t message[32];
+ 
+ 	if (sign_response == NULL) {
+@@ -509,9 +509,9 @@
+ 		skdebug(__func__, "calloc response failed");
+ 		goto out;
+ 	}
+-	SHA256Init(&ctx);
+-	SHA256Update(&ctx, data, datalen);
+-	SHA256Final(message, &ctx);
++	SHA256_Init(&ctx);
++	SHA256_Update(&ctx, data, datalen);
++	SHA256_Final(message, &ctx);
+ 	response->flags = flags;
+ 	response->counter = 0x12345678;
+ 	switch(alg) {

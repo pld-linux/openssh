@@ -56,7 +56,7 @@ Source10:	sshd-keygen
 Source11:	sshd.socket
 Source12:	sshd@.service
 Patch100:	%{name}-git.patch
-# Patch100-md5: xyz
+# Patch100-md5:	4adbc2d6841aa2832d4df8e70e38c666
 Patch0:		%{name}-no-pty-tests.patch
 Patch1:		%{name}-tests-reuseport.patch
 Patch2:		%{name}-pam_misc.patch

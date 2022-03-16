@@ -37,7 +37,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	8.9p1
-Release:	4
+Release:	5
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -55,6 +55,8 @@ Source9:	sshd.service
 Source10:	sshd-keygen
 Source11:	sshd.socket
 Source12:	sshd@.service
+Patch100:	%{name}-git.patch
+# Patch100-md5: xyz
 Patch0:		%{name}-no-pty-tests.patch
 Patch1:		%{name}-tests-reuseport.patch
 Patch2:		%{name}-pam_misc.patch
@@ -540,6 +542,8 @@ openldap-a.
 
 %prep
 %setup -q
+%patch100 -p1
+
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1

@@ -5,8 +5,8 @@
 set -e
 url=https://github.com/openssh/openssh-portable.git
 package=openssh
-tag=V_8_9_P1
-branch=V_8_9
+tag=V_9_0_P1
+branch=V_9_0
 out=$package-git.patch
 repo=$package.git
 

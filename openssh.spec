@@ -36,13 +36,13 @@ Summary(pt_BR.UTF-8):	Implementação livre do SSH
 Summary(ru.UTF-8):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
-Version:	8.9p1
-Release:	5
+Version:	9.0p1
+Release:	1
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
 Source0:	https://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
-# Source0-md5:	f33910174f0af52491277211e2b105bb
+# Source0-md5:	5ed8252a0ee379c0f7c9e0d25d32424d
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 # Source1-md5:	66943d481cc422512b537bcc2c7400d1
 Source2:	%{name}d.init
@@ -55,8 +55,8 @@ Source9:	sshd.service
 Source10:	sshd-keygen
 Source11:	sshd.socket
 Source12:	sshd@.service
-Patch100:	%{name}-git.patch
-# Patch100-md5:	4adbc2d6841aa2832d4df8e70e38c666
+#Patch100:	%{name}-git.patch
+## Patch100-md5:	d41d8cd98f00b204e9800998ecf8427e
 Patch0:		%{name}-no-pty-tests.patch
 Patch1:		%{name}-tests-reuseport.patch
 Patch2:		%{name}-pam_misc.patch
@@ -542,7 +542,7 @@ openldap-a.
 
 %prep
 %setup -q
-%patch100 -p1
+#%patch100 -p1
 
 %patch0 -p1
 %patch1 -p1

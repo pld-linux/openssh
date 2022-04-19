@@ -55,7 +55,7 @@ Source9:	sshd.service
 Source10:	sshd-keygen
 Source11:	sshd.socket
 Source12:	sshd@.service
-#Patch100:	%{name}-git.patch
+Patch100:	%{name}-git.patch
 ## Patch100-md5:	d41d8cd98f00b204e9800998ecf8427e
 Patch0:		%{name}-no-pty-tests.patch
 Patch1:		%{name}-tests-reuseport.patch
@@ -542,7 +542,7 @@ openldap-a.
 
 %prep
 %setup -q
-#%patch100 -p1
+%patch100 -p1
 
 %patch0 -p1
 %patch1 -p1

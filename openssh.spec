@@ -595,7 +595,7 @@ CPPFLAGS="%{rpmcppflags} -DCHROOT -std=gnu99"
 	--with-ldap%{!?with_ldap:=no} \
 	%{?with_ldns:--with-ldns} \
 	%{?with_libedit:--with-libedit} \
-	--with-mantype=man \
+	--with-mantype=doc \
 	--with-md5-passwords \
 	--with-pam \
 	--with-pid-dir=%{_localstatedir}/run \

@@ -109,14 +109,6 @@ BuildRequires:	%{name}-server
 BuildRequires:	uname(release) >= 3.5
 %endif
 Requires:	zlib >= 1.2.3
-%if "%{pld_release}" == "ac"
-Requires:	filesystem >= 2.0-1
-Requires:	pam >= 0.79.0
-%else
-Requires:	filesystem >= 3.0-11
-Requires:	pam >= %{pam_ver}
-Suggests:	xorg-app-xauth
-%endif
 Obsoletes:	ssh
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -376,7 +368,14 @@ Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/useradd
 Requires(post,preun,postun):	systemd-units >= 38
 Requires:	%{name} = %{epoch}:%{version}-%{release}
+%if "%{pld_release}" == "ac"
+Requires:	filesystem >= 2.0-1
+Requires:	pam >= 0.79.0
+%else
+Requires:	filesystem >= 3.0-11
 Requires:	pam >= %{pam_ver}
+Suggests:	xorg-app-xauth
+%endif
 Requires:	rc-scripts >= 0.4.3.0
 Requires:	systemd-units >= 38
 %{?with_libseccomp:Requires:	uname(release) >= 3.5}

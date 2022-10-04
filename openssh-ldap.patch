@@ -137,7 +137,7 @@ diff -urNp -x '*.orig' openssh-8.4p1.org/Makefile.in openssh-8.4p1/Makefile.in
  	ssh-xmss.o \
 @@ -150,8 +153,8 @@ SFTPSERVER_OBJS=sftp-common.o sftp-serve
  
- SFTP_OBJS=	sftp.o progressmeter.o $(SFTP_CLIENT_OBJS)
+ SFTP_OBJS=	sftp.o sftp-usergroup.o progressmeter.o $(SFTP_CLIENT_OBJS)
  
 -MANPAGES	= moduli.5.out scp.1.out ssh-add.1.out ssh-agent.1.out ssh-keygen.1.out ssh-keyscan.1.out ssh.1.out sshd.8.out sftp-server.8.out sftp.1.out ssh-keysign.8.out ssh-pkcs11-helper.8.out ssh-sk-helper.8.out sshd_config.5.out ssh_config.5.out
 -MANPAGES_IN	= moduli.5 scp.1 ssh-add.1 ssh-agent.1 ssh-keygen.1 ssh-keyscan.1 ssh.1 sshd.8 sftp-server.8 sftp.1 ssh-keysign.8 ssh-pkcs11-helper.8 ssh-sk-helper.8 sshd_config.5 ssh_config.5
@@ -148,13 +148,13 @@ diff -urNp -x '*.orig' openssh-8.4p1.org/Makefile.in openssh-8.4p1/Makefile.in
  CONFIGFILES=sshd_config.out ssh_config.out moduli.out
 @@ -230,6 +233,9 @@ ssh-pkcs11-helper$(EXEEXT): $(LIBCOMPAT)
  ssh-sk-helper$(EXEEXT): $(LIBCOMPAT) libssh.a $(SKHELPER_OBJS)
- 	$(LD) -o $@ $(SKHELPER_OBJS) $(LDFLAGS) -lssh -lopenbsd-compat -lssh -lopenbsd-compat $(LIBS) $(LIBFIDO2)
+ 	$(LD) -o $@ $(SKHELPER_OBJS) $(LDFLAGS) -lssh -lopenbsd-compat -lssh -lopenbsd-compat $(LIBS) $(LIBFIDO2) $(CHANNELLIBS)
  
 +ssh-ldap-helper$(EXEEXT): $(LIBCOMPAT) libssh.a ldapconf.o ldapbody.o ldapmisc.o ldap-helper.o
 +	$(LD) -o $@ ldapconf.o ldapbody.o ldapmisc.o ldap-helper.o $(LDFLAGS) -lssh -lopenbsd-compat -lfipscheck $(LIBS)
 +
  ssh-keyscan$(EXEEXT): $(LIBCOMPAT) libssh.a $(SSHKEYSCAN_OBJS)
- 	$(LD) -o $@ $(SSHKEYSCAN_OBJS) $(LDFLAGS) -lssh -lopenbsd-compat -lssh $(LIBS)
+ 	$(LD) -o $@ $(SSHKEYSCAN_OBJS) $(LDFLAGS) -lssh -lopenbsd-compat -lssh $(LIBS) $(CHANNELLIBS)
  
 @@ -395,6 +401,10 @@ install-files:
  	$(INSTALL) -m 4711 $(STRIP_OPT) ssh-keysign$(EXEEXT) $(DESTDIR)$(SSH_KEYSIGN)$(EXEEXT)

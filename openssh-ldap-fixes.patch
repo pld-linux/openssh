@@ -2,14 +2,14 @@ diff -urNp -x '*.orig' openssh-8.4p1.org/Makefile.in openssh-8.4p1/Makefile.in
 --- openssh-8.4p1.org/Makefile.in	2021-03-01 11:29:52.615391132 +0100
 +++ openssh-8.4p1/Makefile.in	2021-03-01 11:29:52.908739606 +0100
 @@ -234,7 +234,7 @@ ssh-sk-helper$(EXEEXT): $(LIBCOMPAT) lib
- 	$(LD) -o $@ $(SKHELPER_OBJS) $(LDFLAGS) -lssh -lopenbsd-compat -lssh -lopenbsd-compat $(LIBS) $(LIBFIDO2)
+ 	$(LD) -o $@ $(SKHELPER_OBJS) $(LDFLAGS) -lssh -lopenbsd-compat -lssh -lopenbsd-compat $(LIBS) $(LIBFIDO2) $(CHANNELLIBS)
  
  ssh-ldap-helper$(EXEEXT): $(LIBCOMPAT) libssh.a ldapconf.o ldapbody.o ldapmisc.o ldap-helper.o
 -	$(LD) -o $@ ldapconf.o ldapbody.o ldapmisc.o ldap-helper.o $(LDFLAGS) -lssh -lopenbsd-compat -lfipscheck $(LIBS)
 +	$(LD) -o $@ ldapconf.o ldapbody.o ldapmisc.o ldap-helper.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS)
  
  ssh-keyscan$(EXEEXT): $(LIBCOMPAT) libssh.a $(SSHKEYSCAN_OBJS)
- 	$(LD) -o $@ $(SSHKEYSCAN_OBJS) $(LDFLAGS) -lssh -lopenbsd-compat -lssh $(LIBS)
+ 	$(LD) -o $@ $(SSHKEYSCAN_OBJS) $(LDFLAGS) -lssh -lopenbsd-compat -lssh $(LIBS) $(CHANNELLIBS)
 diff -urNp -x '*.orig' openssh-8.4p1.org/ldap-helper.c openssh-8.4p1/ldap-helper.c
 --- openssh-8.4p1.org/ldap-helper.c	2021-03-01 11:29:52.615391132 +0100
 +++ openssh-8.4p1/ldap-helper.c	2021-03-01 11:29:52.908739606 +0100

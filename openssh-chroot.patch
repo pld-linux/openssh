@@ -126,8 +126,8 @@ diff -urNp -x '*.orig' openssh-8.8p1.org/sshd_config.0 openssh-8.8p1/sshd_config
 --- openssh-8.8p1.org/sshd_config.0	2021-09-26 16:06:42.000000000 +0200
 +++ openssh-8.8p1/sshd_config.0	2021-12-09 20:13:16.489919836 +0100
 @@ -1053,6 +1053,16 @@ DESCRIPTION
-              TrustedUserCAKeys.  For more details on certificates, see the
-              CERTIFICATES section in ssh-keygen(1).
+              open channels.  This option may be useful in conjunction with
+              ChannelTimeout.
  
 +     UseChroot
 +             Specifies whether to use chroot-jail environment with ssh/sftp,

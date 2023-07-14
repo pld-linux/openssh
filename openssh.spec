@@ -813,6 +813,7 @@ fi
 %attr(755,root,root) %{_bindir}/ssh-add
 %attr(755,root,root) %{_bindir}/ssh-copy-id
 %attr(755,root,root) %{_bindir}/scp
+%attr(755,root,root) %{_libexecdir}/ssh-pkcs11-helper
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ssh_config
 %config(noreplace,missingok) %verify(not md5 mtime size) /etc/env.d/SSH_ASKPASS
 %{_mandir}/man1/scp.1*
@@ -822,6 +823,7 @@ fi
 %{_mandir}/man1/ssh-add.1*
 %{_mandir}/man1/ssh-copy-id.1*
 %{_mandir}/man5/ssh_config.5*
+%{_mandir}/man8/ssh-pkcs11-helper.8*
 %lang(it) %{_mandir}/it/man1/ssh.1*
 %lang(it) %{_mandir}/it/man5/ssh_config.5*
 %lang(pl) %{_mandir}/pl/man1/scp.1*
@@ -850,12 +852,10 @@ fi
 %attr(755,root,root) %{_sbindir}/sshd
 %attr(755,root,root) %{_libexecdir}/sftp-server
 %attr(755,root,root) %{_libexecdir}/ssh-keysign
-%attr(755,root,root) %{_libexecdir}/ssh-pkcs11-helper
 %attr(755,root,root) %{_libexecdir}/sshd-keygen
 %{_mandir}/man8/sshd.8*
 %{_mandir}/man8/sftp-server.8*
 %{_mandir}/man8/ssh-keysign.8*
-%{_mandir}/man8/ssh-pkcs11-helper.8*
 %{_mandir}/man5/sshd_config.5*
 %{_mandir}/man5/moduli.5*
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/sshd_config

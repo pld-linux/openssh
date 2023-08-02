@@ -264,7 +264,7 @@ Requires:	%{name}
 Suggests:	%{name}-clients-helper-fido = %{epoch}:%{version}-%{release}
 Provides:	ssh-clients
 Obsoletes:	ssh-clients
-%requires_eq_to	openssl	openssl-devel
+%requires_eq_to	openssl%{?_isa}	openssl-devel
 
 %description clients
 Ssh (Secure Shell) a program for logging into a remote machine and for
@@ -385,7 +385,7 @@ Suggests:	/bin/login
 Suggests:	xorg-app-xauth
 Provides:	ssh-server
 Provides:	user(sshd)
-%requires_eq_to	openssl	openssl-devel
+%requires_eq_to	openssl%{?_isa}	openssl-devel
 
 %description server
 Ssh (Secure Shell) a program for logging into a remote machine and for

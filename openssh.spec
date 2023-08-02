@@ -98,6 +98,7 @@ BuildRequires:	pam-devel
 BuildRequires:	python-TwistedConch
 %endif
 BuildRequires:	rpm >= 4.4.9-56
+BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpmbuild(macros) >= 1.752
 BuildRequires:	sed >= 4.0
 BuildRequires:	zlib-devel >= 1.2.3

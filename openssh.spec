@@ -261,7 +261,7 @@ Summary(pt_BR.UTF-8):	Clientes do OpenSSH
 Summary(ru.UTF-8):	OpenSSH - клиенты протокола Secure Shell
 Summary(uk.UTF-8):	OpenSSH - клієнти протоколу Secure Shell
 Group:		Applications/Networking
-Requires:	%{name}
+Requires:	%{name} = %{epoch}:%{version}-%{release}
 Suggests:	%{name}-clients-helper-fido = %{epoch}:%{version}-%{release}
 Provides:	ssh-clients
 Obsoletes:	ssh-clients

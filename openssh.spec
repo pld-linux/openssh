@@ -36,13 +36,13 @@ Summary(pt_BR.UTF-8):	Implementação livre do SSH
 Summary(ru.UTF-8):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
-Version:	9.3p2
-Release:	2
+Version:	9.4p1
+Release:	1
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
 Source0:	https://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
-# Source0-md5:	e21180e7c902e596b047b5520842c2e1
+# Source0-md5:	4bbd56a7ba51b0cd61debe8f9e77f8bb
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 # Source1-md5:	66943d481cc422512b537bcc2c7400d1
 Source2:	%{name}d.init
@@ -76,7 +76,6 @@ Patch11:	%{name}-chroot.patch
 Patch13:	%{name}-skip-interop-tests.patch
 Patch14:	%{name}-bind.patch
 Patch15:	%{name}-disable_ldap.patch
-Patch16:	openssl3.0.patch
 URL:		http://www.openssh.com/portable.html
 BuildRequires:	%{__perl}
 %{?with_audit:BuildRequires:	audit-libs-devel}
@@ -91,7 +90,7 @@ BuildRequires:	libfido2-devel >= 1.5.0
 %{?with_libseccomp:BuildRequires:	libseccomp-devel}
 %{?with_selinux:BuildRequires:	libselinux-devel}
 %{?with_ldap:BuildRequires:	openldap-devel}
-BuildRequires:	openssl-devel >= 1.1.0g
+BuildRequires:	openssl-devel >= 1.1.1
 BuildRequires:	pam-devel
 %{?with_gtk:BuildRequires:	pkgconfig}
 %if %{with tests} && %{with tests_conch}
@@ -562,7 +561,6 @@ openldap-a.
 
 %patch14 -p1
 %{!?with_ldap:%patch15 -p1}
-%patch16 -p1
 
 %if "%{pld_release}" == "ac"
 # fix for missing x11.pc

@@ -1,0 +1,14 @@
+# The options here are in the "Match final block" to be applied as the last
+# options and could be potentially overwritten by the user configuration
+Match final all
+
+    GSSAPIAuthentication yes
+
+# If this option is set to yes then remote X11 clients will have full access
+# to the original X11 server. As some X11 clients don't support the untrusted
+# mode correctly, you might consider changing this to 'yes' or using '-Y'.
+#      ForwardX11Trusted no
+
+# Send locale-related environment variables, also pass some GIT vars
+       SendEnv LANG LC_* LANGUAGE XMODIFIERS TZ GIT_AUTHOR_NAME GIT_AUTHOR_EMAIL GIT_COMMITTER_NAME GIT_COMMITTER_EMAIL 
+

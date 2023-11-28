@@ -37,7 +37,7 @@ Summary(ru.UTF-8):	OpenSSH - свободная реализация прото�
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
 Version:	9.5p1
-Release:	6
+Release:	7
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
@@ -55,6 +55,8 @@ Source9:	sshd.service
 Source10:	sshd-keygen
 Source11:	sshd.socket
 Source12:	sshd@.service
+Source13:	pld-ssh_config
+Source14:	pld-sshd_config
 Patch100:	%{name}-git.patch
 # Patch100-md5:	eb723cc4f21efc32752161d539c9c5e9
 Patch0:		%{name}-no-pty-tests.patch
@@ -639,6 +641,7 @@ cd contrib
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{pam.d,rc.d/init.d,sysconfig,security,env.d}} \
 	$RPM_BUILD_ROOT{%{_libexecdir}/ssh,%{schemadir},%{systemdunitdir}}
+install -d $RPM_BUILD_ROOT%{_sysconfdir}/ssh{,d}_config.d
 install -d $RPM_BUILD_ROOT/etc/{profile.d,X11/xinit/xinitrc.d}
 
 %{__make} install \
@@ -652,6 +655,8 @@ cp -p %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/sshd
 cp -p %{SOURCE5} $RPM_BUILD_ROOT/etc/profile.d
 ln -sf /etc/profile.d/ssh-agent.sh $RPM_BUILD_ROOT/etc/X11/xinit/xinitrc.d/ssh-agent.sh
 cp -p %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}
+cp -p %{SOURCE13} $RPM_BUILD_ROOT%{_sysconfdir}/ssh_config.d/50-pld.conf
+cp -p %{SOURCE14} $RPM_BUILD_ROOT%{_sysconfdir}/sshd_config.d/50-pld.conf
 cp -p %{SOURCE7} $RPM_BUILD_ROOT%{schemadir}
 
 cp -p %{SOURCE9} %{SOURCE11} %{SOURCE12} $RPM_BUILD_ROOT%{systemdunitdir}
@@ -814,6 +819,8 @@ fi
 %attr(755,root,root) %{_bindir}/scp
 %attr(755,root,root) %{_libexecdir}/ssh-pkcs11-helper
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ssh_config
+%dir %{_sysconfdir}/ssh_config.d
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ssh_config.d/50-pld.conf
 %config(noreplace,missingok) %verify(not md5 mtime size) /etc/env.d/SSH_ASKPASS
 %{_mandir}/man1/scp.1*
 %{_mandir}/man1/ssh.1*
@@ -858,6 +865,8 @@ fi
 %{_mandir}/man5/sshd_config.5*
 %{_mandir}/man5/moduli.5*
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/sshd_config
+%attr(750,root,root) %dir %{_sysconfdir}/sshd_config.d
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/sshd_config.d/50-pld.conf
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/sshd
 %{_sysconfdir}/moduli
 %attr(754,root,root) /etc/rc.d/init.d/sshd

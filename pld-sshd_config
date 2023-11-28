@@ -1,0 +1,12 @@
+PermitRootLogin no
+
+GSSAPIAuthentication yes
+
+UsePAM yes
+
+# Accept locale-related environment variables, also accept some GIT vars
+AcceptEnv LANG LC_* LANGUAGE XMODIFIERS TZ GIT_AUTHOR_NAME GIT_AUTHOR_EMAIL GIT_COMMITTER_NAME GIT_COMMITTER_EMAIL
+
+# Uncomment this if you want to use .local domain
+#Host *.local
+#      CheckHostIP no

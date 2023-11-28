@@ -1,92 +1,20 @@
-diff -urNp -x '*.orig' openssh-8.8p1.org/ssh_config openssh-8.8p1/ssh_config
---- openssh-8.8p1.org/ssh_config	2021-09-26 16:03:19.000000000 +0200
-+++ openssh-8.8p1/ssh_config	2021-12-09 20:12:26.796586510 +0100
-@@ -20,10 +20,13 @@
- # Host *
- #   ForwardAgent no
- #   ForwardX11 no
-+#   ForwardX11Trusted no
- #   PasswordAuthentication yes
- #   HostbasedAuthentication no
- #   GSSAPIAuthentication no
- #   GSSAPIDelegateCredentials no
-+#   GSSAPIKeyExchange no
-+#   GSSAPITrustDNS no
- #   BatchMode no
- #   CheckHostIP no
- #   AddressFamily any
-@@ -44,3 +47,18 @@
+diff -ur openssh-9.5p1.org/ssh_config openssh-9.5p1/ssh_config
+--- openssh-9.5p1.org/ssh_config	2023-10-04 06:34:10.000000000 +0200
++++ openssh-9.5p1/ssh_config	2023-11-28 09:12:00.249971177 +0100
+@@ -44,3 +44,6 @@
  #   ProxyCommand ssh -q -W %h:%p gateway.example.com
  #   RekeyLimit 1G 1h
  #   UserKnownHostsFile ~/.ssh/known_hosts.d/%k
 +
-+Host *
-+	GSSAPIAuthentication yes
-+# If this option is set to yes then remote X11 clients will have full access
-+# to the original X11 server. As some X11 clients don't support the untrusted
-+# mode correctly, you might consider changing this to 'yes' or using '-Y'.
-+#	ForwardX11Trusted no
-+	ServerAliveInterval 60
-+	ServerAliveCountMax 10
-+	TCPKeepAlive no
-+	# Allow DSA keys
-+#	PubkeyAcceptedKeyTypes +ssh-dss
-+#	HostkeyAlgorithms +ssh-dss
-+# Send locale-related environment variables, also pass some GIT vars
-+	SendEnv LANG LC_* LANGUAGE XMODIFIERS TZ GIT_AUTHOR_NAME GIT_AUTHOR_EMAIL GIT_COMMITTER_NAME GIT_COMMITTER_EMAIL
-diff -urNp -x '*.orig' openssh-8.8p1.org/sshd_config openssh-8.8p1/sshd_config
---- openssh-8.8p1.org/sshd_config	2021-09-26 16:03:19.000000000 +0200
-+++ openssh-8.8p1/sshd_config	2021-12-09 20:12:26.796586510 +0100
-@@ -29,7 +29,7 @@
- # Authentication:
- 
- #LoginGraceTime 2m
--#PermitRootLogin prohibit-password
-+PermitRootLogin no
- #StrictModes yes
- #MaxAuthTries 6
- #MaxSessions 10
-@@ -57,6 +57,9 @@ AuthorizedKeysFile	.ssh/authorized_keys
- #PasswordAuthentication yes
- #PermitEmptyPasswords no
- 
-+# Allow DSA keys
-+## PubkeyAcceptedKeyTypes +ssh-dss
++# Put your local config in *.conf files
++Include /etc/ssh/ssh_config.d/*.conf
+diff -ur openssh-9.5p1.org/sshd_config openssh-9.5p1/sshd_config
+--- openssh-9.5p1.org/sshd_config	2023-10-04 06:34:10.000000000 +0200
++++ openssh-9.5p1/sshd_config	2023-11-28 09:12:18.119971176 +0100
+@@ -114,3 +114,6 @@
+ #	AllowTcpForwarding no
+ #	PermitTTY no
+ #	ForceCommand cvs server
 +
- # Change to no to disable s/key passwords
- #KbdInteractiveAuthentication yes
- 
-@@ -69,6 +72,7 @@ AuthorizedKeysFile	.ssh/authorized_keys
- # GSSAPI options
- #GSSAPIAuthentication no
- #GSSAPICleanupCredentials yes
-+GSSAPIAuthentication yes
- 
- # Set this to 'yes' to enable PAM authentication, account processing,
- # and session processing. If this is enabled, PAM authentication will
-@@ -79,7 +83,7 @@ AuthorizedKeysFile	.ssh/authorized_keys
- # If you just want the PAM account and session checks to run without
- # PAM authentication, then enable this but set PasswordAuthentication
- # and KbdInteractiveAuthentication to 'no'.
--#UsePAM no
-+UsePAM yes
- 
- #AllowAgentForwarding yes
- #AllowTcpForwarding yes
-@@ -105,9 +109,16 @@ AuthorizedKeysFile	.ssh/authorized_keys
- # no default banner path
- #Banner none
- 
-+# Accept locale-related environment variables, also accept some GIT vars
-+AcceptEnv LANG LC_* LANGUAGE XMODIFIERS TZ GIT_AUTHOR_NAME GIT_AUTHOR_EMAIL GIT_COMMITTER_NAME GIT_COMMITTER_EMAIL
-+
- # override default of no subsystems
- Subsystem	sftp	/usr/libexec/sftp-server
- 
-+# Uncomment this if you want to use .local domain
-+#Host *.local
-+#	CheckHostIP no
-+
- # Example of overriding settings on a per-user basis
- #Match User anoncvs
- #	X11Forwarding no
++# Put your local config in *.conf files
++Include /etc/ssh/sshd_config.d/*.conf

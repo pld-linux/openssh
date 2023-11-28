@@ -113,7 +113,7 @@ diff -urNp -x '*.orig' openssh-8.8p1.org/sshd_config openssh-8.8p1/sshd_config
 +++ openssh-8.8p1/sshd_config	2021-12-09 20:13:16.489919836 +0100
 @@ -85,6 +85,10 @@ GSSAPIAuthentication yes
  # and KbdInteractiveAuthentication to 'no'.
- UsePAM yes
+ #UsePAM no
  
 +# Set this to 'yes' to enable support for chrooted user environment.
 +# You must create such environment before you can use this feature.

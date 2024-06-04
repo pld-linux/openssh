@@ -322,7 +322,7 @@ diff -urNp -x '*.orig' openssh-8.4p1.org/configure.ac openssh-8.4p1/configure.ac
 diff -urNp -x '*.orig' openssh-8.4p1.org/ldap-helper.c openssh-8.4p1/ldap-helper.c
 --- openssh-8.4p1.org/ldap-helper.c	1970-01-01 01:00:00.000000000 +0100
 +++ openssh-8.4p1/ldap-helper.c	2021-03-01 11:29:31.280956671 +0100
-@@ -0,0 +1,155 @@
+@@ -0,0 +1,156 @@
 +/* $OpenBSD: ssh-pka-ldap.c,v 1.1 2009/12/03 03:34:42 jfch Exp $ */
 +/*
 + * Copyright (c) 2009 Jan F. Chadima.  All rights reserved.
@@ -354,6 +354,7 @@ diff -urNp -x '*.orig' openssh-8.4p1.org/ldap-helper.c openssh-8.4p1/ldap-helper
 +#include "xmalloc.h"
 +#include "ldapconf.h"
 +#include "ldapbody.h"
++#include <stdlib.h>
 +#include <string.h>
 +#include <unistd.h>
 +
@@ -609,7 +610,7 @@ diff -urNp -x '*.orig' openssh-8.4p1.org/ldap.conf openssh-8.4p1/ldap.conf
 diff -urNp -x '*.orig' openssh-8.4p1.org/ldapbody.c openssh-8.4p1/ldapbody.c
 --- openssh-8.4p1.org/ldapbody.c	1970-01-01 01:00:00.000000000 +0100
 +++ openssh-8.4p1/ldapbody.c	2021-03-01 11:29:31.280956671 +0100
-@@ -0,0 +1,494 @@
+@@ -0,0 +1,495 @@
 +/* $OpenBSD: ldapbody.c,v 1.1 2009/12/03 03:34:42 jfch Exp $ */
 +/*
 + * Copyright (c) 2009 Jan F. Chadima.  All rights reserved.
@@ -642,6 +643,7 @@ diff -urNp -x '*.orig' openssh-8.4p1.org/ldapbody.c openssh-8.4p1/ldapbody.c
 +#include "ldapmisc.h"
 +#include "ldapbody.h"
 +#include <stdio.h>
++#include <stdlib.h>
 +#include <unistd.h>
 +
 +#define LDAPSEARCH_FORMAT "(&(objectclass=%s)(objectclass=ldapPublicKey)(uid=%s)%s)"
@@ -1148,7 +1150,7 @@ diff -urNp -x '*.orig' openssh-8.4p1.org/ldapbody.h openssh-8.4p1/ldapbody.h
 diff -urNp -x '*.orig' openssh-8.4p1.org/ldapconf.c openssh-8.4p1/ldapconf.c
 --- openssh-8.4p1.org/ldapconf.c	1970-01-01 01:00:00.000000000 +0100
 +++ openssh-8.4p1/ldapconf.c	2021-03-01 11:29:31.280956671 +0100
-@@ -0,0 +1,691 @@
+@@ -0,0 +1,692 @@
 +/* $OpenBSD: ldapconf.c,v 1.1 2009/12/03 03:34:42 jfch Exp $ */
 +/*
 + * Copyright (c) 2009 Jan F. Chadima.  All rights reserved.
@@ -1181,6 +1183,7 @@ diff -urNp -x '*.orig' openssh-8.4p1.org/ldapconf.c openssh-8.4p1/ldapconf.c
 +#include "xmalloc.h"
 +#include "ldapconf.h"
 +#include <unistd.h>
++#include <stdlib.h>
 +#include <string.h>
 +
 +/* Keyword tokens. */

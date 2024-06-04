@@ -84,7 +84,7 @@ exit 0
 --- openssh-6.6p1/ldap-helper.c~	2014-05-13 17:04:22.258162978 +0300
 +++ openssh-6.6p1/ldap-helper.c	2014-05-13 17:14:08.398824417 +0300
 @@ -31,6 +31,7 @@
- #include "ldapbody.h"
+ #include <stdlib.h>
  #include <string.h>
  #include <unistd.h>
 +#include <signal.h>

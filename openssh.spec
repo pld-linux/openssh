@@ -859,6 +859,7 @@ fi
 %attr(755,root,root) %{_libexecdir}/sftp-server
 %attr(755,root,root) %{_libexecdir}/ssh-keysign
 %attr(755,root,root) %{_libexecdir}/sshd-keygen
+%attr(755,root,root) %{_libexecdir}/sshd-session
 %{_mandir}/man8/sshd.8*
 %{_mandir}/man8/sftp-server.8*
 %{_mandir}/man8/ssh-keysign.8*

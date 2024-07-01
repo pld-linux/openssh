@@ -1,38 +1,36 @@
-diff -urNp -x '*.orig' openssh-8.8p1.org/servconf.c openssh-8.8p1/servconf.c
---- openssh-8.8p1.org/servconf.c	2021-09-26 16:03:19.000000000 +0200
-+++ openssh-8.8p1/servconf.c	2021-12-09 20:13:16.486586503 +0100
-@@ -92,7 +92,9 @@ initialize_server_options(ServerOptions
- 
- 	/* Portable-specific options */
+diff -ruNp openssh-9.8p1.orig/servconf.c openssh-9.8p1/servconf.c
+--- openssh-9.8p1.orig/servconf.c	2024-07-01 06:36:28.000000000 +0200
++++ openssh-9.8p1/servconf.c	2024-07-01 11:17:17.929993456 +0200
+@@ -94,6 +94,8 @@ initialize_server_options(ServerOptions
  	options->use_pam = -1;
--
-+	
+ 	options->pam_service_name = NULL;
+ 
 +	options->use_chroot = -1;
-+	
++
  	/* Standard Options */
  	options->num_ports = 0;
  	options->ports_from_cmdline = 0;
-@@ -279,6 +281,9 @@ fill_default_server_options(ServerOption
- 	if (options->use_pam == -1)
- 		options->use_pam = 0;
+@@ -299,6 +301,9 @@ fill_default_server_options(ServerOption
+ 	if (options->pam_service_name == NULL)
+ 		options->pam_service_name = xstrdup(SSHD_PAM_SERVICE);
  
 +	if (options->use_chroot == -1)
 +		options->use_chroot = 0;
-+	
++
  	/* Standard Options */
  	if (options->num_host_key_files == 0) {
  		/* fill default hostkeys for protocols */
-@@ -486,6 +491,7 @@ typedef enum {
+@@ -538,6 +543,7 @@ typedef enum {
  	sBadOption,		/* == unknown option */
  	/* Portable-specific options */
- 	sUsePAM,
+ 	sUsePAM, sPAMServiceName,
 +	sUseChroot,
  	/* Standard Options */
  	sPort, sHostKeyFile, sLoginGraceTime,
  	sPermitRootLogin, sLogFacility, sLogLevel, sLogVerbose,
-@@ -538,6 +544,11 @@ static struct {
- #else
+@@ -595,6 +601,11 @@ static struct {
  	{ "usepam", sUnsupported, SSHCFG_GLOBAL },
+ 	{ "pamservicename", sUnsupported, SSHCFG_ALL },
  #endif
 +#ifdef CHROOT
 +	{ "usechroot", sUseChroot, SSHCFG_GLOBAL },
@@ -42,9 +40,9 @@ diff -urNp -x '*.orig' openssh-8.8p1.org/servconf.c openssh-8.8p1/servconf.c
  	{ "pamauthenticationviakbdint", sDeprecated, SSHCFG_GLOBAL },
  	/* Standard Options */
  	{ "port", sPort, SSHCFG_GLOBAL },
-@@ -1332,6 +1343,10 @@ process_server_config_line_depth(ServerO
- 		intptr = &options->use_pam;
- 		goto parse_flag;
+@@ -1338,6 +1349,10 @@ process_server_config_line_depth(ServerO
+ 			*charptr = xstrdup(arg);
+ 		break;
  
 +	case sUseChroot:
 +		intptr = &options->use_chroot;

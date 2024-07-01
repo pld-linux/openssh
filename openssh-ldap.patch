@@ -110,19 +110,19 @@ diff -urNp -x '*.orig' openssh-8.4p1.org/HOWTO.ldap-keys openssh-8.4p1/HOWTO.lda
 +5) Author
 +    Jan F. Chadima <jchadima@redhat.com>
 +
-diff -urNp -x '*.orig' openssh-8.4p1.org/Makefile.in openssh-8.4p1/Makefile.in
---- openssh-8.4p1.org/Makefile.in	2020-09-27 09:25:01.000000000 +0200
-+++ openssh-8.4p1/Makefile.in	2021-03-01 11:29:31.280956671 +0100
-@@ -23,6 +23,8 @@ SSH_PROGRAM=@bindir@/ssh
+diff -ruN openssh-9.8p1.orig/Makefile.in openssh-9.8p1/Makefile.in
+--- openssh-9.8p1.orig/Makefile.in	2024-07-01 06:36:28.000000000 +0200
++++ openssh-9.8p1/Makefile.in	2024-07-01 11:10:26.787664770 +0200
+@@ -24,6 +24,8 @@
  ASKPASS_PROGRAM=$(libexecdir)/ssh-askpass
  SFTP_SERVER=$(libexecdir)/sftp-server
  SSH_KEYSIGN=$(libexecdir)/ssh-keysign
 +SSH_LDAP_HELPER=$(libexecdir)/ssh-ldap-helper
 +SSH_LDAP_WRAPPER=$(libexecdir)/ssh-ldap-wrapper
+ SSHD_SESSION=$(libexecdir)/sshd-session
  SSH_PKCS11_HELPER=$(libexecdir)/ssh-pkcs11-helper
  SSH_SK_HELPER=$(libexecdir)/ssh-sk-helper
- PRIVSEP_PATH=@PRIVSEP_PATH@
-@@ -63,10 +65,11 @@ LDFLAGS_NOPIE=-L. -Lopenbsd-compat/ @LDF
+@@ -68,10 +70,11 @@
  EXEEXT=@EXEEXT@
  MANFMT=@MANFMT@
  MKDIR_P=@MKDIR_P@
@@ -130,12 +130,12 @@ diff -urNp -x '*.orig' openssh-8.4p1.org/Makefile.in openssh-8.4p1/Makefile.in
  
  .SUFFIXES: .lo
  
--TARGETS=ssh$(EXEEXT) sshd$(EXEEXT) ssh-add$(EXEEXT) ssh-keygen$(EXEEXT) ssh-keyscan${EXEEXT} ssh-keysign${EXEEXT} ssh-pkcs11-helper$(EXEEXT) ssh-agent$(EXEEXT) scp$(EXEEXT) sftp-server$(EXEEXT) sftp$(EXEEXT) ssh-sk-helper$(EXEEXT)
-+TARGETS=ssh$(EXEEXT) sshd$(EXEEXT) ssh-add$(EXEEXT) ssh-keygen$(EXEEXT) ssh-keyscan${EXEEXT} ssh-keysign${EXEEXT} ssh-pkcs11-helper$(EXEEXT) ssh-agent$(EXEEXT) scp$(EXEEXT) sftp-server$(EXEEXT) sftp$(EXEEXT) ssh-sk-helper$(EXEEXT) ssh-ldap-helper$(EXEEXT)
+-TARGETS=ssh$(EXEEXT) sshd$(EXEEXT) sshd-session$(EXEEXT) ssh-add$(EXEEXT) ssh-keygen$(EXEEXT) ssh-keyscan${EXEEXT} ssh-keysign${EXEEXT} ssh-pkcs11-helper$(EXEEXT) ssh-agent$(EXEEXT) scp$(EXEEXT) sftp-server$(EXEEXT) sftp$(EXEEXT) ssh-sk-helper$(EXEEXT)
++TARGETS=ssh$(EXEEXT) sshd$(EXEEXT) sshd-session$(EXEEXT) ssh-add$(EXEEXT) ssh-keygen$(EXEEXT) ssh-keyscan${EXEEXT} ssh-keysign${EXEEXT} ssh-pkcs11-helper$(EXEEXT) ssh-agent$(EXEEXT) scp$(EXEEXT) sftp-server$(EXEEXT) sftp$(EXEEXT) ssh-sk-helper$(EXEEXT) ssh-ldap-helper$(EXEEXT)
  
  XMSS_OBJS=\
  	ssh-xmss.o \
-@@ -150,8 +153,8 @@ SFTPSERVER_OBJS=sftp-common.o sftp-serve
+@@ -163,8 +166,8 @@
  
  SFTP_OBJS=	sftp.o sftp-usergroup.o progressmeter.o $(SFTP_CLIENT_OBJS)
  
@@ -146,7 +146,7 @@ diff -urNp -x '*.orig' openssh-8.4p1.org/Makefile.in openssh-8.4p1/Makefile.in
  MANTYPE		= @MANTYPE@
  
  CONFIGFILES=sshd_config.out ssh_config.out moduli.out
-@@ -230,6 +233,9 @@ ssh-pkcs11-helper$(EXEEXT): $(LIBCOMPAT)
+@@ -241,6 +244,9 @@
  ssh-sk-helper$(EXEEXT): $(LIBCOMPAT) libssh.a $(SKHELPER_OBJS)
  	$(LD) -o $@ $(SKHELPER_OBJS) $(LDFLAGS) -lssh -lopenbsd-compat -lssh -lopenbsd-compat $(LIBS) $(LIBFIDO2) $(CHANNELLIBS)
  
@@ -156,7 +156,7 @@ diff -urNp -x '*.orig' openssh-8.4p1.org/Makefile.in openssh-8.4p1/Makefile.in
  ssh-keyscan$(EXEEXT): $(LIBCOMPAT) libssh.a $(SSHKEYSCAN_OBJS)
  	$(LD) -o $@ $(SSHKEYSCAN_OBJS) $(LDFLAGS) -lssh -lopenbsd-compat -lssh $(LIBS) $(CHANNELLIBS)
  
-@@ -395,6 +401,10 @@ install-files:
+@@ -414,6 +420,10 @@
  	$(INSTALL) -m 4711 $(STRIP_OPT) ssh-keysign$(EXEEXT) $(DESTDIR)$(SSH_KEYSIGN)$(EXEEXT)
  	$(INSTALL) -m 0755 $(STRIP_OPT) ssh-pkcs11-helper$(EXEEXT) $(DESTDIR)$(SSH_PKCS11_HELPER)$(EXEEXT)
  	$(INSTALL) -m 0755 $(STRIP_OPT) ssh-sk-helper$(EXEEXT) $(DESTDIR)$(SSH_SK_HELPER)$(EXEEXT)
@@ -167,7 +167,7 @@ diff -urNp -x '*.orig' openssh-8.4p1.org/Makefile.in openssh-8.4p1/Makefile.in
  	$(INSTALL) -m 0755 $(STRIP_OPT) sftp$(EXEEXT) $(DESTDIR)$(bindir)/sftp$(EXEEXT)
  	$(INSTALL) -m 0755 $(STRIP_OPT) sftp-server$(EXEEXT) $(DESTDIR)$(SFTP_SERVER)$(EXEEXT)
  	$(INSTALL) -m 644 ssh.1.out $(DESTDIR)$(mandir)/$(mansubdir)1/ssh.1
-@@ -412,6 +422,10 @@ install-files:
+@@ -431,6 +441,10 @@
  	$(INSTALL) -m 644 ssh-keysign.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-keysign.8
  	$(INSTALL) -m 644 ssh-pkcs11-helper.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-pkcs11-helper.8
  	$(INSTALL) -m 644 ssh-sk-helper.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-sk-helper.8
@@ -178,7 +178,7 @@ diff -urNp -x '*.orig' openssh-8.4p1.org/Makefile.in openssh-8.4p1/Makefile.in
  
  install-sysconf:
  	$(MKDIR_P) $(DESTDIR)$(sysconfdir)
-@@ -435,6 +449,13 @@ install-sysconf:
+@@ -454,6 +468,13 @@
  	else \
  		echo "$(DESTDIR)$(sysconfdir)/moduli already exists, install will not overwrite"; \
  	fi
@@ -192,7 +192,7 @@ diff -urNp -x '*.orig' openssh-8.4p1.org/Makefile.in openssh-8.4p1/Makefile.in
  
  host-key: ssh-keygen$(EXEEXT)
  	@if [ -z "$(DESTDIR)" ] ; then \
-@@ -473,6 +494,8 @@ uninstall:
+@@ -492,6 +513,8 @@
  	-rm -f $(DESTDIR)$(SSH_KEYSIGN)$(EXEEXT)
  	-rm -f $(DESTDIR)$(SSH_PKCS11_HELPER)$(EXEEXT)
  	-rm -f $(DESTDIR)$(SSH_SK_HELPER)$(EXEEXT)
@@ -201,7 +201,7 @@ diff -urNp -x '*.orig' openssh-8.4p1.org/Makefile.in openssh-8.4p1/Makefile.in
  	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)1/ssh.1
  	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)1/scp.1
  	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)1/ssh-add.1
-@@ -485,6 +508,7 @@ uninstall:
+@@ -504,6 +527,7 @@
  	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-keysign.8
  	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-pkcs11-helper.8
  	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-sk-helper.8

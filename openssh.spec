@@ -755,11 +755,11 @@ fi
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 EOF
 
-%triggerpostun server -- %{name}-server < 6.2p1-1
-cp -f %{_sysconfdir}/sshd_config{,.rpmorig}
-sed -i -e 's#AuthorizedKeysCommandRunAs#AuthorizedKeysCommandUser##g' %{_sysconfdir}/sshd_config
+if grep -q AuthorizedKeysCommandRunAs %{_sysconfdir}/sshd_config; then
+	cp -f %{_sysconfdir}/sshd_config{,.rpmorig}
+	sed -i -e 's#AuthorizedKeysCommandRunAs#AuthorizedKeysCommandUser##g' %{_sysconfdir}/sshd_config
+fi
 
-%triggerpostun server -- %{name}-server < 2:5.9p1-8
 # lpk.patch to ldap.patch
 if grep -qE '^(UseLPK|Lpk)' %{_sysconfdir}/sshd_config; then
 	echo >&2 "Migrating LPK patch to LDAP patch"

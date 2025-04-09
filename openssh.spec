@@ -36,13 +36,13 @@ Summary(pt_BR.UTF-8):	Implementação livre do SSH
 Summary(ru.UTF-8):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
-Version:	9.9p2
+Version:	10.0p1
 Release:	1
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
 Source0:	https://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
-# Source0-md5:	f617b95fe278bfea8d004589c7a68a85
+# Source0-md5:	689148621a2eaa734497b12bed1c5202
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 # Source1-md5:	66943d481cc422512b537bcc2c7400d1
 Source2:	%{name}d.init
@@ -857,6 +857,7 @@ fi
 %attr(755,root,root) %{_sbindir}/sshd
 %attr(755,root,root) %{_libexecdir}/sftp-server
 %attr(755,root,root) %{_libexecdir}/ssh-keysign
+%attr(755,root,root) %{_libexecdir}/sshd-auth
 %attr(755,root,root) %{_libexecdir}/sshd-keygen
 %attr(755,root,root) %{_libexecdir}/sshd-session
 %{_mandir}/man8/sshd.8*

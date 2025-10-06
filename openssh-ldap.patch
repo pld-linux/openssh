@@ -122,7 +122,7 @@ diff -ruN openssh-9.8p1.orig/Makefile.in openssh-9.8p1/Makefile.in
  SSHD_SESSION=$(libexecdir)/sshd-session
  SSHD_AUTH=$(libexecdir)/sshd-auth
  SSH_PKCS11_HELPER=$(libexecdir)/ssh-pkcs11-helper
-@@ -68,10 +70,11 @@
+@@ -74,10 +74,11 @@ LDFLAGS_NOPIE=-L. -Lopenbsd-compat/ @LDF
  EXEEXT=@EXEEXT@
  MANFMT=@MANFMT@
  MKDIR_P=@MKDIR_P@
@@ -131,10 +131,10 @@ diff -ruN openssh-9.8p1.orig/Makefile.in openssh-9.8p1/Makefile.in
  .SUFFIXES: .lo
  
 -TARGETS=ssh$(EXEEXT) sshd$(EXEEXT) sshd-session$(EXEEXT) sshd-auth$(EXEEXT) ssh-add$(EXEEXT) ssh-keygen$(EXEEXT) ssh-keyscan${EXEEXT} ssh-keysign${EXEEXT} ssh-pkcs11-helper$(EXEEXT) ssh-agent$(EXEEXT) scp$(EXEEXT) sftp-server$(EXEEXT) sftp$(EXEEXT) ssh-sk-helper$(EXEEXT) $(SK_STANDALONE)
-+TARGETS=ssh$(EXEEXT) sshd$(EXEEXT) sshd-session$(EXEEXT) sshd-auth$(EXEEXT) ssh-add$(EXEEXT) ssh-keygen$(EXEEXT) ssh-keyscan${EXEEXT} ssh-keysign${EXEEXT} ssh-pkcs11-helper$(EXEEXT) ssh-agent$(EXEEXT) scp$(EXEEXT) sftp-server$(EXEEXT) sftp$(EXEEXT) ssh-sk-helper$(EXEEXT) $(SK_STANDALONE) ssh-ldap-helper$(EXEEXT)
++TARGETS=ssh$(EXEEXT) sshd$(EXEEXT) sshd-session$(EXEEXT) sshd-auth$(EXEEXT) ssh-add$(EXEEXT) ssh-keygen$(EXEEXT) ssh-keyscan${EXEEXT} ssh-keysign${EXEEXT} ssh-pkcs11-helper$(EXEEXT) ssh-agent$(EXEEXT) scp$(EXEEXT) sftp-server$(EXEEXT) sftp$(EXEEXT) ssh-sk-helper$(EXEEXT) ssh-ldap-helper$(EXEEXT) $(SK_STANDALONE)
  
- XMSS_OBJS=\
- 	ssh-xmss.o \
+ LIBOPENSSH_OBJS=\
+ 	ssh_api.o \
 @@ -163,8 +166,8 @@
  
  SFTP_OBJS=	sftp.o sftp-usergroup.o progressmeter.o $(SFTP_CLIENT_OBJS)

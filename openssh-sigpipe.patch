@@ -11,15 +11,15 @@ diff -urNp -x '*.orig' openssh-8.4p1.org/clientloop.c openssh-8.4p1/clientloop.c
  /*
   * Name of the host we are connecting to.  This is the name given on the
   * command line, or the Hostname specified for the user-supplied name in a
-@@ -1301,6 +1304,8 @@ client_loop(struct ssh *ssh, int have_pt
+@@ -1518,6 +1518,8 @@ client_loop(struct ssh *ssh, int have_pt
  		ssh_signal(SIGQUIT, signal_handler);
  	if (ssh_signal(SIGTERM, SIG_IGN) != SIG_IGN)
  		ssh_signal(SIGTERM, signal_handler);
 +	if (enable_sigpipe)
-+		signal(SIGPIPE, signal_handler);
++		ssh_signal(SIGPIPE, signal_handler);
  	ssh_signal(SIGWINCH, window_change_handler);
- 
- 	if (have_pty)
+ #ifdef SIGINFO
+ 	ssh_signal(SIGINFO, siginfo_handler);
 diff -urNp -x '*.orig' openssh-8.4p1.org/ssh.0 openssh-8.4p1/ssh.0
 --- openssh-8.4p1.org/ssh.0	2020-09-27 09:42:10.000000000 +0200
 +++ openssh-8.4p1/ssh.0	2021-03-01 11:29:10.909905265 +0100

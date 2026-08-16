@@ -23,7 +23,7 @@
  
  #ifdef USE_PAM
 @@ -280,6 +281,14 @@ SSHCONF_UNSUPPORTED_INT(use_pam, UsePAM,
- SSHCONF_UNSUPPORTED_STRING(pam_service_name, PAMServiceName, SSHCFG_GLOBAL)
+ SSHCONF_UNSUPPORTED_STRING(pam_service_name, PAMServiceName, SSHCFG_ALL)
  #endif
  
 +#ifdef CHROOT

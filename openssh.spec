@@ -36,13 +36,13 @@ Summary(pt_BR.UTF-8):	Implementação livre do SSH
 Summary(ru.UTF-8):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
-Version:	10.4p1
-Release:	2
+Version:	10.5p1
+Release:	1
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
 Source0:	https://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
-# Source0-md5:	c5fb91ded926b38e8956074cac2cd44f
+# Source0-md5:	a95119f402dfa0166c9dd1237239085c
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 # Source1-md5:	66943d481cc422512b537bcc2c7400d1
 Source2:	%{name}d.init
@@ -60,7 +60,6 @@ Source14:	pld-sshd_config
 Patch0:		%{name}-no-pty-tests.patch
 Patch1:		%{name}-tests-reuseport.patch
 Patch2:		%{name}-pam_misc.patch
-Patch3:		%{name}-sigpipe.patch
 # http://pkgs.fedoraproject.org/gitweb/?p=openssh.git;a=tree
 Patch4:		%{name}-ldap.patch
 Patch5:		%{name}-ldap-fixes.patch
@@ -70,7 +69,6 @@ Patch8:		ldap-helper-sigpipe.patch
 # High Performance SSH/SCP - HPN-SSH - http://www.psc.edu/networking/projects/hpn-ssh/
 # http://www.psc.edu/networking/projects/hpn-ssh/openssh-5.2p1-hpn13v6.diff.gz
 Patch9:		%{name}-5.2p1-hpn13v6.diff
-Patch10:	gss-opts.patch
 Patch11:	%{name}-chroot.patch
 
 Patch13:	%{name}-skip-interop-tests.patch
@@ -544,7 +542,6 @@ openldap-a.
 %patch -P0 -p1
 %patch -P1 -p1
 %patch -P2 -p1
-%patch -P3 -p1
 %patch -P4 -p1
 %patch -P5 -p1
 %patch -P6 -p1
@@ -553,7 +550,6 @@ openldap-a.
 
 %{?with_hpn:%patch -P9 -p1}
 
-%patch -P10 -p1
 %patch -P11 -p1
 
 %patch -P13 -p1

@@ -129,5 +129,5 @@
 +functionality. For this to work properly you have to create special chroot-jail
 +environment in a /path/to/chroot directory.
  .It Cm TCPKeepAlive
- Specifies whether the system should send TCP keepalive messages to the
- other side.
+ Specifies whether the system should send keepalive messages on TCP sockets it
+ has opened.

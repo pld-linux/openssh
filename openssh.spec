@@ -12,7 +12,7 @@
 %bcond_without	libedit		# libedit (editline/history support in sftp client)
 %bcond_without	kerberos5	# Kerberos5 support
 %bcond_without	selinux		# SELinux support
-%bcond_without	libseccomp	# use libseccomp for seccomp privsep (requires 3.5 kernel)
+%bcond_without	libseccomp	# seccomp_filter sandbox for privsep, requires kernel 3.5
 %bcond_with	hpn		# High Performance SSH/SCP - HPN-SSH including Cipher NONE (broken too often)
 %bcond_without	tests		# test suite
 %bcond_with	tests_conch	# run conch interoperability tests
@@ -36,13 +36,13 @@ Summary(pt_BR.UTF-8):	Implementação livre do SSH
 Summary(ru.UTF-8):	OpenSSH - свободная реализация протокола Secure Shell (SSH)
 Summary(uk.UTF-8):	OpenSSH - вільна реалізація протоколу Secure Shell (SSH)
 Name:		openssh
-Version:	10.6p1
-Release:	4
+Version:	10.6p2
+Release:	1
 Epoch:		2
 License:	BSD
 Group:		Applications/Networking
 Source0:	https://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/%{name}-%{version}.tar.gz
-# Source0-md5:	a4e4ce2cc3b87706a043f8e0dc3e25d8
+# Source0-md5:	24fb1fb2c6ee537582c566dd9ed0e7cb
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 # Source1-md5:	66943d481cc422512b537bcc2c7400d1
 Source2:	%{name}d.init
@@ -74,7 +74,7 @@ Patch11:	%{name}-chroot.patch
 Patch13:	%{name}-skip-interop-tests.patch
 Patch14:	%{name}-bind.patch
 Patch15:	%{name}-disable_ldap.patch
-URL:		http://www.openssh.com/portable.html
+URL:		https://www.openssh.com/portable.html
 BuildRequires:	%{__perl}
 %{?with_audit:BuildRequires:	audit-libs-devel}
 BuildRequires:	autoconf >= 2.50
@@ -85,7 +85,6 @@ BuildRequires:	automake
 %{?with_ldns:BuildRequires:	ldns-devel}
 %{?with_libedit:BuildRequires:	libedit-devel}
 BuildRequires:	libfido2-devel >= 1.5.0
-%{?with_libseccomp:BuildRequires:	libseccomp-devel}
 %{?with_selinux:BuildRequires:	libselinux-devel}
 %{?with_ldap:BuildRequires:	openldap-devel}
 BuildRequires:	openssl-devel >= 1.1.1
@@ -103,7 +102,7 @@ BuildRequires:	zlib-devel >= 1.2.3
 BuildRequires:	%{name}-server
 %endif
 %if %{with tests} && %{with libseccomp}
-# libseccomp based sandbox requires NO_NEW_PRIVS prctl flag
+# seccomp_filter sandbox requires NO_NEW_PRIVS prctl flag
 BuildRequires:	uname(release) >= 3.5
 %endif
 Requires:	zlib >= 1.2.3
